@@ -4,11 +4,65 @@ import cors from 'cors';
 const app = express();
 const PORT = process.env.PORT || 3002;
 
+// Rate limiting configuration
+const rateLimitStore = new Map();
+const RATE_LIMIT_WINDOW = 60 * 1000; // 1 minute
+const MAX_REQUESTS_PER_WINDOW = 5; // 5 requests per minute per IP
+
+// Rate limiter middleware
+const rateLimiter = (req, res, next) => {
+  const clientIP = req.ip || req.connection.remoteAddress || 'unknown';
+  const now = Date.now();
+  
+  // Get or initialize rate limit data for this IP
+  let rateData = rateLimitStore.get(clientIP);
+  
+  if (!rateData || now - rateData.windowStart > RATE_LIMIT_WINDOW) {
+    // Start new window
+    rateData = {
+      windowStart: now,
+      requestCount: 1
+    };
+    rateLimitStore.set(clientIP, rateData);
+    next();
+    return;
+  }
+  
+  // Check if limit exceeded
+  if (rateData.requestCount >= MAX_REQUESTS_PER_WINDOW) {
+    const retryAfter = Math.ceil((RATE_LIMIT_WINDOW - (now - rateData.windowStart)) / 1000);
+    res.status(429).json({
+      success: false,
+      message: `Too many requests. Please try again in ${retryAfter} seconds.`,
+      retryAfter
+    });
+    return;
+  }
+  
+  // Increment request count
+  rateData.requestCount++;
+  rateLimitStore.set(clientIP, rateData);
+  next();
+};
+
+// Cleanup old entries every 5 minutes
+setInterval(() => {
+  const now = Date.now();
+  for (const [ip, data] of rateLimitStore.entries()) {
+    if (now - data.windowStart > RATE_LIMIT_WINDOW * 2) {
+      rateLimitStore.delete(ip);
+    }
+  }
+}, 5 * 60 * 1000);
+
 // In-memory storage for submissions (replace with database in production)
 const submissions = [];
 
 app.use(cors());
 app.use(express.json());
+
+// Apply rate limiting to all API routes
+app.use('/api', rateLimiter);
 
 // Store contact form submissions
 app.post('/api/contact', (req, res) => {

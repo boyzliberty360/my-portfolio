@@ -1,11 +1,45 @@
-import React from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
-import { Mail, MapPin, User, Send, Github } from "lucide-react";
-import { useState } from "react";
+import { Mail, MapPin, User, Send, Github, Clock, AlertTriangle } from "lucide-react";
+
+// Rate limiting configuration (client-side)
+const RATE_LIMIT_WINDOW = 60 * 1000; // 1 minute
+const MAX_REQUESTS_PER_WINDOW = 5;
+
+// Load rate limit data from localStorage
+const loadRateLimitData = () => {
+  try {
+    const stored = localStorage.getItem("contact-form-rate-limit");
+    if (stored) {
+      const data = JSON.parse(stored);
+      // Clear expired data
+      if (Date.now() - data.windowStart > RATE_LIMIT_WINDOW) {
+        return { windowStart: Date.now(), requestCount: 0 };
+      }
+      return data;
+    }
+  } catch {
+    // Ignore errors
+  }
+  return { windowStart: Date.now(), requestCount: 0 };
+};
+
+// Save rate limit data to localStorage
+const saveRateLimitData = (data) => {
+  try {
+    localStorage.setItem("contact-form-rate-limit", JSON.stringify(data));
+  } catch {
+    // Ignore errors
+  }
+};
 
 export default function Contact() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState({ type: "", message: "" });
+  const [rateLimitData, setRateLimitData] = useState(loadRateLimitData);
+  const [remainingRequests, setRemainingRequests] = useState(MAX_REQUESTS_PER_WINDOW);
+  const [cooldownSeconds, setCooldownSeconds] = useState(0);
+  const [isRateLimited, setIsRateLimited] = useState(false);
 
   const contactInfo = {
     name: "Emmanuel Adejoh",
@@ -14,8 +48,68 @@ export default function Contact() {
     github: "https://github.com/boyzliberty360",
   };
 
+  // Update remaining requests and cooldown timer
+  const updateRateLimitState = useCallback(() => {
+    const data = loadRateLimitData();
+    const now = Date.now();
+    
+    // Check if window has expired
+    if (now - data.windowStart > RATE_LIMIT_WINDOW) {
+      // Reset for new window
+      const newData = { windowStart: now, requestCount: 0 };
+      saveRateLimitData(newData);
+      setRemainingRequests(MAX_REQUESTS_PER_WINDOW);
+      setCooldownSeconds(0);
+      setIsRateLimited(false);
+    } else {
+      // Calculate remaining requests
+      const remaining = Math.max(0, MAX_REQUESTS_PER_WINDOW - data.requestCount);
+      setRemainingRequests(remaining);
+      
+      // Calculate cooldown
+      const elapsed = now - data.windowStart;
+      const remainingTime = Math.max(0, Math.ceil((RATE_LIMIT_WINDOW - elapsed) / 1000));
+      setCooldownSeconds(remainingTime);
+      
+      // Check if rate limited
+      setIsRateLimited(data.requestCount >= MAX_REQUESTS_PER_WINDOW);
+    }
+  }, []);
+
+  // Update rate limit state every second when in cooldown
+  useEffect(() => {
+    updateRateLimitState();
+    
+    if (cooldownSeconds > 0 || isRateLimited) {
+      const interval = setInterval(updateRateLimitState, 1000);
+      return () => clearInterval(interval);
+    }
+  }, [cooldownSeconds, isRateLimited, updateRateLimitState]);
+
+  // Check server rate limit and submit form
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    // Client-side rate limit check
+    const data = loadRateLimitData();
+    const now = Date.now();
+    
+    // Reset window if expired
+    let currentData = data;
+    if (now - data.windowStart > RATE_LIMIT_WINDOW) {
+      currentData = { windowStart: now, requestCount: 0 };
+    }
+    
+    // Check if client-side limit exceeded
+    if (currentData.requestCount >= MAX_REQUESTS_PER_WINDOW) {
+      const retryAfter = Math.ceil((RATE_LIMIT_WINDOW - (now - currentData.windowStart)) / 1000);
+      setSubmitStatus({
+        type: "error",
+        message: `Too many requests. Please wait ${retryAfter} seconds before sending another message.`,
+      });
+      return;
+    }
+
     setSubmitStatus({ type: "", message: "" });
 
     const form = e.currentTarget;
@@ -39,7 +133,31 @@ export default function Contact() {
 
       const result = await response.json();
 
+      // Handle server-side rate limiting (429 response)
+      if (response.status === 429 || result.code === "RATE_LIMIT_EXCEEDED") {
+        // Update local rate limit data to reflect server rejection
+        const newData = { windowStart: now, requestCount: MAX_REQUESTS_PER_WINDOW };
+        saveRateLimitData(newData);
+        setRateLimitData(newData);
+        updateRateLimitState();
+        
+        setSubmitStatus({
+          type: "error",
+          message: "Too many requests from your IP. Please wait a moment before trying again.",
+        });
+        return;
+      }
+
       if (result.success) {
+        // Increment client-side request count
+        const updatedData = {
+          windowStart: currentData.windowStart,
+          requestCount: currentData.requestCount + 1,
+        };
+        saveRateLimitData(updatedData);
+        setRateLimitData(updatedData);
+        updateRateLimitState();
+        
         setSubmitStatus({
           type: "success",
           message: "Message sent successfully! I'll get back to you soon.",
@@ -57,6 +175,14 @@ export default function Contact() {
       setIsSubmitting(false);
     }
   };
+
+  // Determine button state
+  const isDisabled = isSubmitting || isRateLimited || remainingRequests === 0;
+  const buttonText = isSubmitting 
+    ? "Sending..." 
+    : isRateLimited 
+      ? `Wait ${cooldownSeconds}s` 
+      : "Send Message";
 
   return (
     <section id="contact" className="px-6 md:px-16 py-20">
@@ -95,7 +221,8 @@ export default function Contact() {
                   name="name"
                   type="text"
                   required
-                  className="w-full p-3 rounded-lg bg-white/15 dark:bg-black/20 border border-purple-300/50 dark:border-purple-400/30 focus:outline-none focus:ring-2 focus:ring-purple-400 dark:text-white text-slate-900"
+                  disabled={isDisabled}
+                  className="w-full p-3 rounded-lg bg-white/15 dark:bg-black/20 border border-purple-300/50 dark:border-purple-400/30 focus:outline-none focus:ring-2 focus:ring-purple-400 dark:text-white text-slate-900 disabled:opacity-50"
                 />
               </div>
               <div>
@@ -107,7 +234,8 @@ export default function Contact() {
                   name="email"
                   type="email"
                   required
-                  className="w-full p-3 rounded-lg bg-white/15 dark:bg-black/20 border border-purple-300/50 dark:border-purple-400/30 focus:outline-none focus:ring-2 focus:ring-purple-400 dark:text-white text-slate-900"
+                  disabled={isDisabled}
+                  className="w-full p-3 rounded-lg bg-white/15 dark:bg-black/20 border border-purple-300/50 dark:border-purple-400/30 focus:outline-none focus:ring-2 focus:ring-purple-400 dark:text-white text-slate-900 disabled:opacity-50"
                 />
               </div>
             </div>
@@ -120,7 +248,8 @@ export default function Contact() {
                 id="subject"
                 name="subject"
                 type="text"
-                className="w-full p-3 rounded-lg bg-white/15 dark:bg-black/20 border border-purple-300/50 dark:border-purple-400/30 focus:outline-none focus:ring-2 focus:ring-purple-400 dark:text-white text-slate-900"
+                disabled={isDisabled}
+                className="w-full p-3 rounded-lg bg-white/15 dark:bg-black/20 border border-purple-300/50 dark:border-purple-400/30 focus:outline-none focus:ring-2 focus:ring-purple-400 dark:text-white text-slate-900 disabled:opacity-50"
               />
             </div>
 
@@ -133,19 +262,53 @@ export default function Contact() {
                 name="message"
                 rows={6}
                 required
-                className="w-full p-3 rounded-lg bg-white/15 dark:bg-black/20 border border-purple-300/50 dark:border-purple-400/30 focus:outline-none focus:ring-2 focus:ring-purple-400 dark:text-white text-slate-900"
+                disabled={isDisabled}
+                className="w-full p-3 rounded-lg bg-white/15 dark:bg-black/20 border border-purple-300/50 dark:border-purple-400/30 focus:outline-none focus:ring-2 focus:ring-purple-400 dark:text-white text-slate-900 disabled:opacity-50"
               />
             </div>
 
+            {/* Rate Limit Indicator */}
+            <div className="flex items-center justify-between text-sm">
+              <div className={`flex items-center gap-2 ${
+                remainingRequests <= 1 
+                  ? "text-orange-500 dark:text-orange-400" 
+                  : remainingRequests <= 2 
+                    ? "text-yellow-500 dark:text-yellow-400"
+                    : "text-emerald-500 dark:text-emerald-400"
+              }`}>
+                {isRateLimited ? (
+                  <>
+                    <Clock size={16} />
+                    <span>Cooldown: {cooldownSeconds}s</span>
+                  </>
+                ) : (
+                  <>
+                    <span>{remainingRequests}/{MAX_REQUESTS_PER_WINDOW} requests remaining</span>
+                  </>
+                )}
+              </div>
+              
+              {remainingRequests <= 2 && !isRateLimited && (
+                <div className="flex items-center gap-1 text-orange-500 dark:text-orange-400 text-xs">
+                  <AlertTriangle size={12} />
+                  <span>Limited</span>
+                </div>
+              )}
+            </div>
+
             <motion.button
-              whileHover={{ scale: 1.01 }}
-              whileTap={{ scale: 0.98 }}
+              whileHover={!isDisabled ? { scale: 1.01 } : {}}
+              whileTap={!isDisabled ? { scale: 0.98 } : {}}
               type="submit"
-              disabled={isSubmitting}
-              className="w-full flex items-center justify-center gap-2 py-3 rounded-lg text-white font-semibold bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 transition disabled:opacity-50"
+              disabled={isDisabled}
+              className={`w-full flex items-center justify-center gap-2 py-3 rounded-lg text-white font-semibold transition ${
+                isRateLimited
+                  ? "bg-gray-500 cursor-not-allowed"
+                  : "bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600"
+              } disabled:opacity-50`}
             >
               <Send size={16} />
-              {isSubmitting ? "Sending..." : "Send Message"}
+              {buttonText}
             </motion.button>
 
             {submitStatus.message && (
