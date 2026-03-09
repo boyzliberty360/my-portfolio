@@ -33,10 +33,6 @@ const About = () => {
       desc: "Building responsive, high-performance websites and web applications using modern technologies.",
     },
     {
-      title: "Mobile Development",
-      desc: "Creating cross-platform mobile applications that provide seamless user experiences.",
-    },
-    {
       title: "Backend Development",
       desc: "Designing and implementing scalable server-side solutions and APIs.",
     },
@@ -55,7 +51,7 @@ const About = () => {
           About Me
         </motion.h2>
 
-        <div className="grid lg:grid-cols-2 gap-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-12">
           {/* Left - Personal Info */}
           <motion.div
             initial={{ opacity: 0, x: -30 }}

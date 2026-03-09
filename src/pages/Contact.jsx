@@ -194,14 +194,14 @@ export default function Contact() {
           className="text-center mb-12"
         >
           <h2 className="ai-heading text-4xl md:text-5xl font-bold dark:text-white text-slate-900 mb-4">
-            Contact Us Now
+            Contact
           </h2>
           <p className="text-lg md:text-2xl dark:text-gray-300 text-slate-600 max-w-2xl mx-auto">
             Have a project in mind? Let's discuss how we can work together to bring your ideas to life.
           </p>
         </motion.div>
 
-        <div className="grid lg:grid-cols-2 gap-8 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
           <motion.form
             initial={{ opacity: 0, x: -20 }}
             whileInView={{ opacity: 1, x: 0 }}

@@ -5,7 +5,7 @@ import { Briefcase, Calendar } from "lucide-react";
 const experiences = [
   {
     company: "Mercuryx",
-    role: "Tech Mentor & Software Engineer",
+    role: "Tech Trainee & Software Engineer",
     period: "2024 - Present",
     description: "Dual role combining active software engineering with structured technical mentorship. On the engineering side, collaborate with the team to build and maintain scalable software systems across the full development lifecycle — from design and planning through to QA and deployment. On the mentorship side, lead frontend development sessions for junior developers, covering core web technologies including HTML, CSS, and JavaScript, with a focus on building practical skills and real-world coding confidence. Passionate about growing the next generation of developers while continuing to sharpen my own engineering craft.",
     current: true,

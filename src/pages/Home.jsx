@@ -37,7 +37,7 @@ export default function Home() {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2, duration: 0.8 }}
-          className="ai-heading text-5xl md:text-7xl font-bold mb-4 dark:text-white text-slate-900"
+          className="ai-heading text-4xl sm:text-5xl md:text-7xl font-bold mb-4 dark:text-white text-slate-900"
         >
           Adejoh Emmanuel
         </motion.h1>
@@ -46,7 +46,7 @@ export default function Home() {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4, duration: 0.8 }}
-          className="text-2xl md:text-4xl text-cyan-300 font-semibold mb-8"
+          className="text-xl sm:text-2xl md:text-4xl text-cyan-300 font-semibold mb-8"
         >
           Full Stack Developer
         </motion.p>

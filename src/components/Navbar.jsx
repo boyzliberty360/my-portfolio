@@ -10,7 +10,7 @@ export default function Navbar() {
   const links = ["Home", "About", "Experience", "Projects", "Contact"];
 
   return (
-    <nav className="fixed w-full top-0 z-50 glass py-4 px-6 md:px-10 flex items-center">
+    <nav className="fixed w-full top-0 z-50 glass py-4 px-6 md:px-10 flex items-center justify-between">
       <a
         href="#home"
         onClick={() => setIsOpen(false)}
@@ -18,45 +18,49 @@ export default function Navbar() {
         aria-label="Go to home"
       >
         <Cpu className="w-5 h-5" />
-        MyPortfolio
+        <span className="hidden sm:inline">MyPortfolio</span>
       </a>
 
-      <ul className="hidden md:flex ml-auto items-center gap-7 dark:text-white text-slate-900">
-        {links.map((item) => (
-          <li key={item}>
-            <a
-              href={`#${item.toLowerCase()}`}
-              className="relative font-semibold tracking-wide hover:text-cyan-300 transition-colors"
-            >
-              {item}
-            </a>
-          </li>
-        ))}
-      </ul>
+      {/* Desktop: Nav links and centered theme toggle */}
+      <div className="hidden md:flex items-center">
+        <ul className="flex items-center gap-7 dark:text-white text-slate-900">
+          {links.map((item) => (
+            <li key={item}>
+              <a
+                href={`#${item.toLowerCase()}`}
+                className="relative font-semibold tracking-wide hover:text-cyan-300 transition-colors"
+              >
+                {item}
+              </a>
+            </li>
+          ))}
+        </ul>
 
-      <motion.button
-        whileHover={{ scale: 1.06 }}
-        whileTap={{ scale: 0.96 }}
-        onClick={toggleTheme}
-        className="hidden md:flex absolute left-1/2 -translate-x-1/2 w-10 h-10 rounded-full glass items-center justify-center text-cyan-300"
-        aria-label="Toggle theme"
-      >
-        {isDark ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
-      </motion.button>
-
-      <div className="md:hidden flex items-center gap-3">
         <motion.button
           whileHover={{ scale: 1.06 }}
           whileTap={{ scale: 0.96 }}
           onClick={toggleTheme}
-          className="md:hidden w-10 h-10 rounded-full glass flex items-center justify-center text-cyan-300"
+          className="absolute left-1/2 -translate-x-1/2 w-10 h-10 rounded-full glass flex items-center justify-center text-cyan-300"
+          aria-label="Toggle theme"
+        >
+          {isDark ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+        </motion.button>
+      </div>
+
+      {/* Mobile: Theme toggle and burger menu */}
+      <div className="flex md:hidden items-center gap-3">
+        <motion.button
+          whileHover={{ scale: 1.06 }}
+          whileTap={{ scale: 0.96 }}
+          onClick={toggleTheme}
+          className="w-10 h-10 rounded-full glass flex items-center justify-center text-cyan-300"
           aria-label="Toggle theme"
         >
           {isDark ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
         </motion.button>
 
         <button
-          className="md:hidden dark:text-white text-slate-900"
+          className="dark:text-white text-slate-900"
           onClick={() => setIsOpen((prev) => !prev)}
           aria-label="Toggle mobile menu"
         >
