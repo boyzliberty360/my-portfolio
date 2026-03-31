@@ -3,7 +3,36 @@ import { motion } from "framer-motion";
 import Card from "../components/Card";
 
 const GITHUB_USERNAME = "boyzliberty360";
+const buildGithubPreview = (repoName) =>
+  `https://opengraph.githubassets.com/1/${GITHUB_USERNAME}/${repoName}`;
+const buildSitePreview = (url) =>
+  `https://s.wordpress.com/mshots/v1/${encodeURIComponent(url)}?w=1200`;
+
 const FALLBACK_REPOS = [
+  {
+    id: "fallback-construction-hub",
+    name: "construction-hub",
+    description:
+      "A construction materials commerce platform with category-led browsing, cart, checkout, and admin operations.",
+    language: "JavaScript",
+    html_url: null,
+    homepage: "https://constructionhub.vercel.app",
+    default_branch: "HEAD",
+    imageUrl: buildSitePreview("https://constructionhub.vercel.app"),
+    liveUrl: "https://constructionhub.vercel.app",
+  },
+  {
+    id: "fallback-spend-lens",
+    name: "spend-lens",
+    description:
+      "A finance-focused application for tracking spending patterns, monitoring categories, and improving budgeting visibility.",
+    language: "JavaScript",
+    html_url: `https://github.com/${GITHUB_USERNAME}/spend-lens`,
+    homepage: "",
+    default_branch: "HEAD",
+    imageUrl: buildGithubPreview("spend-lens"),
+    liveUrl: null,
+  },
   {
     id: "fallback-rejob",
     name: "rejob",
@@ -13,6 +42,8 @@ const FALLBACK_REPOS = [
     html_url: `https://github.com/${GITHUB_USERNAME}/rejob`,
     homepage: "",
     default_branch: "HEAD",
+    imageUrl: buildGithubPreview("rejob"),
+    liveUrl: null,
   },
   {
     id: "fallback-hauntr",
@@ -22,6 +53,8 @@ const FALLBACK_REPOS = [
     html_url: `https://github.com/${GITHUB_USERNAME}/hauntr`,
     homepage: "",
     default_branch: "HEAD",
+    imageUrl: buildGithubPreview("hauntr"),
+    liveUrl: null,
   },
 ];
 
@@ -32,8 +65,14 @@ export default function Projects() {
     const username = GITHUB_USERNAME;
     const imageMarkdownRegex = /!\[([^\]]*)\]\(([^)]+)\)/g;
     const imageHtmlRegex = /<img[^>]+src=["']([^"']+)["'][^>]*>/gi;
+    const markdownLinkRegex = /\[([^\]]+)\]\((https?:\/\/[^)]+)\)/gi;
+    const htmlLinkRegex = /<a[^>]+href=["'](https?:\/\/[^"']+)["'][^>]*>(.*?)<\/a>/gi;
+    const bareUrlRegex = /https?:\/\/[^\s)<>"]+/gi;
+    const liveUrlHintRegex = /(live|demo|preview|app|website|site|vercel|netlify|render)/i;
+    const preferredDomainRegex = /(vercel\.app|netlify\.app|web\.app|firebaseapp\.com|onrender\.com|pages\.dev|github\.io)/i;
     const iconHintRegex = /(icon|logo|favicon)/i;
-    const featuredRepos = ["rejob", "hauntr"];
+    const featuredRepos = ["construction-hub", "spend-lens", "rejob", "hauntr"];
+    let isMounted = true;
 
     const toAbsoluteImageUrl = (url, repo) => {
       if (!url) return null;
@@ -76,6 +115,40 @@ export default function Projects() {
       if (!url) return null;
       if (url.startsWith("http://") || url.startsWith("https://")) return url;
       return `https://${url}`;
+    };
+
+    const extractReadmeHomepage = (content) => {
+      const markdownLinks = Array.from(content.matchAll(markdownLinkRegex)).map((match) => ({
+        label: match[1],
+        url: match[2],
+      }));
+      const htmlLinks = Array.from(content.matchAll(htmlLinkRegex)).map((match) => ({
+        label: match[2] || "",
+        url: match[1],
+      }));
+      const bareUrls = Array.from(content.matchAll(bareUrlRegex)).map((match) => ({
+        label: "",
+        url: match[0],
+      }));
+
+      const candidates = [...markdownLinks, ...htmlLinks, ...bareUrls]
+        .map((item) => ({
+          ...item,
+          url: normalizeUrl(item.url),
+        }))
+        .filter((item) => item.url && !item.url.includes("github.com"));
+
+      if (candidates.length === 0) return null;
+
+      const preferredByDomain = candidates.find((item) => preferredDomainRegex.test(item.url));
+      if (preferredByDomain) return preferredByDomain.url;
+
+      const preferredByHint = candidates.find(
+        (item) => liveUrlHintRegex.test(item.label) || liveUrlHintRegex.test(item.url)
+      );
+      if (preferredByHint) return preferredByHint.url;
+
+      return candidates[0].url;
     };
 
     const buildScreenshotUrl = (url) => {
@@ -176,65 +249,142 @@ export default function Projects() {
       return null;
     };
 
-    const fetchRepoImage = async (repo) => {
-      const liveUrl = normalizeUrl(repo.homepage?.trim());
-      if (liveUrl) return buildScreenshotUrl(liveUrl);
+    const fetchRepoMetadata = async (repo) => {
+      const configuredLiveUrl = normalizeUrl(repo.homepage?.trim());
+      if (configuredLiveUrl) {
+        return {
+          liveUrl: configuredLiveUrl,
+          imageUrl: buildScreenshotUrl(configuredLiveUrl),
+        };
+      }
 
       try {
         const res = await fetch(`https://api.github.com/repos/${username}/${repo.name}/readme`);
-        if (!res.ok) return `https://opengraph.githubassets.com/1/${username}/${repo.name}`;
+        if (!res.ok) {
+          return {
+            liveUrl: null,
+            imageUrl: buildGithubPreview(repo.name),
+          };
+        }
         const readme = await res.json();
-        if (!readme?.content) return `https://opengraph.githubassets.com/1/${username}/${repo.name}`;
+        if (!readme?.content) {
+          return {
+            liveUrl: null,
+            imageUrl: buildGithubPreview(repo.name),
+          };
+        }
 
         const decoded = atob(readme.content.replace(/\n/g, ""));
+        const readmeHomepage = extractReadmeHomepage(decoded);
+        if (readmeHomepage) {
+          return {
+            liveUrl: readmeHomepage,
+            imageUrl: buildScreenshotUrl(readmeHomepage),
+          };
+        }
+
         const readmeImage = extractReadmeImage(decoded, repo);
-        if (readmeImage) return readmeImage;
+        if (readmeImage) {
+          return {
+            liveUrl: null,
+            imageUrl: readmeImage,
+          };
+        }
 
         if (repo.name.toLowerCase() === "hauntr") {
           const iconUrl = await fetchRepoIcon(repo);
-          if (iconUrl) return iconUrl;
+          if (iconUrl) {
+            return {
+              liveUrl: null,
+              imageUrl: iconUrl,
+            };
+          }
           const searchedIcon = await searchRepoIcon(repo);
-          if (searchedIcon) return searchedIcon;
+          if (searchedIcon) {
+            return {
+              liveUrl: null,
+              imageUrl: searchedIcon,
+            };
+          }
         }
 
-        return `https://opengraph.githubassets.com/1/${username}/${repo.name}`;
+        return {
+          liveUrl: null,
+          imageUrl: buildGithubPreview(repo.name),
+        };
       } catch {
-        return `https://opengraph.githubassets.com/1/${username}/${repo.name}`;
+        return {
+          liveUrl: null,
+          imageUrl: buildGithubPreview(repo.name),
+        };
+      }
+    };
+
+    const fetchRepoByName = async (repoName) => {
+      try {
+        const res = await fetch(`https://api.github.com/repos/${username}/${repoName}`);
+        if (!res.ok) return null;
+        const repo = await res.json();
+        if (!repo?.name) return null;
+        return repo;
+      } catch {
+        return null;
       }
     };
 
     const loadRepos = async () => {
       try {
-        const res = await fetch(`https://api.github.com/users/${username}/repos`);
-        const data = await res.json();
-        if (!Array.isArray(data)) {
-          setRepos(FALLBACK_REPOS);
-          return;
-        }
-        const filtered = data.filter((repo) =>
-          featuredRepos.includes(repo.name.toLowerCase())
+        const fetchedRepos = await Promise.all(
+          featuredRepos.map(async (repoName) => {
+            const repo = await fetchRepoByName(repoName);
+            const fallbackRepo = FALLBACK_REPOS.find(
+              (item) => item.name.toLowerCase() === repoName
+            );
+
+            return {
+              ...(fallbackRepo || {}),
+              ...(repo || {}),
+            };
+          })
         );
-        const sorted = featuredRepos
-          .map((name) => filtered.find((repo) => repo.name.toLowerCase() === name))
-          .filter(Boolean);
-        if (sorted.length === 0) {
-          setRepos(FALLBACK_REPOS);
-          return;
-        }
+
+        const sorted = fetchedRepos.filter(Boolean);
+
         const withImages = await Promise.all(
-          sorted.map(async (repo) => ({
-            ...repo,
-            imageUrl: await fetchRepoImage(repo),
-            liveUrl: normalizeUrl(repo.homepage?.trim()) || null,
-          }))
+          sorted.map(async (repo) => {
+            const metadata = await fetchRepoMetadata(repo);
+            return {
+              ...repo,
+              imageUrl: metadata.imageUrl,
+              liveUrl: metadata.liveUrl,
+            };
+          })
         );
-        setRepos(withImages);
+
+        if (!isMounted) return;
+
+        setRepos(
+          featuredRepos.map((repoName) => {
+            const fetchedRepo = withImages.find((repo) => repo.name.toLowerCase() === repoName);
+            const fallbackRepo = FALLBACK_REPOS.find((repo) => repo.name.toLowerCase() === repoName);
+
+            return {
+              ...(fallbackRepo || {}),
+              ...(fetchedRepo || {}),
+            };
+          })
+        );
       } catch (err) {
-        setRepos(FALLBACK_REPOS);
+        if (!isMounted) return;
+        setRepos((currentRepos) => currentRepos.length > 0 ? currentRepos : FALLBACK_REPOS);
       }
     };
 
     loadRepos();
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   return (
@@ -265,6 +415,7 @@ export default function Projects() {
             link={repo.html_url}
             imageUrl={repo.imageUrl}
             liveUrl={repo.liveUrl}
+            language={repo.language}
           />
         ))}
       </div>

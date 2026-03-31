@@ -17,13 +17,13 @@ const sectionVariant = {
 export default function App() {
   return (
     <ThemeProvider>
-      <div className="app-shell dark:text-white text-slate-900 min-h-screen transition-colors duration-500">
+      <div className="app-shell min-h-screen overflow-x-hidden transition-colors duration-500 dark:text-white text-slate-900">
         <Navbar />
         <motion.main
           initial="hidden"
           animate="visible"
           transition={{ staggerChildren: 0.15 }}
-          className="space-y-28 mt-20"
+          className="mt-20 space-y-20 md:space-y-24 lg:space-y-28"
         >
           <motion.div variants={sectionVariant}>
             <Home />

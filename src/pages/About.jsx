@@ -13,17 +13,17 @@ const About = () => {
     {
       title: "Frontend",
       icon: <Globe size={20} />,
-      items: ["React", "Next.js", "JavaScript", "TypeScript", "Tailwind CSS", "Framer Motion"],
+      items: ["React", "Nuxt.js", "Vue", "JavaScript", "TypeScript", "Tailwind CSS", "Framer Motion"],
     },
     {
       title: "Backend",
       icon: <Database size={20} />,
-      items: ["Node.js", "Express", "MongoDB", "REST APIs", "SQL", "PostgreSQL"],
+      items: ["Node.js", "Express", "MongoDB", "REST APIs", "SQL", "PostgreSQL", "Go(Golang)"],
     },
     {
       title: "Tools",
       icon: <Wrench size={20} />,
-      items: ["Git", "Docker", "Azure", "Vercel", "Netlify", "supabase", "Web3Forms", "GitHub"],
+      items: ["Git", "Docker", "Vercel", "Netlify", "supabase", "Web3Forms", "GitHub", "Cloudflare"],
     },
   ];
 
