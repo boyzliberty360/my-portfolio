@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
-import { Mail, MapPin, User, Send, Github, Clock, AlertTriangle } from "lucide-react";
+import { Mail, MapPin, User, Send, Github, Clock } from "lucide-react";
 
 // Rate limiting configuration (client-side)
 const RATE_LIMIT_WINDOW = 60 * 1000; // 1 minute
@@ -75,7 +75,7 @@ export default function Contact() {
       setIsRateLimited(data.requestCount >= MAX_REQUESTS_PER_WINDOW);
     }
   }, []);
-
+ 
   // Update rate limit state every second when in cooldown
   useEffect(() => {
     updateRateLimitState();
@@ -267,34 +267,12 @@ export default function Contact() {
               />
             </div>
 
-            {/* Rate Limit Indicator */}
-            <div className="flex items-center justify-between text-sm">
-              <div className={`flex items-center gap-2 ${
-                remainingRequests <= 1 
-                  ? "text-orange-500 dark:text-orange-400" 
-                  : remainingRequests <= 2 
-                    ? "text-yellow-500 dark:text-yellow-400"
-                    : "text-emerald-500 dark:text-emerald-400"
-              }`}>
-                {isRateLimited ? (
-                  <>
-                    <Clock size={16} />
-                    <span>Cooldown: {cooldownSeconds}s</span>
-                  </>
-                ) : (
-                  <>
-                    <span>{remainingRequests}/{MAX_REQUESTS_PER_WINDOW} requests remaining</span>
-                  </>
-                )}
+            {isRateLimited && (
+              <div className="flex items-center gap-2 text-sm text-orange-500 dark:text-orange-400">
+                <Clock size={16} />
+                <span>Cooldown: {cooldownSeconds}s</span>
               </div>
-              
-              {remainingRequests <= 2 && !isRateLimited && (
-                <div className="flex items-center gap-1 text-orange-500 dark:text-orange-400 text-xs">
-                  <AlertTriangle size={12} />
-                  <span>Limited</span>
-                </div>
-              )}
-            </div>
+            )}
 
             <motion.button
               whileHover={!isDisabled ? { scale: 1.01 } : {}}
