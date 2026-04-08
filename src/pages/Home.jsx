@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { ArrowRight, Mail, Github } from "lucide-react";
 
-const PROFILE_IMAGE = "https://github.com/boyzliberty360.png?size=512";
+const PROFILE_IMAGE = "https://github.com/emmyade360.png?size=512";
 
 export default function Home() {
   return (
@@ -107,11 +107,11 @@ export default function Home() {
                 <p className="text-xs uppercase tracking-[0.24em] text-cyan-300">GitHub Profile</p>
                 <div className="mt-3 flex items-center justify-between gap-3">
                   <div>
-                    <p className="text-lg font-semibold text-white">boyzliberty360</p>
+                    <p className="text-lg font-semibold text-white">emmyade360</p>
                     <p className="text-sm text-slate-300">Frontend, backend, product-focused builds</p>
                   </div>
                   <a
-                    href="https://github.com/boyzliberty360"
+                    href="https://github.com/emmyade360"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex h-11 w-11 items-center justify-center rounded-full border border-cyan-400/30 bg-cyan-400/10 text-cyan-300 transition hover:bg-cyan-400 hover:text-slate-950"

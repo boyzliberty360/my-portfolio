@@ -2,15 +2,17 @@ import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import Card from "../components/Card";
 
-const GITHUB_USERNAME = "boyzliberty360";
+const GITHUB_USERNAME =
+  import.meta.env.VITE_GITHUB_USERNAME?.trim() || "emmyade360";
 const buildGithubPreview = (repoName) =>
   `https://opengraph.githubassets.com/1/${GITHUB_USERNAME}/${repoName}`;
 const buildSitePreview = (url) =>
   `https://s.wordpress.com/mshots/v1/${encodeURIComponent(url)}?w=1200`;
 
-const FALLBACK_REPOS = [
-  {
+const PROJECT_CATALOG = {
+  "construction-hub": {
     id: "fallback-construction-hub",
+    displayName: "Construction Hub",
     name: "construction-hub",
     description:
       "A construction materials commerce platform with category-led browsing, cart, checkout, and admin operations.",
@@ -21,8 +23,22 @@ const FALLBACK_REPOS = [
     imageUrl: buildSitePreview("https://constructionhub.vercel.app"),
     liveUrl: "https://constructionhub.vercel.app",
   },
-  {
+  "dualedge-fx": {
+    id: "fallback-dualedge-fx",
+    displayName: "DualEdge FX",
+    name: "dualedge-fx",
+    description:
+      "A polished forex and market-intelligence experience focused on performance, trust, and high-conversion landing flows.",
+    language: "JavaScript",
+    html_url: `https://github.com/${GITHUB_USERNAME}/dualedge-fx`,
+    homepage: import.meta.env.VITE_DUALEDGE_FX_LIVE_URL?.trim() || "",
+    default_branch: "HEAD",
+    imageUrl: buildGithubPreview("dualedge-fx"),
+    liveUrl: import.meta.env.VITE_DUALEDGE_FX_LIVE_URL?.trim() || null,
+  },
+  "spend-lens": {
     id: "fallback-spend-lens",
+    displayName: "Spend Lens",
     name: "spend-lens",
     description:
       "A finance-focused application for tracking spending patterns, monitoring categories, and improving budgeting visibility.",
@@ -33,8 +49,9 @@ const FALLBACK_REPOS = [
     imageUrl: buildGithubPreview("spend-lens"),
     liveUrl: null,
   },
-  {
+  rejob: {
     id: "fallback-rejob",
+    displayName: "ReJob",
     name: "rejob",
     description:
       "An online open source job listing site for employers to list job and for job seekers to apply for jobs with their documents",
@@ -45,8 +62,9 @@ const FALLBACK_REPOS = [
     imageUrl: buildGithubPreview("rejob"),
     liveUrl: null,
   },
-  {
+  hauntr: {
     id: "fallback-hauntr",
+    displayName: "Hauntr",
     name: "hauntr",
     description: "A haunted experience project from my GitHub",
     language: "JavaScript",
@@ -56,7 +74,41 @@ const FALLBACK_REPOS = [
     imageUrl: buildGithubPreview("hauntr"),
     liveUrl: null,
   },
+};
+
+const DEFAULT_FEATURED_REPOS = [
+  "construction-hub",
+  "dualedge-fx",
+  "spend-lens",
+  "rejob",
+  "hauntr",
 ];
+
+const FEATURED_REPOS = (
+  import.meta.env.VITE_FEATURED_REPOS || DEFAULT_FEATURED_REPOS.join(",")
+)
+  .split(",")
+  .map((repo) => repo.trim().toLowerCase())
+  .filter(Boolean);
+
+const FALLBACK_REPOS = FEATURED_REPOS.map(
+  (repoName) =>
+    PROJECT_CATALOG[repoName] || {
+      id: `fallback-${repoName}`,
+      displayName: repoName
+        .split("-")
+        .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+        .join(" "),
+      name: repoName,
+      description: "A featured project from my GitHub portfolio.",
+      language: "JavaScript",
+      html_url: `https://github.com/${GITHUB_USERNAME}/${repoName}`,
+      homepage: "",
+      default_branch: "HEAD",
+      imageUrl: buildGithubPreview(repoName),
+      liveUrl: null,
+    }
+);
 
 export default function Projects() {
   const [repos, setRepos] = useState(FALLBACK_REPOS);
@@ -71,7 +123,7 @@ export default function Projects() {
     const liveUrlHintRegex = /(live|demo|preview|app|website|site|vercel|netlify|render)/i;
     const preferredDomainRegex = /(vercel\.app|netlify\.app|web\.app|firebaseapp\.com|onrender\.com|pages\.dev|github\.io)/i;
     const iconHintRegex = /(icon|logo|favicon)/i;
-    const featuredRepos = ["construction-hub", "spend-lens", "rejob", "hauntr"];
+    const featuredRepos = FEATURED_REPOS;
     let isMounted = true;
 
     const toAbsoluteImageUrl = (url, repo) => {
@@ -401,7 +453,7 @@ export default function Projects() {
         {repos.map((repo) => (
           <Card
             key={repo.id}
-            title={repo.name}
+            title={repo.displayName || repo.name}
             description={
               <>
                 <p>{repo.description || "An online open source job listing site for employers to list job and for job seekers to apply for jobs with their documents"}</p>

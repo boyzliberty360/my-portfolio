@@ -4,9 +4,9 @@ import { Mail, MapPin, Download, Globe, Database, Wrench, Github } from "lucide-
 const About = () => {
   const personalInfo = {
     name: "Emmanuel Adejoh",
-    email: "orion4live@gmail.com",
+    email: "adejorion@gmail.com",
     location: "Nigeria",
-    github: "https://github.com/boyzliberty360",
+    github: "https://github.com/emmyade360",
   };
 
   const skillCategories = [
@@ -79,7 +79,7 @@ const About = () => {
                     rel="noopener noreferrer"
                     className="dark:text-gray-300 text-slate-700 hover:text-cyan-300 transition-colors"
                   >
-                    github.com/boyzliberty360
+                    github.com/emmyade360
                   </a>
                 </div>
               </div>

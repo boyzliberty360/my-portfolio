@@ -43,9 +43,9 @@ export default function Contact() {
 
   const contactInfo = {
     name: "Emmanuel Adejoh",
-    email: "orion4live@gmail.com",
+    email: "adejorion@gmail.com",
     location: "Nigeria",
-    github: "https://github.com/boyzliberty360",
+    github: "https://github.com/emmyade360",
   };
 
   // Update remaining requests and cooldown timer
@@ -341,7 +341,7 @@ export default function Contact() {
                     rel="noopener noreferrer"
                     className="dark:text-gray-300 text-slate-600 hover:text-cyan-400 transition-colors"
                   >
-                    boyzliberty360
+                    emmyade360
                   </a>
                 </div>
               </div>
