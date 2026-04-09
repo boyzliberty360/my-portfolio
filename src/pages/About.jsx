@@ -87,7 +87,7 @@ const About = () => {
               <motion.a
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
-                href="/resumeee.pdf"
+                href="/Resume.pdf"
                 download="Emmanuel-Adejoh-CV.pdf"
                 className="mt-6 flex items-center gap-2 px-6 py-3 bg-cyan-500 hover:bg-cyan-600 text-white rounded-lg font-medium transition-colors"
               >
