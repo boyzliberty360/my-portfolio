@@ -26,9 +26,9 @@ function Portfolio() {
         className="mt-20 space-y-20 md:space-y-24 lg:space-y-28"
       >
         <motion.div variants={sectionVariant}><Home /></motion.div>
+        <motion.div variants={sectionVariant}><Projects /></motion.div>
         <motion.div variants={sectionVariant}><About /></motion.div>
         <motion.div variants={sectionVariant}><Experience /></motion.div>
-        <motion.div variants={sectionVariant}><Projects /></motion.div>
         <motion.div variants={sectionVariant}><Contact /></motion.div>
       </motion.main>
       <Footer />

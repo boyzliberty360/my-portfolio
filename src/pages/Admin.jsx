@@ -39,7 +39,7 @@ function PasswordGate({ onAuth }) {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4 dark:bg-[#06101f] bg-[#c4b9ad]">
+    <div className="min-h-screen flex items-center justify-center bg-white px-4 dark:bg-black">
       <motion.div
         initial={{ opacity: 0, y: 24 }}
         animate={{ opacity: 1, y: 0 }}
@@ -101,9 +101,9 @@ function LivePreview({ liveUrl }) {
   if (!normalizedUrl) return null;
 
   return (
-    <div className="rounded-xl overflow-hidden border border-white/10 bg-slate-900">
-      <div className="flex items-center justify-between px-3 py-1.5 bg-slate-800/60 border-b border-white/10">
-        <span className="text-xs text-slate-400 truncate max-w-[80%]">{normalizedUrl}</span>
+    <div className="overflow-hidden rounded-xl border border-slate-200 bg-white dark:border-white/10 dark:bg-black">
+      <div className="flex items-center justify-between border-b border-slate-200 bg-slate-50 px-3 py-1.5 dark:border-white/10 dark:bg-white/5">
+        <span className="max-w-[80%] truncate text-xs text-slate-500 dark:text-slate-400">{normalizedUrl}</span>
         <CheckCircle size={12} className="text-cyan-400" />
       </div>
       <div className="relative w-full" style={{ aspectRatio: "16 / 9" }}>
@@ -258,7 +258,7 @@ export default function Admin() {
     "text-xs font-medium dark:text-gray-400 text-slate-500 uppercase tracking-wide mb-1.5 block";
 
   return (
-    <div className="min-h-screen dark:bg-[#06101f] bg-[#c4b9ad] py-10 px-6 md:px-14">
+    <div className="min-h-screen bg-white py-10 px-6 dark:bg-black md:px-14">
       <div className="max-w-5xl mx-auto">
         <div className="mb-10 flex items-center gap-6">
           <a

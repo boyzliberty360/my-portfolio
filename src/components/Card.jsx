@@ -33,7 +33,7 @@ export default function Card({ title, description, link, imageUrl, liveUrl, lang
         rel="noopener noreferrer"
         className="group mb-4 block"
       >
-        <div className="relative overflow-hidden rounded-xl border border-white/10 bg-slate-900/60">
+        <div className="relative overflow-hidden rounded-xl border border-slate-200 bg-white dark:border-white/10 dark:bg-black">
           {liveUrl && shouldEmbedLiveUrl ? (
             <iframe
               src={liveUrl}
@@ -53,14 +53,14 @@ export default function Card({ title, description, link, imageUrl, liveUrl, lang
               onError={() => setFailedImageUrl(imageUrl)}
             />
           ) : (
-            <div className="flex h-44 w-full flex-col justify-between bg-gradient-to-br from-slate-950 via-slate-900 to-cyan-950 p-5">
+            <div className="flex h-44 w-full flex-col justify-between bg-white p-5 dark:bg-black">
               <div className="flex items-center justify-between text-xs uppercase tracking-[0.22em] text-cyan-300">
                 <span>Project Preview</span>
                 <span>{language || "Web App"}</span>
               </div>
               <div>
-                <p className="text-lg font-semibold text-white">{title}</p>
-                <p className="mt-2 text-sm text-slate-300">
+                <p className="text-lg font-semibold text-slate-900 dark:text-white">{title}</p>
+                <p className="mt-2 text-sm text-slate-600 dark:text-slate-300">
                   {liveUrl && !shouldEmbedLiveUrl
                     ? "Live preview is blocked by the target site. Use Open site to view it."
                     : "Open the project to view its source or live build."}
@@ -82,7 +82,7 @@ export default function Card({ title, description, link, imageUrl, liveUrl, lang
       </a>
 
       <h3 className="mb-2 text-xl font-bold text-cyan-400">{title}</h3>
-      <div className="mb-4 text-sm leading-relaxed text-gray-300 dark:text-gray-200">{description}</div>
+      <div className="mb-4 text-sm leading-relaxed text-slate-600 dark:text-gray-200">{description}</div>
 
       <div className="flex items-center gap-3">
         {liveUrl && (
@@ -90,7 +90,7 @@ export default function Card({ title, description, link, imageUrl, liveUrl, lang
             href={liveUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="lg-btn px-4 py-1.5 text-sm font-medium text-cyan-300"
+            className="lg-btn px-4 py-1.5 text-sm font-medium text-white"
           >
             <span className="relative z-10">{"Live Site ->"}</span>
           </a>
@@ -100,7 +100,7 @@ export default function Card({ title, description, link, imageUrl, liveUrl, lang
             href={link}
             target="_blank"
             rel="noopener noreferrer"
-            className="lg-btn px-4 py-1.5 text-sm font-medium text-cyan-200"
+            className="lg-btn px-4 py-1.5 text-sm font-medium text-white"
           >
             <span className="relative z-10">{"Source ->"}</span>
           </a>

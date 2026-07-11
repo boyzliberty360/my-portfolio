@@ -309,7 +309,7 @@ export default function Contact() {
               className="glass dark:bg-black/30 bg-white/10 p-6 md:p-8 rounded-2xl space-y-6"
             >
               <div className="flex items-start gap-4">
-                <div className="p-3 rounded-xl bg-gradient-to-r from-purple-500 to-blue-500 text-white">
+                <div className="rounded-xl bg-blue-600 p-3 text-white dark:bg-cyan-500 dark:text-black">
                   <User size={20} />
                 </div>
                 <div>
@@ -319,7 +319,7 @@ export default function Contact() {
               </div>
 
               <div className="flex items-start gap-4">
-                <div className="p-3 rounded-xl bg-gradient-to-r from-green-500 to-emerald-500 text-white">
+                <div className="rounded-xl bg-blue-600 p-3 text-white dark:bg-cyan-500 dark:text-black">
                   <Mail size={20} />
                 </div>
                 <div>
@@ -329,7 +329,7 @@ export default function Contact() {
               </div>
 
               <div className="flex items-start gap-4">
-                <div className="p-3 rounded-xl bg-gradient-to-r from-gray-700 to-gray-900 text-white">
+                <div className="rounded-xl bg-blue-600 p-3 text-white dark:bg-cyan-500 dark:text-black">
                   <Github size={20} />
                 </div>
                 <div>
@@ -346,7 +346,7 @@ export default function Contact() {
               </div>
 
               <div className="flex items-start gap-4">
-                <div className="p-3 rounded-xl bg-gradient-to-r from-orange-500 to-red-500 text-white">
+                <div className="rounded-xl bg-blue-600 p-3 text-white dark:bg-cyan-500 dark:text-black">
                   <MapPin size={20} />
                 </div>
                 <div>
@@ -360,14 +360,14 @@ export default function Contact() {
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.1 }}
-              className="p-6 md:p-8 rounded-2xl text-white bg-gradient-to-r from-purple-500 to-blue-500"
+              className="rounded-2xl bg-black p-6 text-white dark:bg-white dark:text-black md:p-8"
             >
               <h4 className="text-2xl font-bold mb-3">Let's work together!</h4>
-              <p className="text-white/90 leading-relaxed mb-5">
+              <p className="mb-5 leading-relaxed text-white/85 dark:text-black/75">
                 I'm always interested in new opportunities and exciting projects. Whether you have a
                 question or just want to say hi, I'll try my best to get back to you!
               </p>
-              <p className="font-semibold text-white/85">Response time: Usually within 12 hours</p>
+              <p className="font-semibold text-white/80 dark:text-black/70">Response time: Usually within 12 hours</p>
             </motion.div>
           </div>
         </div>
