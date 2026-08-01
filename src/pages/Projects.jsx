@@ -7,18 +7,23 @@ export default function Projects() {
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const fetchProjects = async () => {
-    setLoading(true);
-    const data = await getAdminProjects();
-    setProjects(data);
-    setLoading(false);
-  };
-
   useEffect(() => {
-    fetchProjects();
-    const sync = () => fetchProjects();
+    let active = true;
+
+    const loadProjects = () => {
+      getAdminProjects().then((data) => {
+        if (active) {
+          setProjects(data);
+          setLoading(false);
+        }
+      });
+    };
+
+    loadProjects();
+    const sync = () => loadProjects();
     window.addEventListener("admin-projects-updated", sync);
     return () => {
+      active = false;
       window.removeEventListener("admin-projects-updated", sync);
     };
   }, []);
@@ -60,21 +65,9 @@ export default function Projects() {
           {projects.map((repo) => (
             <Card
               key={repo.id}
-              title={repo.displayName || repo.name}
-              description={
-                <>
-                  <p>{repo.description}</p>
-                  {repo.language && (
-                    <p className="mt-2 text-gray-400 dark:text-gray-500 text-sm">
-                      Language: {repo.language}
-                    </p>
-                  )}
-                </>
-              }
-              link={repo.html_url}
-              imageUrl={repo.imageUrl}
-              liveUrl={repo.liveUrl}
-              language={repo.language}
+              title={repo.name || repo.displayName}
+              description={repo.description}
+              link={repo.link || repo.liveUrl || repo.html_url}
             />
           ))}
         </div>

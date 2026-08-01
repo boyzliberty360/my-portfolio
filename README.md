@@ -1,16 +1,35 @@
-# React + Vite
+# My Portfolio
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+React and Vite portfolio deployed on Vercel.
 
-Currently, two official plugins are available:
+## Projects admin
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+The `/admin` page uses a server-side password and stores project records in
+`public/data/projects.json`. Publishing or deleting a project commits the updated JSON file to the
+GitHub repository. Firebase is not used.
 
-## React Compiler
+Configure these server-only environment variables in Vercel Project Settings:
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- `ADMIN_PASSWORD`: the password used on `/admin`.
+- `GITHUB_PROJECTS_TOKEN`: a fine-grained GitHub token limited to this repository with
+  **Contents: Read and write** permission.
 
-## Expanding the ESLint configuration
+The repository owner, repository name, branch, and data path are detected/defaulted for this
+project. They can be overridden with the optional variables documented in `.env.example`.
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+Do not use a `VITE_` prefix for either secret. Vite exposes `VITE_` variables to the browser.
+
+After the GitHub token commits a project update, the public Projects section reads the latest data
+through `/api/projects`. The repository commit also triggers the normal Vercel redeployment so the
+static fallback stays synchronized.
+
+For local testing of both the Vite app and Vercel Function, use `vercel dev`. Running `npm run dev`
+serves the static project-list fallback but does not provide the admin API.
+
+## Commands
+
+```bash
+npm run dev
+npm run lint
+npm run build
+```

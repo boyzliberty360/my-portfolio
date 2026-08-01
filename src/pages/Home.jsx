@@ -1,7 +1,7 @@
 import { motion, useReducedMotion } from "framer-motion";
 import { ArrowRight, Mail, Github } from "lucide-react";
 
-const PROFILE_IMAGE = "https://github.com/emmyade360.png?size=512";
+const PROFILE_IMAGE = "/images/adejoh-emmanuel-professional.webp";
 
 export default function Home() {
   const prefersReducedMotion = useReducedMotion();
@@ -89,13 +89,13 @@ export default function Home() {
             <div className="relative overflow-hidden rounded-[1.5rem] border border-slate-200 bg-white dark:border-white/10 dark:bg-black">
               <img
                 src={PROFILE_IMAGE}
-                alt="Adejoh Emmanuel profile"
-                className="h-[20rem] w-full object-cover sm:h-[24rem] md:h-[28rem]"
+                alt="Adejoh Emmanuel in a professional suit"
+                className="h-[20rem] w-full object-cover object-[center_22%] sm:h-[24rem] md:h-[28rem]"
                 loading="eager"
                 decoding="async"
               />
               <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-slate-950 via-slate-950/55 to-transparent p-5">
-                <p className="text-xs uppercase tracking-[0.24em] text-cyan-300">GitHub Profile</p>
+                <p className="text-xs uppercase tracking-[0.24em] text-cyan-300">Professional Profile</p>
                 <div className="mt-3 flex items-center justify-between gap-3">
                   <div>
                     <p className="text-lg font-semibold text-white">emmyade360</p>

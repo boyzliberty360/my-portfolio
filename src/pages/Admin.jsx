@@ -1,12 +1,15 @@
 import { useEffect, useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  Plus, Trash2, Eye, EyeOff, ExternalLink, Github,
-  ArrowLeft, Save, Globe, CheckCircle,
+  Plus, Trash2, Eye, EyeOff, ExternalLink,
+  ArrowLeft, Save, Globe, CheckCircle, LogOut, LoaderCircle,
 } from "lucide-react";
-import { getAdminProjects, saveAdminProject, deleteAdminProject } from "../lib/adminProjects";
-
-const ADMIN_PASSWORD = import.meta.env.VITE_ADMIN_PASSWORD || "admin123";
+import {
+  authenticateAdmin,
+  getAdminProjects,
+  saveAdminProject,
+  deleteAdminProject,
+} from "../lib/adminProjects";
 
 const normalizeUrl = (raw) => {
   if (!raw) return null;
@@ -16,25 +19,31 @@ const normalizeUrl = (raw) => {
 };
 
 const EMPTY_FORM = {
-  displayName: "",
+  name: "",
   description: "",
-  liveUrl: "",
-  html_url: "",
-  language: "JavaScript",
+  link: "",
 };
 
 function PasswordGate({ onAuth }) {
   const [password, setPassword] = useState("");
   const [showPw, setShowPw] = useState(false);
-  const [error, setError] = useState(false);
+  const [error, setError] = useState("");
+  const [submitting, setSubmitting] = useState(false);
 
-  const submit = () => {
-    if (password === ADMIN_PASSWORD) {
-      sessionStorage.setItem("admin-authed", "1");
-      onAuth();
-    } else {
-      setError(true);
+  const submit = async () => {
+    if (!password || submitting) return;
+
+    setSubmitting(true);
+    setError("");
+    try {
+      const token = await authenticateAdmin(password);
+      sessionStorage.setItem("admin-session", token);
+      onAuth(token);
+    } catch (requestError) {
+      setError(requestError.message || "Unable to log in");
       setPassword("");
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -58,7 +67,7 @@ function PasswordGate({ onAuth }) {
             autoFocus
             onChange={(e) => {
               setPassword(e.target.value);
-              setError(false);
+              setError("");
             }}
             onKeyDown={(e) => e.key === "Enter" && submit()}
             className="lg-input w-full px-4 py-3 pr-11 rounded-lg dark:text-white text-slate-900"
@@ -73,31 +82,35 @@ function PasswordGate({ onAuth }) {
         </div>
 
         <AnimatePresence>
-          {error && (
+          {Boolean(error) && (
             <motion.p
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: "auto" }}
               exit={{ opacity: 0, height: 0 }}
               className="text-red-400 text-sm mb-3"
             >
-              Incorrect password
+              {error}
             </motion.p>
           )}
         </AnimatePresence>
 
         <button
           onClick={submit}
+          disabled={submitting || !password}
           className="lg-btn w-full py-3 text-white font-medium"
         >
-          <span className="relative z-10">Login</span>
+          <span className="relative z-10 inline-flex items-center justify-center gap-2">
+            {submitting && <LoaderCircle size={16} className="animate-spin" />}
+            {submitting ? "Signing in..." : "Login"}
+          </span>
         </button>
       </motion.div>
     </div>
   );
 }
 
-function LivePreview({ liveUrl }) {
-  const normalizedUrl = useMemo(() => normalizeUrl(liveUrl), [liveUrl]);
+function LivePreview({ link }) {
+  const normalizedUrl = useMemo(() => normalizeUrl(link), [link]);
   if (!normalizedUrl) return null;
 
   return (
@@ -127,6 +140,9 @@ function LivePreview({ liveUrl }) {
 }
 
 function ProjectCard({ project, onDelete }) {
+  const name = project.name || project.displayName;
+  const link = project.link || project.liveUrl || project.html_url;
+
   return (
     <motion.div
       layout
@@ -135,48 +151,22 @@ function ProjectCard({ project, onDelete }) {
       exit={{ opacity: 0, x: 20 }}
       className="glass dark:bg-black/30 bg-white/60 rounded-xl border border-white/15 overflow-hidden"
     >
-      {project.imageUrl && (
-        <img
-          src={project.imageUrl}
-          alt={project.displayName}
-          className="w-full h-32 object-cover object-top border-b border-white/10"
-          loading="lazy"
-          onError={(e) => {
-            e.target.style.display = "none";
-          }}
-        />
-      )}
       <div className="p-4 flex items-start gap-3">
         <div className="flex-1 min-w-0">
-          <p className="font-semibold dark:text-white text-slate-900 truncate">{project.displayName}</p>
-          {project.language && (
-            <span className="text-xs text-cyan-400 font-medium">{project.language}</span>
-          )}
+          <p className="font-semibold dark:text-white text-slate-900 truncate">{name}</p>
           {project.description && (
             <p className="text-xs dark:text-slate-400 text-slate-500 mt-1 line-clamp-2">{project.description}</p>
           )}
-          <div className="flex gap-3 mt-2 flex-wrap">
-            {project.liveUrl && (
-              <a
-                href={project.liveUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-xs text-cyan-400 flex items-center gap-1 hover:underline"
-              >
-                <ExternalLink size={11} /> Live site
-              </a>
-            )}
-            {project.html_url && (
-              <a
-                href={project.html_url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-xs text-cyan-300 flex items-center gap-1 hover:underline"
-              >
-                <Github size={11} /> Source
-              </a>
-            )}
-          </div>
+          {link && (
+            <a
+              href={link}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-2 flex items-center gap-1 text-xs text-cyan-400 hover:underline"
+            >
+              <ExternalLink size={11} /> Open project
+            </a>
+          )}
         </div>
         <button
           onClick={() => onDelete(project.id)}
@@ -191,15 +181,16 @@ function ProjectCard({ project, onDelete }) {
 }
 
 export default function Admin() {
-  const initialAuthed = sessionStorage.getItem("admin-authed") === "1";
-  const [authed, setAuthed] = useState(initialAuthed);
+  const initialToken = sessionStorage.getItem("admin-session") || "";
+  const [authToken, setAuthToken] = useState(initialToken);
   const [projects, setProjects] = useState([]);
-  const [loading, setLoading] = useState(initialAuthed);
+  const [loading, setLoading] = useState(Boolean(initialToken));
   const [form, setForm] = useState(EMPTY_FORM);
   const [saved, setSaved] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [actionError, setActionError] = useState("");
 
   const refresh = async () => {
-    if (!authed) return;
     setLoading(true);
     const data = await getAdminProjects();
     setProjects(data);
@@ -207,47 +198,78 @@ export default function Admin() {
   };
 
   useEffect(() => {
-    if (authed) {
-      refresh();
+    if (!authToken) return undefined;
+
+    let cancelled = false;
+    getAdminProjects().then((data) => {
+      if (!cancelled) {
+        setProjects(data);
+        setLoading(false);
+      }
+    });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [authToken]);
+
+  const clearSession = () => {
+    sessionStorage.removeItem("admin-session");
+    setAuthToken("");
+    setProjects([]);
+    setActionError("");
+  };
+
+  const handleRequestError = (error) => {
+    if (error.status === 401) {
+      clearSession();
+      return;
     }
-  }, [authed]);
+    setActionError(error.message || "Unable to update projects");
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!form.displayName.trim()) return;
+    if (!form.name.trim() || !form.description.trim() || !form.link.trim() || saving) return;
 
-    const liveUrl = normalizeUrl(form.liveUrl);
+    setSaving(true);
+    setActionError("");
+
     const project = {
-      displayName: form.displayName.trim(),
+      name: form.name.trim(),
       description: form.description.trim(),
-      liveUrl,
-      html_url: normalizeUrl(form.html_url),
-      language: form.language.trim(),
-      name: form.displayName.trim().toLowerCase().replace(/\s+/g, "-"),
-      imageUrl: null,
+      link: normalizeUrl(form.link),
     };
 
-    const success = await saveAdminProject(project);
-    if (success) {
+    try {
+      await saveAdminProject(project, authToken);
       await refresh();
       setForm(EMPTY_FORM);
       setSaved(true);
       setTimeout(() => setSaved(false), 2500);
+    } catch (error) {
+      handleRequestError(error);
+    } finally {
+      setSaving(false);
     }
   };
 
   const handleDelete = async (id) => {
-    const success = await deleteAdminProject(id);
-    if (success) {
+    setActionError("");
+    try {
+      await deleteAdminProject(id, authToken);
       await refresh();
+    } catch (error) {
+      handleRequestError(error);
     }
   };
 
-  const handleAuth = () => {
-    setAuthed(true);
+  const handleAuth = (token) => {
+    setLoading(true);
+    setAuthToken(token);
   };
 
-  if (!authed) {
+  if (!authToken) {
     return <PasswordGate onAuth={handleAuth} />;
   }
 
@@ -260,7 +282,7 @@ export default function Admin() {
   return (
     <div className="min-h-screen bg-white py-10 px-6 dark:bg-black md:px-14">
       <div className="max-w-5xl mx-auto">
-        <div className="mb-10 flex items-center gap-6">
+        <div className="mb-10 flex flex-wrap items-center gap-6">
           <a
             href="/#projects"
             className="flex items-center gap-1.5 text-sm text-cyan-400 hover:text-cyan-300 transition-colors"
@@ -275,6 +297,13 @@ export default function Admin() {
               Projects added here appear live on the portfolio.
             </p>
           </div>
+          <button
+            type="button"
+            onClick={clearSession}
+            className="ml-auto inline-flex items-center gap-2 rounded-full border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 transition-colors hover:border-red-400 hover:text-red-500 dark:border-white/15 dark:text-slate-300 dark:hover:border-red-400 dark:hover:text-red-400"
+          >
+            <LogOut size={15} /> Log out
+          </button>
         </div>
 
         <div className="grid gap-8 items-start lg:grid-cols-[1fr_1.1fr]">
@@ -284,20 +313,26 @@ export default function Admin() {
             </h2>
 
             <form onSubmit={handleSubmit} className="space-y-4">
+              {actionError && (
+                <p role="alert" className="rounded-xl border border-red-400/25 bg-red-400/10 px-3 py-2 text-sm text-red-500 dark:text-red-300">
+                  {actionError}
+                </p>
+              )}
               <div>
-                <label className={labelClass}>Display Name *</label>
+                <label className={labelClass}>Project Name *</label>
                 <input
                   required
-                  value={form.displayName}
-                  onChange={(e) => setForm({ ...form, displayName: e.target.value })}
+                  value={form.name}
+                  onChange={(e) => setForm({ ...form, name: e.target.value })}
                   placeholder="My Awesome Project"
                   className={inputClass}
                 />
               </div>
 
               <div>
-                <label className={labelClass}>Description</label>
+                <label className={labelClass}>Description *</label>
                 <textarea
+                  required
                   rows={3}
                   value={form.description}
                   onChange={(e) => setForm({ ...form, description: e.target.value })}
@@ -309,49 +344,32 @@ export default function Admin() {
               <div>
                 <label className={labelClass}>
                   <span className="inline-flex items-center gap-1.5">
-                    <Globe size={12} className="text-cyan-400" /> Live Site URL
+                    <Globe size={12} className="text-cyan-400" /> Project Link *
                   </span>
                 </label>
                 <input
-                  value={form.liveUrl}
-                  onChange={(e) => setForm({ ...form, liveUrl: e.target.value })}
+                  required
+                  type="url"
+                  value={form.link}
+                  onChange={(e) => setForm({ ...form, link: e.target.value })}
                   placeholder="https://myproject.vercel.app"
                   className={inputClass}
                 />
               </div>
 
-              <LivePreview liveUrl={form.liveUrl} />
-
-              <div>
-                <label className={labelClass}>
-                  <span className="inline-flex items-center gap-1.5">
-                    <Github size={12} className="text-cyan-400" /> Source Code URL
-                  </span>
-                </label>
-                <input
-                  value={form.html_url}
-                  onChange={(e) => setForm({ ...form, html_url: e.target.value })}
-                  placeholder="https://github.com/username/repo"
-                  className={inputClass}
-                />
-              </div>
-
-              <div>
-                <label className={labelClass}>Language / Stack</label>
-                <input
-                  value={form.language}
-                  onChange={(e) => setForm({ ...form, language: e.target.value })}
-                  placeholder="TypeScript, React, Node.js..."
-                  className={inputClass}
-                />
-              </div>
+              <LivePreview link={form.link} />
 
               <button
                 type="submit"
+                disabled={saving}
                 className="lg-btn flex w-full items-center justify-center gap-2 py-3 font-medium text-white"
               >
                 <span className="relative z-10 flex items-center gap-2">
-                  {saved ? (
+                  {saving ? (
+                    <>
+                      <LoaderCircle size={16} className="animate-spin" /> Publishing...
+                    </>
+                  ) : saved ? (
                     <>
                       <CheckCircle size={16} /> Saved!
                     </>

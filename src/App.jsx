@@ -6,6 +6,7 @@ import Home from "./pages/Home";
 import About from "./pages/About";
 import Experience from "./pages/Experience";
 import Projects from "./pages/Projects";
+import Certifications from "./pages/Certifications";
 import Contact from "./pages/Contact";
 import Admin from "./pages/Admin";
 import { ThemeProvider } from "./context/ThemeContext";
@@ -27,6 +28,7 @@ function Portfolio() {
       >
         <motion.div variants={sectionVariant}><Home /></motion.div>
         <motion.div variants={sectionVariant}><Projects /></motion.div>
+        <motion.div variants={sectionVariant}><Certifications /></motion.div>
         <motion.div variants={sectionVariant}><About /></motion.div>
         <motion.div variants={sectionVariant}><Experience /></motion.div>
         <motion.div variants={sectionVariant}><Contact /></motion.div>

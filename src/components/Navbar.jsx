@@ -7,7 +7,7 @@ export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const { isDark, toggleTheme } = useTheme();
 
-  const links = ["Home", "Projects", "About", "Experience", "Contact"];
+  const links = ["Home", "Projects", "Certifications", "About", "Experience", "Contact"];
   const toggleLabel = isDark ? "Dark mode" : "Light mode";
 
   return (
@@ -53,12 +53,12 @@ export default function Navbar() {
           </div>
 
           <div className="hidden items-center md:flex">
-            <ul className="flex items-center gap-5 text-slate-900 dark:text-white">
+            <ul className="flex items-center gap-3 text-slate-900 dark:text-white lg:gap-5">
               {links.map((item) => (
                 <li key={item}>
                   <a
                     href={`#${item.toLowerCase()}`}
-                    className="relative text-[0.86rem] font-semibold tracking-wide transition-colors duration-200 hover:text-cyan-300"
+                    className="relative text-[0.78rem] font-semibold tracking-wide transition-colors duration-200 hover:text-cyan-300 lg:text-[0.86rem]"
                   >
                     {item}
                   </a>

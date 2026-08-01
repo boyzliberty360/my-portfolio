@@ -1,66 +1,78 @@
-import {
-  addDoc,
-  collection,
-  deleteDoc,
-  doc,
-  getDocs,
-  orderBy,
-  query,
-  serverTimestamp,
-  updateDoc,
-} from "firebase/firestore";
-import { db } from "./firebase";
+const PROJECTS_API = "/api/projects";
+const STATIC_PROJECTS = "/data/projects.json";
 
-const projectsRef = collection(db, "projects");
+const parseResponse = async (response) => {
+  const body = await response.json().catch(() => ({}));
+  if (!response.ok) {
+    const error = new Error(body.error || "Unable to complete the request");
+    error.status = response.status;
+    throw error;
+  }
+  return body;
+};
+
+const request = async (options = {}) => {
+  const response = await fetch(PROJECTS_API, {
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options.headers,
+    },
+  });
+  return parseResponse(response);
+};
 
 const dispatchUpdate = () => {
   window.dispatchEvent(new Event("admin-projects-updated"));
 };
 
+export const authenticateAdmin = async (password) => {
+  const { token } = await request({
+    method: "POST",
+    body: JSON.stringify({ action: "login", password }),
+  });
+  return token;
+};
+
 export const getAdminProjects = async () => {
   try {
-    const q = query(projectsRef, orderBy("createdAt", "desc"));
-    const snapshot = await getDocs(q);
-    return snapshot.docs.map((item) => ({ id: item.id, ...item.data() }));
+    const { projects } = await request({ cache: "no-store" });
+    return projects;
   } catch (error) {
-    console.error("Error fetching projects:", error);
-    return [];
+    console.warn("Projects API unavailable; using the deployed project list.", error);
+    const response = await fetch(STATIC_PROJECTS, { cache: "no-store" });
+    if (!response.ok) return [];
+    const projects = await response.json().catch(() => []);
+    return Array.isArray(projects) ? projects : [];
   }
 };
 
-export const saveAdminProject = async (project) => {
-  try {
-    await addDoc(projectsRef, {
-      ...project,
-      createdAt: serverTimestamp(),
-    });
-    dispatchUpdate();
-    return true;
-  } catch (error) {
-    console.error("Error saving project:", error);
-    return false;
-  }
+export const saveAdminProject = async (project, token) => {
+  await request({
+    method: "POST",
+    headers: { Authorization: `Bearer ${token}` },
+    body: JSON.stringify({ project }),
+  });
+  dispatchUpdate();
+  return true;
 };
 
-export const deleteAdminProject = async (id) => {
-  try {
-    await deleteDoc(doc(db, "projects", id));
-    dispatchUpdate();
-    return true;
-  } catch (error) {
-    console.error("Error deleting project:", error);
-    return false;
-  }
+export const deleteAdminProject = async (id, token) => {
+  await request({
+    method: "DELETE",
+    headers: { Authorization: `Bearer ${token}` },
+    body: JSON.stringify({ id }),
+  });
+  dispatchUpdate();
+  return true;
 };
 
-export const updateAdminProject = async (id, patch) => {
-  try {
-    const ref = doc(db, "projects", id);
-    await updateDoc(ref, patch);
-    dispatchUpdate();
-    return true;
-  } catch (error) {
-    console.error("Error updating project:", error);
-    return false;
-  }
+export const updateAdminProject = async (id, patch, token) => {
+  await request({
+    method: "PATCH",
+    headers: { Authorization: `Bearer ${token}` },
+    body: JSON.stringify({ id, patch }),
+  });
+  dispatchUpdate();
+  return true;
 };
