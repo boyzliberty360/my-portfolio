@@ -68,6 +68,7 @@ export default function Projects() {
               title={repo.name || repo.displayName}
               description={repo.description}
               link={repo.link || repo.liveUrl || repo.html_url}
+              image={repo.image}
             />
           ))}
         </div>

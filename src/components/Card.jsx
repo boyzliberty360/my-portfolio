@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { ExternalLink } from "lucide-react";
 
-export default function Card({ title, description, link }) {
+export default function Card({ title, description, link, image }) {
   return (
     <motion.article
       whileHover={{ scale: 1.02, y: -4 }}
@@ -10,7 +10,15 @@ export default function Card({ title, description, link }) {
       style={{ willChange: "transform" }}
     >
       <div className="group relative mb-4 overflow-hidden rounded-xl border border-slate-200 bg-white dark:border-white/10 dark:bg-black">
-        {link ? (
+        {image ? (
+          <img
+            src={image}
+            alt={`${title} website preview`}
+            className="h-44 w-full object-cover object-top"
+            loading="lazy"
+            decoding="async"
+          />
+        ) : link ? (
           <iframe
             src={link}
             title={`${title} website preview`}

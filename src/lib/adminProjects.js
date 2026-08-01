@@ -37,6 +37,7 @@ export const authenticateAdmin = async (password) => {
 export const getAdminProjects = async () => {
   try {
     const { projects } = await request({ cache: "no-store" });
+    if (!Array.isArray(projects)) throw new Error("Malformed projects response");
     return projects;
   } catch (error) {
     console.warn("Projects API unavailable; using the deployed project list.", error);

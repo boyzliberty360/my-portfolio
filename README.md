@@ -4,27 +4,24 @@ React and Vite portfolio deployed on Vercel.
 
 ## Projects admin
 
-The `/admin` page uses a server-side password and stores project records in
-`public/data/projects.json`. Publishing or deleting a project commits the updated JSON file to the
-GitHub repository. Firebase is not used.
+The `/admin` page uses a server-side password. Projects are stored privately and persistently in
+Vercel Blob, then served publicly through `/api/projects`. Firebase and GitHub storage are not used.
 
-Configure these server-only environment variables in Vercel Project Settings:
+### Vercel setup
 
-- `ADMIN_PASSWORD`: the password used on `/admin`.
-- `GITHUB_PROJECTS_TOKEN`: a fine-grained GitHub token limited to this repository with
-  **Contents: Read and write** permission.
+1. Open the portfolio project in Vercel.
+2. Go to **Storage**, select **Create Database**, and choose **Blob**.
+3. Create a **Private** Blob store and connect it to this project. New Vercel Blob connections use
+   automatically managed OIDC authentication, so no GitHub token or manually copied storage token
+   is needed.
+4. Add `ADMIN_PASSWORD` in Vercel Project Settings → Environment Variables.
+5. Redeploy the project.
 
-The repository owner, repository name, branch, and data path are detected/defaulted for this
-project. They can be overridden with the optional variables documented in `.env.example`.
+Do not prefix `ADMIN_PASSWORD` with `VITE_`, because Vite exposes `VITE_` variables to the browser.
+The administrator enters only this password on `/admin`; storage authentication stays server-side.
 
-Do not use a `VITE_` prefix for either secret. Vite exposes `VITE_` variables to the browser.
-
-After the GitHub token commits a project update, the public Projects section reads the latest data
-through `/api/projects`. The repository commit also triggers the normal Vercel redeployment so the
-static fallback stays synchronized.
-
-For local testing of both the Vite app and Vercel Function, use `vercel dev`. Running `npm run dev`
-serves the static project-list fallback but does not provide the admin API.
+For local testing of both the Vite app and Vercel Function, link the project and use `vercel dev`.
+Running `npm run dev` serves the static project-list fallback but does not provide the admin API.
 
 ## Commands
 

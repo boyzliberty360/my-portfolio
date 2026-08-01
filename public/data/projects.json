@@ -1,1 +1,19 @@
-[]
+[
+  {
+    "id": "7f6a4a8a-6350-42d2-96f5-35e40dada993",
+    "name": "Trusta",
+    "description": "A safe-payment platform that coordinates payments, delivery evidence, and secure fund release for eligible online deals in Nigeria.",
+    "link": "https://trusta-pro.vercel.app/",
+    "image": "/images/projects/trusta-preview.webp",
+    "createdAt": "2026-08-01T10:24:16.604Z",
+    "updatedAt": "2026-08-01T10:24:16.604Z"
+  },
+  {
+    "id": "82f51b0b-7f68-439f-ac0f-d0637ae3a318",
+    "name": "DoctorCare",
+    "description": "A digital healthcare platform connecting patients with verified doctors for consultations, appointment booking, and medical record management across Nigeria.",
+    "link": "https://doctorcare-phi.vercel.app/",
+    "createdAt": "2026-08-01T10:24:16.604Z",
+    "updatedAt": "2026-08-01T10:29:08.380Z"
+  }
+]

@@ -1,7 +1,7 @@
 import { createHmac, randomUUID, timingSafeEqual } from "node:crypto";
+import { get, put } from "@vercel/blob";
 
-const PROJECTS_PATH = process.env.PROJECTS_FILE_PATH || "public/data/projects.json";
-const BRANCH = process.env.PROJECTS_GITHUB_BRANCH || "main";
+const PROJECTS_PATH = "portfolio/projects.json";
 const TOKEN_TTL_MS = 8 * 60 * 60 * 1000;
 
 const json = (response, status, body) => {
@@ -42,66 +42,26 @@ const isValidSessionToken = (token) => {
   }
 };
 
-const getRepository = () => {
-  const owner = process.env.PROJECTS_GITHUB_OWNER || process.env.VERCEL_GIT_REPO_OWNER || "emmyade360";
-  const name = process.env.PROJECTS_GITHUB_REPO || process.env.VERCEL_GIT_REPO_SLUG || "my-portfolio";
-  return { owner, name };
-};
-
-const githubHeaders = () => {
-  const headers = {
-    Accept: "application/vnd.github+json",
-    "X-GitHub-Api-Version": "2022-11-28",
-    "User-Agent": "my-portfolio-projects-api",
-  };
-
-  if (process.env.GITHUB_PROJECTS_TOKEN) {
-    headers.Authorization = `Bearer ${process.env.GITHUB_PROJECTS_TOKEN}`;
+const getProjectsFile = async () => {
+  const result = await get(PROJECTS_PATH, { access: "private", useCache: false });
+  if (!result || result.statusCode !== 200 || !result.stream) {
+    return { projects: [], etag: null };
   }
 
-  return headers;
-};
-
-const getProjectsFile = async () => {
-  const { owner, name } = getRepository();
-  const url = `https://api.github.com/repos/${owner}/${name}/contents/${PROJECTS_PATH}?ref=${encodeURIComponent(BRANCH)}`;
-  const response = await fetch(url, { headers: githubHeaders(), cache: "no-store" });
-
-  if (response.status === 404) return { projects: [], sha: null };
-  if (!response.ok) throw new Error(`GitHub read failed (${response.status})`);
-
-  const file = await response.json();
-  const decoded = Buffer.from(file.content.replace(/\n/g, ""), "base64").toString("utf8");
-  const projects = JSON.parse(decoded);
+  const projects = JSON.parse(await new Response(result.stream).text());
 
   if (!Array.isArray(projects)) throw new Error("Projects file must contain a JSON array");
-  return { projects, sha: file.sha };
+  return { projects, etag: result.blob.etag };
 };
 
-const writeProjectsFile = async (projects, sha, message) => {
-  const token = process.env.GITHUB_PROJECTS_TOKEN;
-  if (!token) throw new Error("GITHUB_PROJECTS_TOKEN is not configured");
-
-  const { owner, name } = getRepository();
-  const url = `https://api.github.com/repos/${owner}/${name}/contents/${PROJECTS_PATH}`;
-  const body = {
-    message,
-    branch: BRANCH,
-    content: Buffer.from(`${JSON.stringify(projects, null, 2)}\n`).toString("base64"),
-  };
-
-  if (sha) body.sha = sha;
-
-  const response = await fetch(url, {
-    method: "PUT",
-    headers: { ...githubHeaders(), "Content-Type": "application/json" },
-    body: JSON.stringify(body),
+const writeProjectsFile = async (projects, etag) => {
+  await put(PROJECTS_PATH, `${JSON.stringify(projects, null, 2)}\n`, {
+    access: "private",
+    addRandomSuffix: false,
+    allowOverwrite: true,
+    contentType: "application/json",
+    ...(etag ? { ifMatch: etag } : {}),
   });
-
-  if (!response.ok) {
-    const details = await response.json().catch(() => ({}));
-    throw new Error(details.message || `GitHub write failed (${response.status})`);
-  }
 };
 
 const cleanText = (value, maxLength) => String(value || "").trim().slice(0, maxLength);
@@ -152,7 +112,7 @@ export default async function handler(request, response) {
       return json(response, 401, { error: "Your admin session is invalid or has expired" });
     }
 
-    const { projects, sha } = await getProjectsFile();
+    const { projects, etag } = await getProjectsFile();
 
     if (request.method === "POST") {
       const project = normalizeProject(request.body?.project || {});
@@ -161,7 +121,7 @@ export default async function handler(request, response) {
       if (!project.link) return json(response, 400, { error: "A valid project link is required" });
 
       const nextProjects = [project, ...projects];
-      await writeProjectsFile(nextProjects, sha, `Add portfolio project: ${project.name}`);
+      await writeProjectsFile(nextProjects, etag);
       return json(response, 201, { project });
     }
 
@@ -177,7 +137,7 @@ export default async function handler(request, response) {
 
       const nextProjects = [...projects];
       nextProjects[index] = updated;
-      await writeProjectsFile(nextProjects, sha, `Update portfolio project: ${updated.name}`);
+      await writeProjectsFile(nextProjects, etag);
       return json(response, 200, { project: updated });
     }
 
@@ -188,8 +148,7 @@ export default async function handler(request, response) {
 
       await writeProjectsFile(
         projects.filter((item) => item.id !== id),
-        sha,
-        `Remove portfolio project: ${project.name || project.displayName}`,
+        etag,
       );
       return json(response, 200, { success: true });
     }
