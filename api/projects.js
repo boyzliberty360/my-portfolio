@@ -1,5 +1,5 @@
 import { createHmac, randomUUID, timingSafeEqual } from "node:crypto";
-import { get, put } from "@vercel/blob";
+import { get, head, put } from "@vercel/blob";
 
 const PROJECTS_PATH = "portfolio/projects.json";
 const TOKEN_TTL_MS = 8 * 60 * 60 * 1000;
@@ -51,7 +51,11 @@ const getProjectsFile = async () => {
   const projects = JSON.parse(await new Response(result.stream).text());
 
   if (!Array.isArray(projects)) throw new Error("Projects file must contain a JSON array");
-  return { projects, etag: result.blob.etag };
+
+  // get() returns a weak (W/"...") etag, but put()'s ifMatch precondition
+  // requires the strong form — head() returns that.
+  const { etag } = await head(result.blob.url);
+  return { projects, etag };
 };
 
 const writeProjectsFile = async (projects, etag) => {

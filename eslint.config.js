@@ -38,4 +38,10 @@ export default defineConfig([
       'no-unused-vars': 'off',
     },
   },
+  {
+    files: ['vite.config.js'],
+    languageOptions: {
+      globals: globals.node,
+    },
+  },
 ])
