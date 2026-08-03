@@ -17,14 +17,14 @@ function TestimonialCard({ testimonial, index }) {
       className="testimonial-card surface"
     >
       <Quote className="testimonial-quote-icon" aria-hidden="true" />
-      <blockquote>“{testimonial.quote}”</blockquote>
+      <blockquote>{testimonial.quote}</blockquote>
       <figcaption>
         {testimonial.avatarUrl ? (
           <img src={testimonial.avatarUrl} alt="" width="40" height="40" loading="lazy" />
         ) : (
           <span className="testimonial-avatar" aria-hidden="true">{initials(testimonial.name)}</span>
         )}
-        <span className="testimonial-author"><strong>{testimonial.name}</strong><small>{testimonial.role} · {testimonial.company}</small></span>
+        <span className="testimonial-author"><strong>{testimonial.name}</strong><small>{testimonial.role}, {testimonial.company}</small></span>
         {testimonial.sourceUrl ? <a href={testimonial.sourceUrl} target="_blank" rel="noopener noreferrer" aria-label={`View ${testimonial.name}'s testimonial source`}><ArrowUpRight className="h-4 w-4" /></a> : null}
       </figcaption>
     </motion.figure>
@@ -87,7 +87,7 @@ export default function Testimonials() {
           <label><span>Company or context</span><input required maxLength={100} value={form.company} onChange={(event) => setForm({ ...form, company: event.target.value })} placeholder="Company or collaboration" /></label>
           <label><span>Email <small>Private verification</small></span><input required type="email" maxLength={160} value={form.contactEmail} onChange={(event) => setForm({ ...form, contactEmail: event.target.value })} placeholder="you@example.com" /></label>
         </div>
-        <div className="review-form-footer"><p className="review-privacy">Your email is only used for verification and is never shown on the portfolio.</p><button className="button button-primary button-small" type="submit" disabled={submitting}>{submitting ? "Sending…" : "Submit review"} {submitting ? null : <Send className="h-3.5 w-3.5" />}</button></div>
+        <div className="review-form-footer"><p className="review-privacy">Your email is only used for verification and is never shown on the portfolio.</p><button className="button button-primary button-small" type="submit" disabled={submitting}>{submitting ? "Sending" : "Submit review"} {submitting ? null : <Send className="h-3.5 w-3.5" />}</button></div>
         {submitState.message ? <p className={`review-status ${submitState.type}`} aria-live="polite">{submitState.type === "success" ? <CheckCircle className="h-4 w-4" /> : null}{submitState.message}</p> : null}
       </motion.form>
     </section>

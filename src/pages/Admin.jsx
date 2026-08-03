@@ -282,10 +282,10 @@ function TestimonialCard({ testimonial, onStatus, onDelete }) {
         </button>
       </div>
 
-      <blockquote className="text-sm leading-relaxed text-slate-700 dark:text-slate-200">“{testimonial.quote}”</blockquote>
+      <blockquote className="text-sm leading-relaxed text-slate-700 dark:text-slate-200">{testimonial.quote}</blockquote>
       <div className="mt-4 border-t border-slate-200 pt-3 dark:border-white/10">
         <p className="font-semibold text-slate-900 dark:text-white">{testimonial.name}</p>
-        <p className="text-xs text-slate-500 dark:text-slate-400">{testimonial.role} · {testimonial.company}</p>
+        <p className="text-xs text-slate-500 dark:text-slate-400">{testimonial.role}, {testimonial.company}</p>
         {testimonial.contactEmail ? <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">Private verification: {testimonial.contactEmail}</p> : null}
         {testimonial.sourceUrl ? <a href={testimonial.sourceUrl} target="_blank" rel="noopener noreferrer" className="mt-2 inline-flex items-center gap-1 text-xs text-cyan-500 hover:underline"><ExternalLink size={11} /> View source</a> : null}
       </div>
@@ -612,12 +612,12 @@ export default function Admin() {
                   onChange={(e) => setForm({ ...form, featured: e.target.checked })}
                   className="h-4 w-4 accent-cyan-400"
                 />
-                Feature this project — highlights the card and sorts it first
+                Feature this project. Highlights the card and sorts it first
               </label>
 
               <details className="admin-case-study rounded-xl border border-slate-200 dark:border-white/10">
                 <summary className="cursor-pointer px-4 py-3 text-sm font-semibold dark:text-white text-slate-900">
-                  Case study <span className="font-normal dark:text-slate-500 text-slate-400">— optional, all fields</span>
+                  Case study <span className="font-normal dark:text-slate-500 text-slate-400">optional, all fields</span>
                 </summary>
                 <div className="space-y-4 border-t border-slate-200 px-4 py-4 dark:border-white/10">
                   <div>
@@ -625,7 +625,7 @@ export default function Admin() {
                     <input
                       value={form.type}
                       onChange={(e) => setForm({ ...form, type: e.target.value })}
-                      placeholder="AI product · Fintech platform · Realtime system"
+                      placeholder="AI product, Fintech platform, Realtime system"
                       className={inputClass}
                     />
                   </div>
@@ -634,7 +634,7 @@ export default function Admin() {
                     { key: "solution", label: "The Solution", placeholder: "What you built and what it changed." },
                     { key: "role", label: "My Role", placeholder: "What you personally owned." },
                     { key: "architecture", label: "Architecture", placeholder: "Stack, data flow, and the decisions behind them." },
-                    { key: "challenge", label: "Hardest Problem", placeholder: "The genuinely difficult part — be specific and technical." },
+                    { key: "challenge", label: "Hardest Problem", placeholder: "The genuinely difficult part. Be specific and technical." },
                     { key: "response", label: "How I Solved It", placeholder: "The approach, the trade-off, and why." },
                   ].map((field) => (
                     <div key={field.key}>
@@ -658,7 +658,7 @@ export default function Admin() {
                       className={`${inputClass} resize-none`}
                     />
                     <p className="mt-1 text-xs dark:text-slate-500 text-slate-400">
-                      Pipe-separated. The strongest signal on the card — say what you rejected and why.
+                      Pipe-separated. The strongest signal on the card. Say what you rejected and why.
                     </p>
                   </div>
                   <div>
@@ -666,13 +666,13 @@ export default function Admin() {
                     <input
                       value={form.snippetLabel}
                       onChange={(e) => setForm({ ...form, snippetLabel: e.target.value })}
-                      placeholder="Caption — e.g. The transition map every write is asserted against"
+                      placeholder="Caption. Example: The transition map every write is asserted against"
                       className={inputClass}
                     />
                     <input
                       value={form.snippetLanguage}
                       onChange={(e) => setForm({ ...form, snippetLanguage: e.target.value })}
-                      placeholder="Language — typescript, go, sql"
+                      placeholder="Language, for example typescript, go, or sql"
                       className={`${inputClass} mt-2`}
                     />
                     <textarea
@@ -782,7 +782,7 @@ export default function Admin() {
                   <textarea required rows={5} value={testimonialForm.quote} onChange={(e) => setTestimonialForm({ ...testimonialForm, quote: e.target.value })} placeholder="What did they say about working with you?" className={`${inputClass} resize-none`} />
                 </div>
                 <div className="grid gap-4 sm:grid-cols-2">
-                  <div><label className={labelClass}>Person’s name *</label><input required value={testimonialForm.name} onChange={(e) => setTestimonialForm({ ...testimonialForm, name: e.target.value })} placeholder="Ada Example" className={inputClass} /></div>
+                  <div><label className={labelClass}>Person's name *</label><input required value={testimonialForm.name} onChange={(e) => setTestimonialForm({ ...testimonialForm, name: e.target.value })} placeholder="Ada Example" className={inputClass} /></div>
                   <div><label className={labelClass}>Role *</label><input required value={testimonialForm.role} onChange={(e) => setTestimonialForm({ ...testimonialForm, role: e.target.value })} placeholder="Product Designer" className={inputClass} /></div>
                 </div>
                 <div><label className={labelClass}>Company / context *</label><input required value={testimonialForm.company} onChange={(e) => setTestimonialForm({ ...testimonialForm, company: e.target.value })} placeholder="Company or collaboration context" className={inputClass} /></div>

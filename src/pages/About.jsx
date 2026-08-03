@@ -13,7 +13,7 @@ function SectionIntro({ eyebrow, title, children }) {
 }
 
 // Deliberately short. This section exists to establish credibility in a few
-// seconds and hand the reader straight to the projects — the principles,
+// seconds and hand the reader straight to the projects. The principles,
 // practices, and services grids that used to live here all restated what the
 // two paragraphs below and the case studies already say.
 export default function About() {
@@ -31,7 +31,7 @@ export default function About() {
           transition={{ duration: 0.55 }}
           className="about-story surface"
         >
-          <div className="story-label">01 / Approach</div>
+          <div className="story-label">Approach</div>
           <div className="story-copy">
             {aboutParagraphs.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
           </div>
@@ -52,7 +52,7 @@ export default function About() {
           className="about-aside"
         >
           <div className="info-list surface">
-            <div className="info-row"><MapPin className="h-4 w-4" /><span>Working</span><strong>Remote · {profile.timezone}</strong></div>
+            <div className="info-row"><MapPin className="h-4 w-4" /><span>Working</span><strong>Remote, {profile.timezone}</strong></div>
             <div className="info-row"><Mail className="h-4 w-4" /><span>Email</span><a href={`mailto:${profile.email}`}>{profile.email}</a></div>
             <div className="info-row"><Github className="h-4 w-4" /><span>Code</span><a href={profile.github} target="_blank" rel="noopener noreferrer">@{profile.githubHandle}</a></div>
             {profile.linkedin ? (

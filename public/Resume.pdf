@@ -73,7 +73,7 @@ endobj
 << /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents 8 0 R >>
 endobj
 8 0 obj
-<< /Length 4892 >>
+<< /Length 5208 >>
 stream
 0.88 0.94 0.92 rg 48 782 499 22 re f
 0.02 0.36 0.32 rg 48 784 4 17 re f
@@ -103,29 +103,32 @@ BT 0.02 0.36 0.32 rg /F2 12 Tf 1 0 0 1 60 514 Tm (EXPERIENCE) Tj ET
 0.65 w 0.78 0.83 0.81 RG 48 506 m 547 506 l S
 0.88 0.94 0.92 rg 48 483 499 22 re f
 BT 0.08 0.12 0.12 rg /F2 11 Tf 1 0 0 1 48 489 Tm (Software Engineer & Technical Mentor | Mercuryx) Tj ET
-BT 0.02 0.36 0.32 rg /F1 10 Tf 1 0 0 1 48 473 Tm (Oct 2025 - Present) Tj ET
+BT 0.02 0.36 0.32 rg /F1 10 Tf 1 0 0 1 48 473 Tm (Oct 2025 to Present) Tj ET
 BT 0.08 0.12 0.12 rg /F1 10 Tf 1 0 0 1 48 457 Tm (I take features from specification through implementation, review, and release to production) Tj ET
 BT 0.08 0.12 0.12 rg /F1 10 Tf 1 0 0 1 48 443 Tm (users. I also mentor the junior engineers on the team, which means defending design decisions) Tj ET
 BT 0.08 0.12 0.12 rg /F1 10 Tf 1 0 0 1 48 429 Tm (out loud and turning implicit conventions into written ones.) Tj ET
-BT 0.08 0.12 0.12 rg /F1 10 Tf 1 0 0 1 48 409 Tm (- Take features from first idea through building, testing, and release to real users.) Tj ET
-BT 0.08 0.12 0.12 rg /F1 10 Tf 1 0 0 1 48 391 Tm (- Teach the junior developers on the team and review their work.) Tj ET
-0.6 w 0.9 0.93 0.92 RG 48 369 m 547 369 l S
-0.88 0.94 0.92 rg 48 351 499 22 re f
-BT 0.08 0.12 0.12 rg /F2 11 Tf 1 0 0 1 48 357 Tm (Backend Engineering Programme - Go | Learn2Earn) Tj ET
-BT 0.02 0.36 0.32 rg /F1 10 Tf 1 0 0 1 48 341 Tm (Nov 2025 - Dec 2025) Tj ET
-BT 0.08 0.12 0.12 rg /F1 10 Tf 1 0 0 1 48 325 Tm (An intensive Go programme covering concurrency, HTTP service design, and the structure of a) Tj ET
-BT 0.08 0.12 0.12 rg /F1 10 Tf 1 0 0 1 48 311 Tm (backend that stays predictable as load rises rather than degrading unpredictably.) Tj ET
-BT 0.08 0.12 0.12 rg /F1 10 Tf 1 0 0 1 48 291 Tm (- Intensive programme in Go, a language built for handling many users at once.) Tj ET
-BT 0.08 0.12 0.12 rg /F1 10 Tf 1 0 0 1 48 273 Tm (- Covered designing the behind-the-scenes half of an app to stay fast under load.) Tj ET
-0.6 w 0.9 0.93 0.92 RG 48 251 m 547 251 l S
-0.88 0.94 0.92 rg 48 233 499 22 re f
-BT 0.08 0.12 0.12 rg /F2 11 Tf 1 0 0 1 48 239 Tm (Full Stack Developer | Vivaking Technologies) Tj ET
-BT 0.02 0.36 0.32 rg /F1 10 Tf 1 0 0 1 48 223 Tm (Mar 2025 - Nov 2025) Tj ET
-BT 0.08 0.12 0.12 rg /F1 10 Tf 1 0 0 1 48 207 Tm (I shipped client features end to end: React interfaces, Node and MongoDB services, and the API) Tj ET
-BT 0.08 0.12 0.12 rg /F1 10 Tf 1 0 0 1 48 193 Tm (contracts joining them. A recurring part of the work was profiling the paths users hit most) Tj ET
-BT 0.08 0.12 0.12 rg /F1 10 Tf 1 0 0 1 48 179 Tm (often and cutting the work done on them.) Tj ET
-BT 0.08 0.12 0.12 rg /F1 10 Tf 1 0 0 1 48 159 Tm (- Built complete features for clients: the screens, the storage, and everything in between.) Tj ET
-BT 0.08 0.12 0.12 rg /F1 10 Tf 1 0 0 1 48 141 Tm (- Made the parts people used most noticeably faster.) Tj ET
+BT 0.08 0.12 0.12 rg /F1 10 Tf 1 0 0 1 48 409 Tm (- Own features from specification through implementation, review, and production release.) Tj ET
+BT 0.08 0.12 0.12 rg /F1 10 Tf 1 0 0 1 48 391 Tm (- Mentor junior engineers, review their work, and write down conventions the team had only kept) Tj ET
+BT 0.08 0.12 0.12 rg /F1 10 Tf 1 0 0 1 48 377 Tm (in its head.) Tj ET
+0.6 w 0.9 0.93 0.92 RG 48 355 m 547 355 l S
+0.88 0.94 0.92 rg 48 337 499 22 re f
+BT 0.08 0.12 0.12 rg /F2 11 Tf 1 0 0 1 48 343 Tm (Backend Engineering Programme in Go | Learn2Earn) Tj ET
+BT 0.02 0.36 0.32 rg /F1 10 Tf 1 0 0 1 48 327 Tm (Nov 2025 to Dec 2025) Tj ET
+BT 0.08 0.12 0.12 rg /F1 10 Tf 1 0 0 1 48 311 Tm (An intensive Go programme covering concurrency, HTTP service design, and the structure of a) Tj ET
+BT 0.08 0.12 0.12 rg /F1 10 Tf 1 0 0 1 48 297 Tm (backend that stays predictable as load rises rather than degrading unpredictably.) Tj ET
+BT 0.08 0.12 0.12 rg /F1 10 Tf 1 0 0 1 48 277 Tm (- Concurrency patterns, HTTP service design, and structuring a backend that degrades) Tj ET
+BT 0.08 0.12 0.12 rg /F1 10 Tf 1 0 0 1 48 263 Tm (predictably under load.) Tj ET
+BT 0.08 0.12 0.12 rg /F1 10 Tf 1 0 0 1 48 245 Tm (- Built and tested services against the patterns Go is designed around rather than porting) Tj ET
+BT 0.08 0.12 0.12 rg /F1 10 Tf 1 0 0 1 48 231 Tm (JavaScript habits across.) Tj ET
+0.6 w 0.9 0.93 0.92 RG 48 209 m 547 209 l S
+0.88 0.94 0.92 rg 48 191 499 22 re f
+BT 0.08 0.12 0.12 rg /F2 11 Tf 1 0 0 1 48 197 Tm (Full Stack Developer | Vivaking Technologies) Tj ET
+BT 0.02 0.36 0.32 rg /F1 10 Tf 1 0 0 1 48 181 Tm (Mar 2025 to Nov 2025) Tj ET
+BT 0.08 0.12 0.12 rg /F1 10 Tf 1 0 0 1 48 165 Tm (I shipped client features end to end: React interfaces, Node and MongoDB services, and the API) Tj ET
+BT 0.08 0.12 0.12 rg /F1 10 Tf 1 0 0 1 48 151 Tm (contracts joining them. A recurring part of the work was profiling the paths users hit most) Tj ET
+BT 0.08 0.12 0.12 rg /F1 10 Tf 1 0 0 1 48 137 Tm (often and cutting the work done on them.) Tj ET
+BT 0.08 0.12 0.12 rg /F1 10 Tf 1 0 0 1 48 117 Tm (- Delivered React interfaces, Node and MongoDB services, and the API contracts joining them.) Tj ET
+BT 0.08 0.12 0.12 rg /F1 10 Tf 1 0 0 1 48 99 Tm (- Profiled the paths users hit most often and cut the work done on each request.) Tj ET
 endstream
 endobj
 xref
@@ -142,5 +145,5 @@ xref
 trailer
 << /Size 9 /Root 1 0 R >>
 startxref
-10314
+10630
 %%EOF

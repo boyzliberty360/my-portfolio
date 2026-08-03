@@ -3,7 +3,7 @@
 // project with neither simply renders without a case study.
 //
 // Written for an engineer reading it: name the actual mechanism, then the
-// trade-off behind it. Every field is optional -- a project without real
+// trade-off behind it. Every field is optional. A project without real
 // material for a section renders without that section rather than with filler.
 export const projectCaseStudies = {
   Trusta: {
@@ -19,7 +19,7 @@ export const projectCaseStudies = {
     challenge:
       "Payment systems fail in the middle. A webhook can arrive twice, out of order, or be forged; a client can double-submit; the provider can accept a transfer and go quiet. Any of those can double-charge a buyer or release funds that were never actually collected. The subtler one was ordering: an early version could cancel a deal for seller silence in the same job pass that confirmed the shipment.",
     response:
-      "Mutations are wrapped in request-level idempotency keyed on (scope, key) with a unique constraint that serialises concurrent duplicates and replays the stored 2xx response on retry. Webhook signatures are verified with a constant-time compare, and no webhook is ever trusted alone for a money-moving decision — the deal service requeries the provider's transaction status API before it transitions anything. Deadline enforcement was moved to run after reconciliation in the job, so a payment landing this cycle is already reflected before any deal is judged abandoned.",
+      "Mutations are wrapped in request-level idempotency keyed on (scope, key) with a unique constraint that serialises concurrent duplicates and replays the stored 2xx response on retry. Webhook signatures are verified with a constant-time compare, and no webhook is ever trusted alone for a money-moving decision. The deal service requeries the provider's transaction status API before it transitions anything. Deadline enforcement was moved to run after reconciliation in the job, so a payment landing this cycle is already reflected before any deal is judged abandoned.",
     tradeoffs: [
       {
         decision: "Trusting the webhook payload",
@@ -33,7 +33,7 @@ export const projectCaseStudies = {
         chose: "Accept unsigned in sandbox but flag signed:false for distinct audit logging; reject outright in production",
         rejected: "Rejecting unsigned requests in every environment",
         because:
-          "The provider only signs production notifications, so a uniform rule would make sandbox testing impossible. Whenever a signature is present it is always verified and a mismatch is always rejected — the relaxation is on absence, never on mismatch.",
+          "The provider only signs production notifications, so a uniform rule would make sandbox testing impossible. Whenever a signature is present it is always verified and a mismatch is always rejected. The relaxation is on absence, never on mismatch.",
       },
       {
         decision: "Claiming an idempotency key",
@@ -85,7 +85,7 @@ export function assertDealTransition(from: DealStatus, to: DealStatus) {
     lessons: [
       "Writing the state machine as data before writing any handler made the illegal transitions obvious at review time rather than in production.",
       "Ordering inside a scheduled job is a correctness property, not a style choice. The abandoned-deal bug was entirely a matter of which function ran first.",
-      "Comments explaining why a security rule is relaxed are worth more than the rule itself — they are what stops the next person removing the exception or widening it.",
+      "Comments explaining why a security rule is relaxed are worth more than the rule itself. They are what stops the next person removing the exception or widening it.",
     ],
     next: [
       "Property-based tests over the transition map so unreachable and absorbing states are proven, not eyeballed",
@@ -101,7 +101,7 @@ export function assertDealTransition(from: DealStatus, to: DealStatus) {
     role:
       "Built the patient-facing interface, the data model behind it, and the booking flow connecting the two.",
     architecture:
-      "Four bounded domains — doctors, patients, appointments, and records — with the coupling between them kept at the API boundary, so scheduling rules can change without touching how records are stored or exposed.",
+      "The product splits into four bounded domains: doctors, patients, appointments, and records. Coupling between them is kept at the API boundary, so scheduling rules can change without touching how records are stored or exposed.",
     challenge:
       "In healthcare an interface mistake has a cost outside the software. An ambiguous booking screen wastes a clinician's day, and a record rendered on a route that had no reason to load it is a disclosure, not a bug report.",
     response:

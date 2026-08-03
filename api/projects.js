@@ -21,7 +21,7 @@ const getProjectsFile = async () => {
   if (!Array.isArray(projects)) throw new Error("Projects file must contain a JSON array");
 
   // get() returns a weak (W/"...") etag, but put()'s ifMatch precondition
-  // requires the strong form — head() returns that.
+  // requires the strong form. head() returns that.
   const { etag } = await head(result.blob.url);
   return { projects, etag };
 };
@@ -78,7 +78,7 @@ const CASE_STUDY_TEXT_FIELDS = [
 ];
 
 // Every field is optional. A project with no case study renders without one,
-// which is the point — generic filler reads worse than an absent section.
+// which is the point. Generic filler reads worse than an absent section.
 const cleanCaseStudy = (value) => {
   if (!value || typeof value !== "object") return null;
 

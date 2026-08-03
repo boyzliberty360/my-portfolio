@@ -80,7 +80,7 @@ export default function Home() {
             transition={{ delay: 0.38, duration: 0.65 }}
             className="hero-meta"
           >
-            <span><MapPin className="h-4 w-4" /> Remote · {profile.timezone}</span>
+            <span><MapPin className="h-4 w-4" /> Remote, {profile.timezone}</span>
             <a href={`mailto:${profile.email}`}><Mail className="h-4 w-4" /> {profile.email}</a>
             <a href={profile.github} target="_blank" rel="noopener noreferrer"><Github className="h-4 w-4" /> GitHub</a>
             {profile.linkedin ? (
@@ -97,8 +97,8 @@ export default function Home() {
         >
           <div className="profile-frame">
             <div className="profile-frame-top">
-              <span>EM / 01</span>
-              <span>Frontend · backend · AI</span>
+              <span>EM 01</span>
+              <span>Frontend, backend, AI</span>
             </div>
             <img
               src={PROFILE_IMAGE}

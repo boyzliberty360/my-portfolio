@@ -10,7 +10,7 @@ export default function Footer() {
         <div className="section-shell footer-content">
           <div className="footer-cta">
             <p className="footer-kicker">{profile.availability}</p>
-            <h2>Let’s build something<br /><em>that lasts.</em></h2>
+            <h2>Let's build something<br /><em>that lasts.</em></h2>
           </div>
 
           <div className="footer-links-area">
@@ -19,7 +19,7 @@ export default function Footer() {
                 <p>{profile.name}</p>
                 <span>{profile.shortHeadline}</span>
                 <span className="footer-meta">
-                  <span><MapPin className="h-3.5 w-3.5" /> {profile.location} · Remote · {profile.timezone}</span>
+                  <span><MapPin className="h-3.5 w-3.5" /> Remote from {profile.location}, {profile.timezone}</span>
                   <span><Clock className="h-3.5 w-3.5" /> {profile.responseTime}</span>
                 </span>
               </div>

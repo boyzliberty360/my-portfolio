@@ -217,23 +217,12 @@ function buildResumePages() {
     drawText(item.period, MARGIN_X, y, "F1", 10, COLORS.accent);
     y -= 16;
     addWrappedBlock(item.description, { size: 10, lineHeight: 14, gapAfter: 6 });
-    addBulletList(
-      item.company === "Mercuryx"
-        ? [
-            "Take features from first idea through building, testing, and release to real users.",
-            "Teach the junior developers on the team and review their work.",
-          ]
-        : item.company === "Learn2Earn"
-        ? [
-            "Intensive programme in Go, a language built for handling many users at once.",
-            "Covered designing the behind-the-scenes half of an app to stay fast under load.",
-          ]
-        : [
-            "Built complete features for clients: the screens, the storage, and everything in between.",
-            "Made the parts people used most noticeably faster.",
-          ],
-      { size: 10, gapAfter: 4 }
-    );
+    // Bullets live on the record in profile.js, not here. Keying them off the
+    // company name meant the resume kept its own copy of the story and drifted
+    // out of voice with the site the moment either one was edited.
+    if (item.highlights?.length) {
+      addBulletList(item.highlights, { size: 10, gapAfter: 4 });
+    }
     y -= 4;
     if (item !== experiences[experiences.length - 1]) {
       drawLine(MARGIN_X, y, MARGIN_X + CONTENT_WIDTH, y, 0.6, COLORS.softLine);

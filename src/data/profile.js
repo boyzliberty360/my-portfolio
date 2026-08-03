@@ -14,17 +14,17 @@ export const profile = {
   linkedinHandle: "",
   siteUrl: "https://emmyade.vercel.app/",
   title: "AI Engineer",
-  titleLong: "AI Engineer — frontend and backend",
+  titleLong: "AI Engineer, frontend and backend",
   availability: "Open to frontend, backend, and AI engineering roles",
   timezone: "WAT (UTC+1)",
-  timezoneNote: "UTC+1 — a full working day with Europe, mornings with US East.",
+  timezoneNote: "UTC+1. A full working day with Europe, mornings with US East.",
   // Kept deliberately non-numeric. An invented SLA is the kind of claim that
   // gets tested on the first message.
   responseTime: "I read and reply to every message.",
   headline:
     "React and Next.js interfaces on top of Node and Go services. The work that decides whether a feature survives sits between them: schema-validated model output, tiered provider failover, prompt-injection boundaries, and routing by cost rather than by default.",
   shortHeadline:
-    "LLM features built for production — interface, service layer, and the reliability work between them.",
+    "LLM features built for production, from the interface down to the service layer and the reliability work between them.",
 };
 
 // Recruiters read this before engineers do, so it leads in plain language and
@@ -88,7 +88,7 @@ export const skillCategories = [
       { name: "Anthropic Claude", evidence: "Long-context and higher-reasoning work" },
       { name: "Vercel AI SDK", evidence: "Provider-agnostic calls, streaming, tool use" },
       { name: "Cerebras", evidence: "Second provider in the fallback chain" },
-      { name: "Llama 3.1 / 3.3", evidence: "Open weights, cheap tier for routine tasks" },
+      { name: "Llama 3.1 and 3.3", evidence: "Open weights, cheap tier for routine tasks" },
     ],
   },
   {
@@ -127,9 +127,9 @@ export const skillCategories = [
   {
     title: "Quality and delivery",
     items: [
-      { name: "Vitest / Jest", evidence: "Coverage on the paths that handle money and data" },
+      { name: "Vitest and Jest", evidence: "Coverage on the paths that handle money and data" },
       { name: "Zod", evidence: "Runtime validation at every trust boundary" },
-      { name: "Git / GitHub", evidence: "Reviewed branches, readable history" },
+      { name: "Git and GitHub", evidence: "Reviewed branches, readable history" },
       { name: "Vercel", evidence: "Preview deploys, serverless functions, blob storage" },
       { name: "Docker", evidence: "Reproducible local and CI environments" },
       { name: "Logging", evidence: "Structured logs, request tracing, health checks" },
@@ -137,7 +137,7 @@ export const skillCategories = [
   },
 ];
 
-// Deliberately does not overlap anything claimed in skillCategories above --
+// Deliberately does not overlap anything claimed in skillCategories above.
 // claiming a tool and listing it as unlearned in the same page reads as noise.
 export const currentlyLearning = [
   {
@@ -162,27 +162,39 @@ export const experiences = [
   {
     company: "Mercuryx",
     role: "Software Engineer & Technical Mentor",
-    period: "Oct 2025 — Present",
+    period: "Oct 2025 to Present",
     description:
       "I take features from specification through implementation, review, and release to production users. I also mentor the junior engineers on the team, which means defending design decisions out loud and turning implicit conventions into written ones.",
+    highlights: [
+      "Own features from specification through implementation, review, and production release.",
+      "Mentor junior engineers, review their work, and write down conventions the team had only kept in its head.",
+    ],
     technologies: ["React", "JavaScript", "Testing", "Code review", "Mentoring"],
     current: true,
   },
   {
     company: "Learn2Earn",
-    role: "Backend Engineering Programme — Go",
-    period: "Nov 2025 — Dec 2025",
+    role: "Backend Engineering Programme in Go",
+    period: "Nov 2025 to Dec 2025",
     description:
       "An intensive Go programme covering concurrency, HTTP service design, and the structure of a backend that stays predictable as load rises rather than degrading unpredictably.",
+    highlights: [
+      "Concurrency patterns, HTTP service design, and structuring a backend that degrades predictably under load.",
+      "Built and tested services against the patterns Go is designed around rather than porting JavaScript habits across.",
+    ],
     technologies: ["Go", "Concurrency", "Service design"],
     current: false,
   },
   {
     company: "Vivaking Technologies",
     role: "Full Stack Developer",
-    period: "Mar 2025 — Nov 2025",
+    period: "Mar 2025 to Nov 2025",
     description:
       "I shipped client features end to end: React interfaces, Node and MongoDB services, and the API contracts joining them. A recurring part of the work was profiling the paths users hit most often and cutting the work done on them.",
+    highlights: [
+      "Delivered React interfaces, Node and MongoDB services, and the API contracts joining them.",
+      "Profiled the paths users hit most often and cut the work done on each request.",
+    ],
     technologies: ["React", "Node.js", "MongoDB", "Profiling"],
     current: false,
   },

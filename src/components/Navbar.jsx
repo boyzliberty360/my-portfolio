@@ -7,7 +7,7 @@ const LINKS = ["About", "Projects", "Experience", "Certifications", "Testimonial
 
 // The same dashed-gear mark as the favicon in public/engineer.svg, redrawn on
 // currentColor so it picks up the accent chip in both themes. The favicon's
-// trend line is dropped -- at this size three elements read as noise.
+// trend line is dropped. At this size three elements read as noise.
 function BrandMark() {
   return (
     <svg viewBox="0 0 24 24" fill="none" className="h-[1.05rem] w-[1.05rem]" aria-hidden="true">

@@ -28,14 +28,14 @@ const CASE_STUDY_FIELDS = [
 ];
 
 // Every section below is independently optional. A study carrying only a
-// problem statement renders only that — filler reads worse to anyone
+// problem statement renders only that. Filler reads worse to anyone
 // evaluating the work than an absent section does.
 const asList = (value) => (Array.isArray(value) && value.length ? value : []);
 
 export default function Card({ title, description, link, image, technologies = [], flagship = false, github, caseStudy }) {
   // Content entered in the admin wins; the checked-in map is the fallback for
   // projects written before the admin carried case-study fields. Neither one
-  // present means no case study renders at all — generic filler reads worse
+  // present means no case study renders at all. Generic filler reads worse
   // than an absent section.
   const study = caseStudy || projectCaseStudies[title] || null;
   const entries = study ? CASE_STUDY_FIELDS.filter((field) => study[field.key]) : [];

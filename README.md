@@ -1,4 +1,4 @@
-# Portfolio — Emmanuel Adejoh
+# Portfolio: Emmanuel Adejoh
 
 Personal portfolio for a full-stack AI engineer. React + Vite front end, Tailwind for styling,
 and Vercel Functions backing a small content admin so projects and testimonials can be edited
@@ -9,7 +9,7 @@ without a redeploy.
 | Piece | Where | Notes |
 | --- | --- | --- |
 | Page sections | `src/pages/` | One component per section, composed in `src/App.jsx` |
-| Copy and profile data | `src/data/profile.js` | Single source of truth — also feeds the generated PDF resume |
+| Copy and profile data | `src/data/profile.js` | Single source of truth, also feeds the generated PDF resume |
 | Project cards | `src/components/Card.jsx` | Renders a case study only when there is real content for one |
 | Content API | `api/projects.js`, `api/testimonials.js` | Vercel Functions over Vercel Blob, password-protected |
 | Admin UI | `src/pages/Admin.jsx` at `/admin` | Add and edit projects and testimonials |
@@ -25,10 +25,10 @@ build. There is no second copy of that content to keep in sync.
 ## Commands
 
 ```bash
-npm run dev      # Vite only — /api/projects is bridged, other functions are not
+npm run dev      # Vite only. /api/projects is bridged, other functions are not
 vercel dev       # full stack, needed to exercise the admin end to end
 npm run lint
-npm run build    # runs prebuild -> regenerates public/Resume.pdf
+npm run build    # runs prebuild, which regenerates public/Resume.pdf
 npm run previews # screenshot project homepages into public/images/projects/
 ```
 
@@ -37,13 +37,13 @@ npm run previews # screenshot project homepages into public/images/projects/
 `/admin` authenticates against a server-side password. Projects are stored privately in Vercel
 Blob and served publicly through `/api/projects`.
 
-1. In the Vercel project, go to **Storage → Create Database → Blob**.
+1. In the Vercel project, go to **Storage**, then **Create Database**, then **Blob**.
 2. Create a **Private** Blob store and connect it. Vercel Blob connections use managed OIDC
    authentication, so no token needs to be copied manually.
-3. Add `ADMIN_PASSWORD` under Project Settings → Environment Variables.
+3. Add `ADMIN_PASSWORD` under Project Settings, then Environment Variables.
 4. Redeploy.
 
-Do not prefix `ADMIN_PASSWORD` with `VITE_` — Vite exposes any `VITE_`-prefixed variable to the
+Do not prefix `ADMIN_PASSWORD` with `VITE_`. Vite exposes any `VITE_`-prefixed variable to the
 browser. Storage authentication stays server-side; the admin only ever sends the password.
 
 The contact form uses Web3Forms and needs `VITE_WEB3FORMS_KEY` (browser-exposed by design).
@@ -62,7 +62,7 @@ are newline-separated. A snippet with no code is dropped rather than rendered as
 Two deliberate behaviours: a project with no case study renders without one, and a project with
 no tech stack shows no tags. Every case-study section is independently optional and disappears
 when empty. Placeholder text would read as filler to anyone evaluating the work, so absence is
-preferred over invention — which is also why nothing on the site claims a metric that cannot be
+preferred over invention, which is also why nothing on the site claims a metric that cannot be
 substantiated.
 
 ### Preview images
@@ -81,7 +81,7 @@ Needs Chromium and ImageMagick on PATH. Output goes to `public/images/projects/<
 
 `Card.jsx` resolves a preview in three steps: the project's explicit `image`, then the convention
 `/images/projects/<slug>.webp`, then a designed placeholder if that file 404s. So capturing a
-screenshot is usually enough — no record needs editing. **The slug rules in `capture-previews.mjs`
+screenshot is usually enough and no record needs editing. **The slug rules in `capture-previews.mjs`
 and `Card.jsx` must stay identical**, or the convention lookup silently misses.
 
 Projects living in Vercel Blob are not rewritten by the script. Capture the screenshot, then paste

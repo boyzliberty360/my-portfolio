@@ -123,7 +123,7 @@ export default function Contact() {
           onSubmit={handleSubmit}
           className="contact-form surface"
         >
-          <div className="form-heading"><span className="form-step">01</span><div><h3>Send a message</h3><p>A job opening, a problem you are stuck on, or just a question — all welcome.</p></div></div>
+          <div className="form-heading"><span className="form-step">01</span><div><h3>Send a message</h3><p>A job opening, a problem you are stuck on, or just a question. All welcome.</p></div></div>
           <div className="form-grid">
             <label><span>Name</span><input name="name" type="text" autoComplete="name" required disabled={isDisabled} /></label>
             <label><span>Email</span><input name="email" type="email" autoComplete="email" required disabled={isDisabled} /></label>
@@ -131,7 +131,7 @@ export default function Contact() {
           <label><span>Subject <small>Optional</small></span><input name="subject" type="text" autoComplete="off" disabled={isDisabled} /></label>
           <label><span>Message</span><textarea name="message" rows="6" required disabled={isDisabled} /></label>
           {isRateLimited ? <p className="form-note form-note-warning"><Clock className="h-4 w-4" /> Cooldown: {cooldownSeconds}s</p> : null}
-          <button className="button button-primary button-submit" type="submit" disabled={isDisabled}><Send className="h-4 w-4" />{isSubmitting ? "Sending…" : isRateLimited ? `Wait ${cooldownSeconds}s` : "Send message"}</button>
+          <button className="button button-primary button-submit" type="submit" disabled={isDisabled}><Send className="h-4 w-4" />{isSubmitting ? "Sending" : isRateLimited ? `Wait ${cooldownSeconds}s` : "Send message"}</button>
           {submitStatus.message ? <p className={`form-status ${submitStatus.type}`} aria-live="polite">{submitStatus.message}</p> : null}
           {showFallback ? <a className="text-link" href={mailto}>Open your email app instead <ArrowUpRight className="h-4 w-4" /></a> : null}
         </motion.form>
