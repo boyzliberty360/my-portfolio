@@ -5,14 +5,13 @@ import { dirname, resolve } from 'node:path'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 
-// vite dev has no backend for anything under /api — that's a Vercel-only
-// concept. This bridges /api/projects to the real serverless handler in
-// api/projects.js so `vite dev` behaves like production instead of 404ing.
-function localProjectsApiPlugin(env) {
+// Vite dev has no backend for anything under /api - this bridges the local
+// serverless handlers so project and testimonial workflows behave like prod.
+function localApiPlugin(env) {
   return {
-    name: 'local-projects-api',
+    name: 'local-portfolio-api',
     configureServer(server) {
-      server.middlewares.use('/api/projects', async (req, res) => {
+      const attachHandler = (apiPath, apiFile) => server.middlewares.use(apiPath, async (req, res) => {
         for (const key of ['ADMIN_PASSWORD', 'BLOB_READ_WRITE_TOKEN', 'BLOB_STORE_ID']) {
           if (env[key]) process.env[key] = env[key]
         }
@@ -32,10 +31,13 @@ function localProjectsApiPlugin(env) {
           return res
         }
 
-        const handlerUrl = pathToFileURL(resolve(__dirname, 'api/projects.js')).href
+        const handlerUrl = pathToFileURL(resolve(__dirname, apiFile)).href
         const { default: handler } = await import(`${handlerUrl}?t=${Date.now()}`)
         await handler(req, res)
       })
+
+      attachHandler('/api/projects', 'api/projects.js')
+      attachHandler('/api/testimonials', 'api/testimonials.js')
     },
   }
 }
@@ -45,7 +47,7 @@ export default defineConfig(({ command, mode }) => {
   const env = loadEnv(mode, process.cwd(), '')
 
   return {
-    plugins: [react(), ...(command === 'serve' ? [localProjectsApiPlugin(env)] : [])],
+    plugins: [react(), ...(command === 'serve' ? [localApiPlugin(env)] : [])],
     build: {
       chunkSizeWarningLimit: 1600,
     },

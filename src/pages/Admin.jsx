@@ -258,6 +258,7 @@ function TestimonialCard({ testimonial, onStatus, onDelete }) {
       <div className="mt-4 border-t border-slate-200 pt-3 dark:border-white/10">
         <p className="font-semibold text-slate-900 dark:text-white">{testimonial.name}</p>
         <p className="text-xs text-slate-500 dark:text-slate-400">{testimonial.role} · {testimonial.company}</p>
+        {testimonial.contactEmail ? <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">Private verification: {testimonial.contactEmail}</p> : null}
         {testimonial.sourceUrl ? <a href={testimonial.sourceUrl} target="_blank" rel="noopener noreferrer" className="mt-2 inline-flex items-center gap-1 text-xs text-cyan-500 hover:underline"><ExternalLink size={11} /> View source</a> : null}
       </div>
 

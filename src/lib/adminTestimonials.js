@@ -24,14 +24,18 @@ const request = async (options = {}) => {
 const dispatchUpdate = () => window.dispatchEvent(new Event("testimonials-updated"));
 
 export const getPublishedTestimonials = async () => {
+  const sanitizePublicTestimonials = (testimonials) => testimonials
+    .filter((testimonial) => testimonial.status === "approved" && !testimonial.isSample)
+    .map(({ contactEmail, source, status, isSample, ...publicTestimonial }) => publicTestimonial);
+
   try {
     const { testimonials } = await request({ cache: "no-store" });
-    return Array.isArray(testimonials) ? testimonials : [];
+    return Array.isArray(testimonials) ? sanitizePublicTestimonials(testimonials) : [];
   } catch {
     const response = await fetch(STATIC_TESTIMONIALS, { cache: "no-store" });
     if (!response.ok) return [];
     const testimonials = await response.json().catch(() => []);
-    return Array.isArray(testimonials) ? testimonials : [];
+    return Array.isArray(testimonials) ? sanitizePublicTestimonials(testimonials) : [];
   }
 };
 
@@ -43,6 +47,14 @@ export const getAdminTestimonials = async (token) => {
     if (error.status === 401) throw error;
     return testimonialSamples;
   }
+};
+
+export const submitPublicTestimonial = async (testimonial, website = "") => {
+  const { message } = await request({
+    method: "POST",
+    body: JSON.stringify({ action: "submit", testimonial, website }),
+  });
+  return message;
 };
 
 export const saveAdminTestimonial = async (testimonial, token) => {

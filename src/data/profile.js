@@ -15,7 +15,7 @@ export const profile = {
   siteUrl: "https://emmyade.vercel.app/",
   title: "AI Engineer",
   titleLong: "AI Engineer — frontend and backend",
-  availability: "Open to AI Engineer roles",
+  availability: "Open to frontend, backend, and AI engineering roles",
   timezone: "WAT (UTC+1)",
   timezoneNote: "UTC+1 — a full working day with Europe, mornings with US East.",
   headline:

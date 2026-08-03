@@ -46,6 +46,11 @@ const cleanUrl = (value) => {
   }
 };
 
+const cleanEmail = (value) => {
+  const email = cleanText(value, 160).toLowerCase();
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) ? email : null;
+};
+
 const normalizeStatus = (value) => ["pending", "approved", "rejected"].includes(value) ? value : "pending";
 
 const normalizeTestimonial = (input, existing = {}) => ({
@@ -54,10 +59,12 @@ const normalizeTestimonial = (input, existing = {}) => ({
   name: cleanText(input.name ?? existing.name, 100),
   role: cleanText(input.role ?? existing.role, 100),
   company: cleanText(input.company ?? existing.company, 100),
+  contactEmail: cleanEmail(input.contactEmail ?? existing.contactEmail),
   avatarUrl: cleanUrl(input.avatarUrl ?? existing.avatarUrl),
   sourceUrl: cleanUrl(input.sourceUrl ?? existing.sourceUrl),
   status: normalizeStatus(input.status ?? existing.status),
   isSample: Boolean(existing.isSample || input.isSample),
+  source: input.source ?? existing.source ?? "admin",
   featured: Boolean(input.featured ?? existing.featured),
   sortOrder: Number.isFinite(Number(input.sortOrder ?? existing.sortOrder)) ? Number(input.sortOrder ?? existing.sortOrder) : 0,
   createdAt: existing.createdAt || new Date().toISOString(),
@@ -66,7 +73,8 @@ const normalizeTestimonial = (input, existing = {}) => ({
 
 const publicTestimonials = (testimonials) => testimonials
   .filter((testimonial) => testimonial.status === "approved" && !testimonial.isSample)
-  .sort((left, right) => Number(right.featured) - Number(left.featured) || left.sortOrder - right.sortOrder);
+  .sort((left, right) => Number(right.featured) - Number(left.featured) || left.sortOrder - right.sortOrder)
+  .map(({ contactEmail, source, status, isSample, ...publicTestimonial }) => publicTestimonial);
 
 export default async function handler(request, response) {
   try {
@@ -84,6 +92,18 @@ export default async function handler(request, response) {
       if (!password) return json(response, 503, { error: "Admin password is not configured" });
       if (!isCorrectAdminPassword(request.body.password || "")) return json(response, 401, { error: "Incorrect password" });
       return json(response, 200, { token: createSessionToken() });
+    }
+
+    if (request.method === "POST" && request.body?.action === "submit") {
+      const input = request.body?.testimonial || {};
+      if (cleanText(request.body?.website, 120)) return json(response, 400, { error: "Unable to submit review" });
+      const { testimonials, etag } = await getTestimonialsFile();
+      const testimonial = normalizeTestimonial({ ...input, status: "pending", isSample: false, source: "public" });
+      if (!testimonial.quote || !testimonial.name || !testimonial.role || !testimonial.company || !testimonial.contactEmail) {
+        return json(response, 400, { error: "Quote, name, role, company, and a valid email are required" });
+      }
+      await writeTestimonialsFile([testimonial, ...testimonials], etag);
+      return json(response, 201, { message: "Review received and is awaiting approval" });
     }
 
     if (!isAdmin) return json(response, 401, { error: "Your admin session is invalid or has expired" });
