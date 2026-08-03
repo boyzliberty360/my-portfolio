@@ -30,8 +30,8 @@ export default function Projects() {
   return (
     <section id="projects" className="content-section section-shell scroll-mt-24">
       <div className="section-intro section-intro-row">
-        <div><p className="eyebrow">My work</p><h2 className="section-title">Real products, live right now.</h2></div>
-        <p className="section-description">Not mock-ups or practice exercises — every one of these is online and you can click through and use it yourself. Open a case study to see what problem it solves and how I built it.</p>
+        <div><p className="eyebrow">Selected work</p><h2 className="section-title">Shipped, and open to inspection.</h2></div>
+        <p className="section-description">Every one of these is deployed and usable right now. The case studies go past the feature list into the architecture, the failure modes, and the decisions I would have to defend in review — including the ones I got wrong first.</p>
       </div>
 
       {loading ? (

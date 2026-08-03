@@ -9,7 +9,7 @@ export default function Experience() {
     <section id="experience" className="content-section section-shell scroll-mt-24">
       <div className="section-intro section-intro-row">
         <div><p className="eyebrow">Experience</p><h2 className="section-title">Where I have worked.</h2></div>
-        <p className="section-description">Building and releasing software for real users, deepening the behind-the-scenes side, and teaching other developers along the way.</p>
+        <p className="section-description">Shipping to production users, moving deliberately deeper into backend and systems work, and mentoring alongside it — which is the fastest way I know to find out whether a decision was actually sound.</p>
       </div>
 
       <div className="experience-list">

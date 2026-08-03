@@ -42,11 +42,31 @@ const EMPTY_FORM = {
   challenge: "",
   response: "",
   quality: "",
+  tradeoffs: "",
+  snippetLabel: "",
+  snippetLanguage: "",
+  snippetCode: "",
+  lessons: "",
+  next: "",
 };
+
+const toLines = (value) => value.split("\n").map((line) => line.trim()).filter(Boolean);
+
+// Trade-offs are the one structured field here. A row is
+// "decision | chose | rejected | because"; anything with fewer parts still
+// renders, the card just omits the pieces that are missing.
+const parseTradeoffs = (value) =>
+  toLines(value)
+    .map((line) => {
+      const [decision = "", chose = "", rejected = "", because = ""] = line.split("|").map((part) => part.trim());
+      return { decision, chose, rejected, because };
+    })
+    .filter((tradeoff) => tradeoff.decision || tradeoff.chose);
 
 // The public card only renders a case study when there is real content for it,
 // so every one of these fields is optional.
 const buildCaseStudy = (form) => {
+  const code = form.snippetCode.trim();
   const study = {
     type: form.type.trim(),
     problem: form.problem.trim(),
@@ -55,7 +75,15 @@ const buildCaseStudy = (form) => {
     architecture: form.architecture.trim(),
     challenge: form.challenge.trim(),
     response: form.response.trim(),
-    quality: form.quality.split("\n").map((line) => line.trim()).filter(Boolean),
+    quality: toLines(form.quality),
+    tradeoffs: parseTradeoffs(form.tradeoffs),
+    lessons: toLines(form.lessons),
+    next: toLines(form.next),
+    // Without code there is nothing to show, so the whole snippet is dropped
+    // rather than rendering an empty labelled block.
+    snippet: code
+      ? { label: form.snippetLabel.trim(), language: form.snippetLanguage.trim(), code }
+      : null,
   };
 
   const hasContent = Object.values(study).some((value) => (Array.isArray(value) ? value.length : value));
@@ -621,12 +649,67 @@ export default function Admin() {
                     </div>
                   ))}
                   <div>
+                    <label className={labelClass}>Trade-offs</label>
+                    <textarea
+                      rows={4}
+                      value={form.tradeoffs}
+                      onChange={(e) => setForm({ ...form, tradeoffs: e.target.value })}
+                      placeholder={"One per line: decision | chose | rejected | because\nTrusting the webhook payload | Requery the provider status API | Acting on the webhook body | A webhook is attacker-reachable input"}
+                      className={`${inputClass} resize-none`}
+                    />
+                    <p className="mt-1 text-xs dark:text-slate-500 text-slate-400">
+                      Pipe-separated. The strongest signal on the card — say what you rejected and why.
+                    </p>
+                  </div>
+                  <div>
+                    <label className={labelClass}>Code Snippet</label>
+                    <input
+                      value={form.snippetLabel}
+                      onChange={(e) => setForm({ ...form, snippetLabel: e.target.value })}
+                      placeholder="Caption — e.g. The transition map every write is asserted against"
+                      className={inputClass}
+                    />
+                    <input
+                      value={form.snippetLanguage}
+                      onChange={(e) => setForm({ ...form, snippetLanguage: e.target.value })}
+                      placeholder="Language — typescript, go, sql"
+                      className={`${inputClass} mt-2`}
+                    />
+                    <textarea
+                      rows={6}
+                      value={form.snippetCode}
+                      onChange={(e) => setForm({ ...form, snippetCode: e.target.value })}
+                      placeholder="Real code from the project. Short and load-bearing beats long and representative."
+                      className={`${inputClass} mt-2 font-mono text-xs`}
+                    />
+                  </div>
+                  <div>
                     <label className={labelClass}>Engineering Highlights</label>
                     <textarea
                       rows={3}
                       value={form.quality}
                       onChange={(e) => setForm({ ...form, quality: e.target.value })}
                       placeholder={"One per line, up to 6\nIdempotency keys prevent double charges\nHMAC signature verification on every webhook"}
+                      className={`${inputClass} resize-none`}
+                    />
+                  </div>
+                  <div>
+                    <label className={labelClass}>What I Took From It</label>
+                    <textarea
+                      rows={3}
+                      value={form.lessons}
+                      onChange={(e) => setForm({ ...form, lessons: e.target.value })}
+                      placeholder={"One per line. What you would do differently, and what the bug taught you."}
+                      className={`${inputClass} resize-none`}
+                    />
+                  </div>
+                  <div>
+                    <label className={labelClass}>What I Would Do Next</label>
+                    <textarea
+                      rows={3}
+                      value={form.next}
+                      onChange={(e) => setForm({ ...form, next: e.target.value })}
+                      placeholder={"One per line. Known gaps and the improvement you would make first."}
                       className={`${inputClass} resize-none`}
                     />
                   </div>

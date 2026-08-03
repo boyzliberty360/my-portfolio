@@ -51,12 +51,19 @@ The contact form uses Web3Forms and needs `VITE_WEB3FORMS_KEY` (browser-exposed 
 ## Adding a project
 
 Everything on a project card comes from the admin form: preview image, live URL, GitHub URL,
-tech stack, a featured flag, and an optional case study (problem, solution, role, architecture,
-hardest problem, how it was solved, plus engineering highlights).
+tech stack, a featured flag, and an optional case study.
+
+The case study is the part hiring managers actually read, so it carries more than a description:
+problem, solution, role, architecture, hardest problem, how it was solved, **trade-offs**, a
+**code snippet**, engineering highlights, **what I took from it**, and **what I would do next**.
+Trade-offs are entered one per line as `decision | chose | rejected | because`; the list fields
+are newline-separated. A snippet with no code is dropped rather than rendered as an empty block.
 
 Two deliberate behaviours: a project with no case study renders without one, and a project with
-no tech stack shows no tags. Placeholder text would read as filler to anyone evaluating the work,
-so absence is preferred over invention.
+no tech stack shows no tags. Every case-study section is independently optional and disappears
+when empty. Placeholder text would read as filler to anyone evaluating the work, so absence is
+preferred over invention — which is also why nothing on the site claims a metric that cannot be
+substantiated.
 
 ### Preview images
 

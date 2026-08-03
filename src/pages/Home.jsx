@@ -45,7 +45,7 @@ export default function Home() {
             transition={{ delay: 0.08, duration: 0.65 }}
             className="hero-title"
           >
-            I build apps that use <em>artificial intelligence.</em>
+            The AI demo is easy. <em>I build the rest.</em>
           </motion.h1>
 
           <motion.p
@@ -64,10 +64,13 @@ export default function Home() {
             className="hero-actions"
           >
             <a className="button button-primary" href="#projects">
-              See what I have built <ArrowRight className="h-4 w-4" />
+              View case studies <ArrowRight className="h-4 w-4" />
             </a>
             <a className="button button-secondary" href="/Resume.pdf" download="Emmanuel-Adejoh-CV.pdf">
               <Download className="h-4 w-4" /> Download resume
+            </a>
+            <a className="button button-ghost" href="#contact">
+              Get in touch
             </a>
           </motion.div>
 

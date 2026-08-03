@@ -1,6 +1,6 @@
 import { motion, useReducedMotion } from "framer-motion";
-import { ArrowUpRight, Check, Download, Github, Linkedin, Mail, MapPin, Sparkles } from "lucide-react";
-import { aiPractices, aboutParagraphs, profile, services, skillCategories, workingPrinciples } from "../data/profile";
+import { ArrowUpRight, BookOpen, Download, Github, Linkedin, Mail, MapPin } from "lucide-react";
+import { aboutParagraphs, currentlyLearning, profile, skillCategories } from "../data/profile";
 
 function SectionIntro({ eyebrow, title, children }) {
   return (
@@ -12,12 +12,16 @@ function SectionIntro({ eyebrow, title, children }) {
   );
 }
 
+// Deliberately short. This section exists to establish credibility in a few
+// seconds and hand the reader straight to the projects — the principles,
+// practices, and services grids that used to live here all restated what the
+// two paragraphs below and the case studies already say.
 export default function About() {
   const prefersReducedMotion = useReducedMotion();
 
   return (
     <section id="about" className="content-section section-shell scroll-mt-24">
-      <SectionIntro eyebrow="What I do" title="Making AI work once is easy. Keeping it working is the job." />
+      <SectionIntro eyebrow="What I do" title="Getting a model to answer is easy. Keeping it correct under load is the job." />
 
       <div className="about-layout">
         <motion.div
@@ -36,7 +40,7 @@ export default function About() {
               <span className="mini-avatar">EA</span>
               <div><strong>{profile.name}</strong><span>{profile.shortHeadline}</span></div>
             </div>
-            <a className="text-link" href="#contact">Get in touch <ArrowUpRight className="h-4 w-4" /></a>
+            <a className="text-link" href="#projects">See the work <ArrowUpRight className="h-4 w-4" /></a>
           </div>
         </motion.div>
 
@@ -61,68 +65,9 @@ export default function About() {
         </motion.aside>
       </div>
 
-      <div className="principles-grid">
-        {workingPrinciples.map((principle, index) => (
-          <motion.article
-            key={principle.title}
-            initial={prefersReducedMotion ? false : { opacity: 0, y: 14 }}
-            whileInView={prefersReducedMotion ? undefined : { opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.15 }}
-            transition={{ duration: 0.45, delay: index * 0.07 }}
-            className="principle-card"
-          >
-            <span className="principle-number">0{index + 1}</span>
-            <h3>{principle.title}</h3>
-            <p>{principle.description}</p>
-          </motion.article>
-        ))}
-      </div>
-
-      <div className="subsection-heading">
-        <div><p className="eyebrow">Safety nets</p><h3>Three things I always build in</h3></div>
-        <p>Plugging an app into an AI takes an afternoon. These are the protections that decide whether it still works six months later, and every project of mine has all three.</p>
-      </div>
-      <div className="principles-grid">
-        {aiPractices.map((practice, index) => (
-          <motion.article
-            key={practice.title}
-            initial={prefersReducedMotion ? false : { opacity: 0, y: 14 }}
-            whileInView={prefersReducedMotion ? undefined : { opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.15 }}
-            transition={{ duration: 0.45, delay: index * 0.07 }}
-            className="principle-card"
-          >
-            <span className="principle-number"><Sparkles className="h-3.5 w-3.5" /></span>
-            <h3>{practice.title}</h3>
-            <p>{practice.description}</p>
-          </motion.article>
-        ))}
-      </div>
-
-      <div className="subsection-heading">
-        <div><p className="eyebrow">What I can take on</p><h3>Four things I handle for a team</h3></div>
-        <p>I can build an AI feature from the screen a person sees all the way down to the system underneath — so it does not need splitting between two people who then have to keep each other in sync.</p>
-      </div>
-      <div className="services-grid">
-        {services.map((service, index) => (
-          <motion.article
-            key={service.title}
-            initial={prefersReducedMotion ? false : { opacity: 0, y: 14 }}
-            whileInView={prefersReducedMotion ? undefined : { opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.15 }}
-            transition={{ duration: 0.45, delay: index * 0.07 }}
-            className="service-card surface"
-          >
-            <span className="service-check"><Check className="h-4 w-4" /></span>
-            <h3>{service.title}</h3>
-            <p>{service.desc}</p>
-          </motion.article>
-        ))}
-      </div>
-
       <div className="subsection-heading skills-heading">
-        <div><p className="eyebrow">Toolkit</p><h3>The tools I use, in plain English</h3></div>
-        <p>These names mean a lot to other engineers and very little to anyone else, so each one has a line saying what it actually does.</p>
+        <div><p className="eyebrow">Toolkit</p><h3>What I use, and what I use it for</h3></div>
+        <p>Each name carries what it actually does in the systems I have shipped.</p>
       </div>
       <div className="skills-grid">
         {skillCategories.map((category) => (
@@ -138,6 +83,15 @@ export default function About() {
             </div>
           </div>
         ))}
+      </div>
+
+      <div className="learning-strip">
+        <p className="eyebrow"><BookOpen className="h-3.5 w-3.5" /> Currently learning</p>
+        <div className="learning-tags">
+          {currentlyLearning.map((item) => (
+            <span key={item.name} title={item.note}>{item.name}</span>
+          ))}
+        </div>
       </div>
     </section>
   );

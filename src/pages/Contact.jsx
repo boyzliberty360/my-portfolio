@@ -109,7 +109,9 @@ export default function Contact() {
     <section id="contact" className="content-section section-shell scroll-mt-24">
       <div className="contact-header">
         <div><p className="eyebrow">Get in touch</p><h2 className="section-title">{profile.availability}.</h2></div>
-        <p className="section-description">Hiring, or just want to ask something? Tell me what you are building and what you need help with. You do not need to know the technical details — I reply to every message.</p>
+        <p className="section-description">
+          Hiring, or want to dig into something on this page? Tell me what you are building and where it is hard. {profile.responseTime}
+        </p>
       </div>
 
       <div className="contact-layout">

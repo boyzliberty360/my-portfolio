@@ -1,5 +1,5 @@
 import { profile } from "../data/profile";
-import { Github, Linkedin, Mail } from "lucide-react";
+import { Clock, Github, Linkedin, Mail, MapPin } from "lucide-react";
 
 export default function Footer() {
   return (
@@ -15,7 +15,14 @@ export default function Footer() {
 
           <div className="footer-links-area">
             <div className="footer-identity">
-              <div><p>{profile.name}</p><span>{profile.shortHeadline}</span></div>
+              <div>
+                <p>{profile.name}</p>
+                <span>{profile.shortHeadline}</span>
+                <span className="footer-meta">
+                  <span><MapPin className="h-3.5 w-3.5" /> {profile.location} · Remote · {profile.timezone}</span>
+                  <span><Clock className="h-3.5 w-3.5" /> {profile.responseTime}</span>
+                </span>
+              </div>
               <div className="footer-socials" aria-label="Social links">
                 <a href={`mailto:${profile.email}`} aria-label="Email Emmanuel" title="Email Emmanuel"><Mail className="h-4 w-4" /></a>
                 <a href={profile.github} target="_blank" rel="noopener noreferrer" aria-label="Open Emmanuel's GitHub" title="GitHub"><Github className="h-4 w-4" /></a>
