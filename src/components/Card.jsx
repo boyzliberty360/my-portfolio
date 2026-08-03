@@ -1,71 +1,119 @@
+import { useState } from "react";
 import { motion } from "framer-motion";
-import { ExternalLink } from "lucide-react";
+import { ArrowUpRight, Check, ExternalLink, Layers3 } from "lucide-react";
+import { projectCaseStudies } from "../data/projectCaseStudies";
 
-export default function Card({ title, description, link, image }) {
+const slugify = (value) =>
+  String(value)
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+
+// `npm run previews` writes screenshots to this convention, so a project added
+// through the admin gets a preview without anyone editing its stored record.
+const conventionalPreview = (title) => {
+  const slug = slugify(title);
+  return slug ? `/images/projects/${slug}.webp` : null;
+};
+
+const CASE_STUDY_FIELDS = [
+  { key: "problem", label: "The problem" },
+  { key: "solution", label: "What it does" },
+  { key: "role", label: "What I did" },
+  { key: "architecture", label: "How it is built" },
+  { key: "challenge", label: "The hardest part" },
+  { key: "response", label: "How I solved it" },
+];
+
+export default function Card({ title, description, link, image, technologies = [], flagship = false, github, caseStudy }) {
+  // Content entered in the admin wins; the checked-in map is the fallback for
+  // projects written before the admin carried case-study fields. Neither one
+  // present means no case study renders at all — generic filler reads worse
+  // than an absent section.
+  const study = caseStudy || projectCaseStudies[title] || null;
+  const entries = study ? CASE_STUDY_FIELDS.filter((field) => study[field.key]) : [];
+  const quality = study?.quality?.length ? study.quality : [];
+  const hasCaseStudy = entries.length > 0 || quality.length > 0;
+
+  // An explicit image wins; otherwise try the screenshot convention and fall
+  // back to the placeholder if that file is not there.
+  const [previewFailed, setPreviewFailed] = useState(false);
+  const preview = previewFailed ? null : image || conventionalPreview(title);
+
   return (
     <motion.article
-      whileHover={{ scale: 1.02, y: -4 }}
-      transition={{ type: "spring", stiffness: 280, damping: 22 }}
-      className="glass rounded-2xl p-5"
-      style={{ willChange: "transform" }}
+      whileHover={{ y: -5 }}
+      transition={{ type: "spring", stiffness: 280, damping: 24 }}
+      className={`project-card surface ${flagship ? "project-card-featured" : ""}`}
     >
-      <div className="group relative mb-4 overflow-hidden rounded-xl border border-slate-200 bg-white dark:border-white/10 dark:bg-black">
-        {image ? (
+      <div className="project-visual">
+        {preview ? (
           <img
-            src={image}
-            alt={`${title} website preview`}
-            className="h-44 w-full object-cover object-top"
+            src={preview}
+            alt={`Screenshot of the ${title} homepage`}
+            width="900" height="563"
             loading="lazy"
             decoding="async"
-          />
-        ) : link ? (
-          <iframe
-            src={link}
-            title={`${title} website preview`}
-            className="pointer-events-none h-44 w-full bg-white"
-            loading="lazy"
-            referrerPolicy="no-referrer"
-            sandbox="allow-forms allow-modals allow-popups allow-same-origin allow-scripts"
+            onError={() => setPreviewFailed(true)}
           />
         ) : (
-          <div className="flex h-44 items-center justify-center px-5 text-center text-sm text-slate-500 dark:text-slate-400">
-            Project preview unavailable
+          <div className="project-placeholder">
+            <Layers3 className="h-6 w-6" aria-hidden="true" />
+            <strong>{title}</strong>
+            {study?.type ? <span>{study.type}</span> : null}
           </div>
         )}
-
-        {link && (
-          <a
-            href={link}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="absolute inset-0 flex items-end justify-between bg-gradient-to-t from-slate-950/95 via-slate-950/15 to-transparent px-4 py-3 text-xs font-medium text-white"
-            aria-label={`Open ${title}`}
-          >
-            <span>Live project preview</span>
-            <span className="inline-flex items-center gap-1 text-cyan-300">
-              Open project <ExternalLink className="h-3.5 w-3.5" />
-            </span>
-          </a>
-        )}
+        {flagship || hasCaseStudy ? (
+          <div className="project-visual-overlay">
+            <span>{flagship ? "Flagship project" : "Selected work"}</span>
+            {hasCaseStudy ? <span>How I built it <ArrowUpRight className="h-3.5 w-3.5" /></span> : null}
+          </div>
+        ) : null}
       </div>
 
-      <h3 className="mb-2 text-xl font-bold text-cyan-400">{title}</h3>
-      <p className="mb-4 text-sm leading-relaxed text-slate-600 dark:text-gray-200">
-        {description}
-      </p>
+      <div className="project-card-body">
+        <div className="project-heading-row">
+          <div>
+            {study?.type ? <p className="project-type">{study.type}</p> : null}
+            <h3>{title}</h3>
+          </div>
+          {flagship ? <span className="flagship-badge">Flagship</span> : null}
+        </div>
+        {description ? <p className="project-summary">{description}</p> : null}
+        {technologies.length ? (
+          <div className="tag-list" aria-label={`${title} technologies`}>
+            {technologies.slice(0, 5).map((tech) => <span key={tech}>{tech}</span>)}
+          </div>
+        ) : null}
 
-      {link && (
-        <a
-          href={link}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="lg-btn inline-flex items-center gap-2 px-4 py-1.5 text-sm font-medium text-white"
-        >
-          <span className="relative z-10 inline-flex items-center gap-2">
-            View project <ExternalLink className="h-3.5 w-3.5" />
-          </span>
-        </a>
-      )}
+        {hasCaseStudy ? (
+          <details className="case-study-details">
+            <summary>See how I built this <ArrowUpRight className="h-4 w-4" /></summary>
+            <div className="case-study-content">
+              {entries.length ? (
+                <div className="case-study-grid">
+                  {entries.map((field) => (
+                    <div key={field.key}>
+                      <span className="detail-label">{field.label}</span>
+                      <p>{study[field.key]}</p>
+                    </div>
+                  ))}
+                </div>
+              ) : null}
+              {quality.length ? (
+                <div className="quality-list">
+                  {quality.map((item) => <span key={item}><Check className="h-3.5 w-3.5" /> {item}</span>)}
+                </div>
+              ) : null}
+            </div>
+          </details>
+        ) : null}
+
+        <div className="project-actions">
+          {link ? <a className="button button-primary button-small" href={link} target="_blank" rel="noopener noreferrer">View live project <ExternalLink className="h-3.5 w-3.5" /></a> : null}
+          {github ? <a className="button button-secondary button-small" href={github} target="_blank" rel="noopener noreferrer">View code <ExternalLink className="h-3.5 w-3.5" /></a> : null}
+        </div>
+      </div>
     </motion.article>
   );
 }

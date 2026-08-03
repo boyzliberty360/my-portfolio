@@ -1,6 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
-import { experiences, profile, resumeSummary, skillCategories } from "../src/data/profile.js";
+import { certifications, experiences, profile, resumeSkillGroups, resumeSummary } from "../src/data/profile.js";
 
 const PAGE_WIDTH = 595;
 const PAGE_HEIGHT = 842;
@@ -9,21 +9,55 @@ const MARGIN_TOP = 54;
 const MARGIN_BOTTOM = 52;
 const CONTENT_WIDTH = PAGE_WIDTH - MARGIN_X * 2;
 
+const COLORS = {
+  ink: [0.08, 0.12, 0.12],
+  muted: [0.30, 0.37, 0.35],
+  accent: [0.02, 0.36, 0.32],
+  accentLight: [0.88, 0.94, 0.92],
+  line: [0.78, 0.83, 0.81],
+  softLine: [0.90, 0.93, 0.92],
+};
+
 const outputPath = path.resolve("public", "Resume.pdf");
 const pages = [];
 let currentPage = [];
 let y = PAGE_HEIGHT - MARGIN_TOP;
 
+// The content stream is written as latin1 with Helvetica in StandardEncoding,
+// so any multi-byte character would both render as mojibake and desync the
+// declared stream length. Fold typographic punctuation down to ASCII first.
+const ASCII_SUBSTITUTIONS = [
+  [/[—–]/g, "-"],
+  [/[‘’‛]/g, "'"],
+  [/[“”]/g, '"'],
+  [/…/g, "..."],
+  [/·/g, "-"],
+  [/ /g, " "],
+];
+
+function toAscii(value) {
+  let text = String(value);
+  for (const [pattern, replacement] of ASCII_SUBSTITUTIONS) {
+    text = text.replace(pattern, replacement);
+  }
+  // Anything still outside printable ASCII would corrupt the stream.
+  return text.replace(/[^\x20-\x7E]/g, "");
+}
+
 function escapePdfText(value) {
-  return value.replaceAll("\\", "\\\\").replaceAll("(", "\\(").replaceAll(")", "\\)");
+  return toAscii(value).replaceAll("\\", "\\\\").replaceAll("(", "\\(").replaceAll(")", "\\)");
 }
 
-function drawText(text, x, yPos, font = "F1", size = 11) {
-  currentPage.push(`BT /${font} ${size} Tf 1 0 0 1 ${x} ${yPos} Tm (${escapePdfText(text)}) Tj ET`);
+function drawText(text, x, yPos, font = "F1", size = 11, color = COLORS.ink) {
+  currentPage.push(`BT ${color[0]} ${color[1]} ${color[2]} rg /${font} ${size} Tf 1 0 0 1 ${x} ${yPos} Tm (${escapePdfText(text)}) Tj ET`);
 }
 
-function drawLine(x1, y1, x2, y2, width = 1, rgb = [0.52, 0.67, 0.82]) {
+function drawLine(x1, y1, x2, y2, width = 1, rgb = COLORS.line) {
   currentPage.push(`${width} w ${rgb[0]} ${rgb[1]} ${rgb[2]} RG ${x1} ${y1} m ${x2} ${y2} l S`);
+}
+
+function drawFilledRect(x, yPos, width, height, rgb) {
+  currentPage.push(`${rgb[0]} ${rgb[1]} ${rgb[2]} rg ${x} ${yPos} ${width} ${height} re f`);
 }
 
 function startPage() {
@@ -86,11 +120,13 @@ function addWrappedBlock(text, options = {}) {
 }
 
 function addSectionHeading(text) {
-  requireSpace(32);
-  drawText(text.toUpperCase(), MARGIN_X, y, "F2", 14);
-  y -= 6;
-  drawLine(MARGIN_X, y, MARGIN_X + CONTENT_WIDTH, y, 0.9, [0.76, 0.8, 0.86]);
-  y -= 18;
+  requireSpace(34);
+  drawFilledRect(MARGIN_X, y - 6, CONTENT_WIDTH, 22, COLORS.accentLight);
+  drawFilledRect(MARGIN_X, y - 4, 4, 17, COLORS.accent);
+  drawText(text.toUpperCase(), MARGIN_X + 12, y, "F2", 12, COLORS.accent);
+  y -= 8;
+  drawLine(MARGIN_X, y, MARGIN_X + CONTENT_WIDTH, y, 0.65, COLORS.line);
+  y -= 17;
 }
 
 function addLabelledParagraph(label, value, size = 10, gapAfter = 6) {
@@ -117,61 +153,90 @@ function addBulletList(items, options = {}) {
 function buildResumePages() {
   startPage();
 
-  drawText(profile.name, MARGIN_X, y, "F2", 22);
+  drawFilledRect(0, PAGE_HEIGHT - 10, PAGE_WIDTH, 10, COLORS.accent);
+
+  drawText(profile.name, MARGIN_X, y, "F2", 22, COLORS.ink);
   y -= 30;
-  drawText(profile.title, MARGIN_X, y, "F1", 13);
+  drawText("AI Engineer | Frontend Engineer | Backend Engineer", MARGIN_X, y, "F1", 13, COLORS.accent);
   y -= 22;
-  drawText(`${profile.email} | ${profile.location} | github.com/${profile.githubHandle}`, MARGIN_X, y, "F1", 11);
-  y -= 14;
-  drawLine(MARGIN_X, y, MARGIN_X + CONTENT_WIDTH, y, 1, [0.68, 0.74, 0.82]);
-  y -= 18;
+  drawText(`${profile.email} | ${profile.phone} | ${profile.location}`, MARGIN_X, y, "F1", 10, COLORS.muted);
+  y -= 15;
+  drawText(`github.com/${profile.githubHandle} | ${profile.siteUrl}`, MARGIN_X, y, "F1", 10, COLORS.muted);
+  y -= 13;
+  drawLine(MARGIN_X, y, MARGIN_X + CONTENT_WIDTH, y, 1.1, COLORS.accent);
+  y -= 20;
 
   addSectionHeading("Professional Summary");
   addWrappedBlock(resumeSummary, { size: 11, lineHeight: 16, gapAfter: 10 });
 
   addSectionHeading("Technical Skills");
-  for (const category of skillCategories) {
-    addLabelledParagraph(category.title, category.items.join(", "));
+  for (const category of resumeSkillGroups) {
+    addLabelledParagraph(category.title, category.skills);
   }
 
-  addSectionHeading("Core Competencies");
+  addSectionHeading("Certifications");
+  for (const certification of certifications) {
+    addLabelledParagraph(
+      certification.name,
+      `${certification.issuer}; ${certification.programme}; Issued ${certification.issued}; Credential ID ${certification.credentialId}`,
+      10,
+      8,
+    );
+  }
+
+  addSectionHeading("AI Engineering");
   addBulletList([
-    "Full-stack web application development",
-    "Responsive frontend implementation",
-    "REST API design and backend integration",
-    "Database design and query optimization",
-    "AI API integration and product features",
-    "Cross-functional collaboration and delivery",
+    "Implemented AI application workflows with Groq, OpenAI, Anthropic Claude, Cerebras, and the Vercel AI SDK",
+    "Designed provider failover and deterministic fallback paths for degraded or unavailable AI services",
+    "Added output validation, prompt-injection controls, personal-data redaction, and request rate limiting",
+    "Applied cost-aware model routing so simple tasks use efficient models and complex tasks receive more capable models",
+  ]);
+
+  requireSpace(130);
+  addSectionHeading("AWS-Ready Cloud Foundations");
+  addBulletList([
+    "Cloud-ready application foundations: Dockerized Node.js and Go services, stateless REST APIs, environment-based configuration, and health checks",
+    "Transferable AWS service patterns across compute, RDS/PostgreSQL, ElastiCache/Redis, S3-style object storage, and CloudWatch-oriented logging",
+    "Security-minded delivery with validation, least-privilege thinking, rate limiting, secrets separation, and observable failure paths",
+  ]);
+
+  addSectionHeading("Product Engineering");
+  addBulletList([
+    "Built responsive React and Next.js interfaces that work clearly across phones, tablets, and desktop screens",
+    "Implemented Node.js and Go services with PostgreSQL, MongoDB, Redis, Supabase, and REST API integrations",
+    "Added automated checks, structured logging, validation, and deployment workflows to improve release confidence",
+    "Communicated technical decisions clearly across remote collaboration and supported junior developer growth",
   ]);
 
   addSectionHeading("Experience");
   for (const item of experiences) {
     requireSpace(96);
-    drawText(`${item.role} | ${item.company}`, MARGIN_X, y, "F2", 11);
+    drawFilledRect(MARGIN_X, y - 6, CONTENT_WIDTH, 22, COLORS.accentLight);
+    drawText(`${item.role} | ${item.company}`, MARGIN_X, y, "F2", 11, COLORS.ink);
     y -= 16;
-    drawText(item.period, MARGIN_X, y, "F1", 10);
+    drawText(item.period, MARGIN_X, y, "F1", 10, COLORS.accent);
     y -= 16;
     addWrappedBlock(item.description, { size: 10, lineHeight: 14, gapAfter: 6 });
     addBulletList(
       item.company === "Mercuryx"
         ? [
-            "Build and maintain scalable software systems across planning, development, QA, and deployment.",
-            "Support frontend training sessions for junior developers in HTML, CSS, and JavaScript.",
+            "Take features from first idea through building, testing, and release to real users.",
+            "Teach the junior developers on the team and review their work.",
           ]
         : item.company === "Learn2Earn"
         ? [
-            "Strengthened backend development fundamentals through focused Golang training.",
-            "Practiced building backend logic and understanding API design with Go.",
+            "Intensive programme in Go, a language built for handling many users at once.",
+            "Covered designing the behind-the-scenes half of an app to stay fast under load.",
           ]
         : [
-            "Built responsive user interfaces and connected them to backend services and data workflows.",
-            "Developed and maintained APIs and application features that improved product reliability and usability.",
+            "Built complete features for clients: the screens, the storage, and everything in between.",
+            "Made the parts people used most noticeably faster.",
           ],
       { size: 10, gapAfter: 4 }
     );
     y -= 4;
     if (item !== experiences[experiences.length - 1]) {
-      drawLine(MARGIN_X, y, MARGIN_X + CONTENT_WIDTH, y, 0.6, [0.87, 0.9, 0.94]);
+      drawLine(MARGIN_X, y, MARGIN_X + CONTENT_WIDTH, y, 0.6, COLORS.softLine);
       y -= 12;
     } else {
       y -= 6;

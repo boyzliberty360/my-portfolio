@@ -1,147 +1,144 @@
-import { motion } from "framer-motion";
-import { Mail, MapPin, Download, Globe, Database, Wrench, Github, Cpu, Link } from "lucide-react";
-import { aboutParagraphs, profile, services, skillCategories } from "../data/profile";
+import { motion, useReducedMotion } from "framer-motion";
+import { ArrowUpRight, Check, Download, Github, Linkedin, Mail, MapPin, Sparkles } from "lucide-react";
+import { aiPractices, aboutParagraphs, profile, services, skillCategories, workingPrinciples } from "../data/profile";
 
-const About = () => {
-  const iconsByTitle = {
-    Frontend: <Globe size={20} />,
-    "Backend & Databases": <Database size={20} />,
-    "AI & APIs": <Cpu size={20} />,
-    "Blockchain / Web3": <Link size={20} />,
-    "Tools & DevOps": <Wrench size={20} />,
-  };
+function SectionIntro({ eyebrow, title, children }) {
+  return (
+    <div className="section-intro">
+      <p className="eyebrow">{eyebrow}</p>
+      <h2 className="section-title">{title}</h2>
+      {children ? <p className="section-description">{children}</p> : null}
+    </div>
+  );
+}
+
+export default function About() {
+  const prefersReducedMotion = useReducedMotion();
 
   return (
-    <section id="about" className="min-h-screen py-20 px-6 md:px-20">
-      <div className="max-w-6xl mx-auto">
-        {/* Heading */}
-        <motion.h2
-          initial={{ opacity: 0, x: -30 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.6 }}
-          className="ai-heading text-4xl md:text-5xl font-bold mb-12 dark:text-white text-slate-900"
+    <section id="about" className="content-section section-shell scroll-mt-24">
+      <SectionIntro eyebrow="What I do" title="Making AI work once is easy. Keeping it working is the job." />
+
+      <div className="about-layout">
+        <motion.div
+          initial={prefersReducedMotion ? false : { opacity: 0, x: -18 }}
+          whileInView={prefersReducedMotion ? undefined : { opacity: 1, x: 0 }}
+          viewport={{ once: true, amount: 0.2 }}
+          transition={{ duration: 0.55 }}
+          className="about-story surface"
         >
-          About Me
-        </motion.h2>
+          <div className="story-label">01 / Approach</div>
+          <div className="story-copy">
+            {aboutParagraphs.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
+          </div>
+          <div className="story-footer">
+            <div className="contact-mini">
+              <span className="mini-avatar">EA</span>
+              <div><strong>{profile.name}</strong><span>{profile.shortHeadline}</span></div>
+            </div>
+            <a className="text-link" href="#contact">Get in touch <ArrowUpRight className="h-4 w-4" /></a>
+          </div>
+        </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-12">
-          {/* Left - Personal Info */}
-          <motion.div
-            initial={{ opacity: 0, x: -30 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.2, duration: 0.6 }}
+        <motion.aside
+          initial={prefersReducedMotion ? false : { opacity: 0, x: 18 }}
+          whileInView={prefersReducedMotion ? undefined : { opacity: 1, x: 0 }}
+          viewport={{ once: true, amount: 0.2 }}
+          transition={{ duration: 0.55, delay: 0.08 }}
+          className="about-aside"
+        >
+          <div className="info-list surface">
+            <div className="info-row"><MapPin className="h-4 w-4" /><span>Working</span><strong>Remote · {profile.timezone}</strong></div>
+            <div className="info-row"><Mail className="h-4 w-4" /><span>Email</span><a href={`mailto:${profile.email}`}>{profile.email}</a></div>
+            <div className="info-row"><Github className="h-4 w-4" /><span>Code</span><a href={profile.github} target="_blank" rel="noopener noreferrer">@{profile.githubHandle}</a></div>
+            {profile.linkedin ? (
+              <div className="info-row"><Linkedin className="h-4 w-4" /><span>LinkedIn</span><a href={profile.linkedin} target="_blank" rel="noopener noreferrer">{profile.linkedinHandle || "Profile"}</a></div>
+            ) : null}
+          </div>
+          <a className="button button-primary button-wide" href="/Resume.pdf" download="Emmanuel-Adejoh-CV.pdf">
+            <Download className="h-4 w-4" /> Download my resume
+          </a>
+        </motion.aside>
+      </div>
+
+      <div className="principles-grid">
+        {workingPrinciples.map((principle, index) => (
+          <motion.article
+            key={principle.title}
+            initial={prefersReducedMotion ? false : { opacity: 0, y: 14 }}
+            whileInView={prefersReducedMotion ? undefined : { opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.15 }}
+            transition={{ duration: 0.45, delay: index * 0.07 }}
+            className="principle-card"
           >
-            {/* Profile Card */}
-            <div className="glass dark:bg-black/30 bg-white/10 rounded-2xl p-8 mb-6">
-              <h3 className="text-2xl font-bold mb-6 dark:text-white text-slate-900">{profile.name}</h3>
-              
-              <div className="space-y-4">
-                <div className="flex items-center gap-3">
-                  <Mail className="text-cyan-400" size={20} />
-                  <span className="dark:text-gray-300 text-slate-700">{profile.email}</span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <MapPin className="text-cyan-400" size={20} />
-                  <span className="dark:text-gray-300 text-slate-700">{profile.location}</span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <Github className="text-cyan-400" size={20} />
-                  <a
-                    href={profile.github}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="dark:text-gray-300 text-slate-700 hover:text-cyan-300 transition-colors"
-                  >
-                    github.com/{profile.githubHandle}
-                  </a>
-                </div>
-              </div>
+            <span className="principle-number">0{index + 1}</span>
+            <h3>{principle.title}</h3>
+            <p>{principle.description}</p>
+          </motion.article>
+        ))}
+      </div>
 
-              <a
-                href="/Resume.pdf"
-                download="Emmanuel-Adejoh-CV.pdf"
-                className="lg-btn mt-6 inline-flex items-center gap-2 px-6 py-3 text-white font-medium"
-              >
-                <span className="relative z-10 flex items-center gap-2">
-                  <Download size={18} />
-                  Download CV
-                </span>
-              </a>
-            </div>
-
-            {/* Skills */}
-            <div className="glass dark:bg-black/30 bg-white/10 rounded-2xl p-8">
-              <h4 className="text-lg font-semibold mb-4 dark:text-white text-slate-900">Skills</h4>
-              <div className="space-y-4">
-                {skillCategories.map((category, i) => (
-                  <motion.div
-                    key={category.title}
-                    initial={{ opacity: 0, y: 10 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    transition={{ delay: i * 0.1, duration: 0.3 }}
-                    className="rounded-xl border border-white/15 dark:border-white/10 p-4"
-                  >
-                    <div className="flex items-center gap-2 mb-3">
-                      <span className="text-cyan-400">{iconsByTitle[category.title]}</span>
-                      <h5 className="font-semibold dark:text-white text-slate-900">{category.title}</h5>
-                    </div>
-                    <div className="flex flex-wrap gap-2">
-                      {category.items.map((item) => (
-                        <span
-                          key={item}
-                          className="neon-pill px-3 py-1 rounded-full text-xs font-medium bg-white/20 dark:bg-white/10 text-slate-800 dark:text-gray-200"
-                        >
-                          {item}
-                        </span>
-                      ))}
-                    </div>
-                  </motion.div>
-                ))}
-              </div>
-            </div>
-          </motion.div>
-
-          {/* Right - Services */}
-          <motion.div
-            initial={{ opacity: 0, x: 30 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.4, duration: 0.6 }}
+      <div className="subsection-heading">
+        <div><p className="eyebrow">Safety nets</p><h3>Three things I always build in</h3></div>
+        <p>Plugging an app into an AI takes an afternoon. These are the protections that decide whether it still works six months later, and every project of mine has all three.</p>
+      </div>
+      <div className="principles-grid">
+        {aiPractices.map((practice, index) => (
+          <motion.article
+            key={practice.title}
+            initial={prefersReducedMotion ? false : { opacity: 0, y: 14 }}
+            whileInView={prefersReducedMotion ? undefined : { opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.15 }}
+            transition={{ duration: 0.45, delay: index * 0.07 }}
+            className="principle-card"
           >
-            <div className="glass dark:bg-black/30 bg-white/10 rounded-2xl p-8 mb-6">
-              <h3 className="text-2xl font-bold mb-4 dark:text-white text-slate-900">Overview</h3>
-              <div className="space-y-4">
-                {aboutParagraphs.map((paragraph) => (
-                  <p
-                    key={paragraph}
-                    className="dark:text-gray-300 text-slate-600 text-sm leading-relaxed"
-                  >
-                    {paragraph}
-                  </p>
-                ))}
-              </div>
-            </div>
+            <span className="principle-number"><Sparkles className="h-3.5 w-3.5" /></span>
+            <h3>{practice.title}</h3>
+            <p>{practice.description}</p>
+          </motion.article>
+        ))}
+      </div>
 
-            <h3 className="text-2xl font-bold mb-6 dark:text-white text-slate-900">What I Do</h3>
-            <div className="space-y-4">
-              {services.map((service, i) => (
-                <motion.div
-                  key={i}
-                  initial={{ opacity: 0, x: 20 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.5 + i * 0.1, duration: 0.5 }}
-                  className="glass dark:bg-black/30 bg-white/10 rounded-xl p-6 hover:bg-white/15 dark:hover:bg-black/40 transition-all duration-300"
-                >
-                  <h4 className="text-lg font-semibold mb-2 dark:text-white text-slate-900">{service.title}</h4>
-                  <p className="dark:text-gray-400 text-slate-600 text-sm leading-relaxed">{service.desc}</p>
-                </motion.div>
+      <div className="subsection-heading">
+        <div><p className="eyebrow">What I can take on</p><h3>Four things I handle for a team</h3></div>
+        <p>I can build an AI feature from the screen a person sees all the way down to the system underneath — so it does not need splitting between two people who then have to keep each other in sync.</p>
+      </div>
+      <div className="services-grid">
+        {services.map((service, index) => (
+          <motion.article
+            key={service.title}
+            initial={prefersReducedMotion ? false : { opacity: 0, y: 14 }}
+            whileInView={prefersReducedMotion ? undefined : { opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.15 }}
+            transition={{ duration: 0.45, delay: index * 0.07 }}
+            className="service-card surface"
+          >
+            <span className="service-check"><Check className="h-4 w-4" /></span>
+            <h3>{service.title}</h3>
+            <p>{service.desc}</p>
+          </motion.article>
+        ))}
+      </div>
+
+      <div className="subsection-heading skills-heading">
+        <div><p className="eyebrow">Toolkit</p><h3>The tools I use, in plain English</h3></div>
+        <p>These names mean a lot to other engineers and very little to anyone else, so each one has a line saying what it actually does.</p>
+      </div>
+      <div className="skills-grid">
+        {skillCategories.map((category) => (
+          <div className="skill-group surface" key={category.title}>
+            <h3>{category.title}</h3>
+            <div className="skill-list">
+              {category.items.map((skill) => (
+                <div className="skill-row" key={skill.name}>
+                  <strong>{skill.name}</strong>
+                  <span>{skill.evidence}</span>
+                </div>
               ))}
             </div>
-          </motion.div>
-        </div>
+          </div>
+        ))}
       </div>
     </section>
   );
-};
-
-export default About;
-
+}

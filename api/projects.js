@@ -1,47 +1,15 @@
-import { createHmac, randomUUID, timingSafeEqual } from "node:crypto";
+import { randomUUID } from "node:crypto";
 import { get, head, put } from "@vercel/blob";
+import {
+  createSessionToken,
+  getAdminPassword,
+  getBearerToken,
+  isCorrectAdminPassword,
+  isValidSessionToken,
+  json,
+} from "./_lib/adminAuth.js";
 
 const PROJECTS_PATH = "portfolio/projects.json";
-const TOKEN_TTL_MS = 8 * 60 * 60 * 1000;
-
-const json = (response, status, body) => {
-  response.setHeader("Cache-Control", "no-store");
-  return response.status(status).json(body);
-};
-
-const safeEqual = (left, right) => {
-  const leftBuffer = Buffer.from(String(left));
-  const rightBuffer = Buffer.from(String(right));
-  return leftBuffer.length === rightBuffer.length && timingSafeEqual(leftBuffer, rightBuffer);
-};
-
-const getAdminPassword = () => process.env.ADMIN_PASSWORD || "";
-
-const createSessionToken = () => {
-  const password = getAdminPassword();
-  const payload = Buffer.from(`${Date.now() + TOKEN_TTL_MS}.${randomUUID()}`).toString("base64url");
-  const signature = createHmac("sha256", password).update(payload).digest("base64url");
-  return `${payload}.${signature}`;
-};
-
-const isValidSessionToken = (token) => {
-  const password = getAdminPassword();
-  if (!password || !token) return false;
-
-  const [payload, signature, extra] = token.split(".");
-  if (!payload || !signature || extra) return false;
-
-  const expected = createHmac("sha256", password).update(payload).digest("base64url");
-  if (!safeEqual(signature, expected)) return false;
-
-  try {
-    const [expiresAt] = Buffer.from(payload, "base64url").toString("utf8").split(".");
-    return Number(expiresAt) > Date.now();
-  } catch {
-    return false;
-  }
-};
-
 const getProjectsFile = async () => {
   const result = await get(PROJECTS_PATH, { access: "private", useCache: false });
   if (!result || result.statusCode !== 200 || !result.stream) {
@@ -80,6 +48,55 @@ const cleanUrl = (value) => {
   }
 };
 
+// Screenshots usually live in this repo's /public, so a root-relative path is
+// valid here even though it is not a parseable absolute URL.
+const cleanImage = (value) => {
+  const trimmed = String(value || "").trim();
+  if (!trimmed) return null;
+  if (trimmed.startsWith("/") && !trimmed.startsWith("//")) return trimmed.slice(0, 300);
+  return cleanUrl(trimmed);
+};
+
+const MAX_TECHNOLOGIES = 8;
+
+const cleanTechnologies = (value) => {
+  const list = Array.isArray(value) ? value : String(value || "").split(",");
+  return list
+    .map((item) => cleanText(item, 40))
+    .filter(Boolean)
+    .slice(0, MAX_TECHNOLOGIES);
+};
+
+const CASE_STUDY_TEXT_FIELDS = [
+  "type",
+  "problem",
+  "solution",
+  "role",
+  "architecture",
+  "challenge",
+  "response",
+];
+
+// Every field is optional. A project with no case study renders without one,
+// which is the point — generic filler reads worse than an absent section.
+const cleanCaseStudy = (value) => {
+  if (!value || typeof value !== "object") return null;
+
+  const study = {};
+  for (const field of CASE_STUDY_TEXT_FIELDS) {
+    const text = cleanText(value[field], 600);
+    if (text) study[field] = text;
+  }
+
+  const quality = (Array.isArray(value.quality) ? value.quality : String(value.quality || "").split("\n"))
+    .map((item) => cleanText(item, 120))
+    .filter(Boolean)
+    .slice(0, 6);
+  if (quality.length) study.quality = quality;
+
+  return Object.keys(study).length ? study : null;
+};
+
 const normalizeProject = (input, existing = {}) => ({
   id: existing.id || randomUUID(),
   name: cleanText(input.name ?? input.displayName ?? existing.name ?? existing.displayName, 100),
@@ -87,14 +104,14 @@ const normalizeProject = (input, existing = {}) => ({
   link: cleanUrl(
     input.link ?? input.liveUrl ?? input.html_url ?? existing.link ?? existing.liveUrl ?? existing.html_url,
   ),
+  image: cleanImage(input.image ?? existing.image),
+  github: cleanUrl(input.github ?? input.githubUrl ?? existing.github ?? existing.githubUrl),
+  technologies: cleanTechnologies(input.technologies ?? input.stack ?? existing.technologies ?? existing.stack),
+  featured: Boolean(input.featured ?? existing.featured ?? false),
+  caseStudy: cleanCaseStudy(input.caseStudy ?? existing.caseStudy),
   createdAt: existing.createdAt || new Date().toISOString(),
   updatedAt: new Date().toISOString(),
 });
-
-const getBearerToken = (request) => {
-  const authorization = request.headers.authorization || "";
-  return authorization.startsWith("Bearer ") ? authorization.slice(7) : "";
-};
 
 export default async function handler(request, response) {
   try {
@@ -106,7 +123,7 @@ export default async function handler(request, response) {
     if (request.method === "POST" && request.body?.action === "login") {
       const password = getAdminPassword();
       if (!password) return json(response, 503, { error: "Admin password is not configured" });
-      if (!safeEqual(request.body.password || "", password)) {
+      if (!isCorrectAdminPassword(request.body.password || "")) {
         return json(response, 401, { error: "Incorrect password" });
       }
       return json(response, 200, { token: createSessionToken() });

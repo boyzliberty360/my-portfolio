@@ -7,6 +7,7 @@ import About from "./pages/About";
 import Experience from "./pages/Experience";
 import Projects from "./pages/Projects";
 import Certifications from "./pages/Certifications";
+import Testimonials from "./pages/Testimonials";
 import Contact from "./pages/Contact";
 import Admin from "./pages/Admin";
 import { ThemeProvider } from "./context/ThemeContext";
@@ -19,18 +20,21 @@ const sectionVariant = {
 function Portfolio() {
   return (
     <div className="app-shell min-h-screen overflow-x-hidden transition-colors duration-500 dark:text-white text-slate-900">
+      <a className="skip-link" href="#main-content">Skip to content</a>
       <Navbar />
       <motion.main
+        id="main-content"
         initial="hidden"
         animate="visible"
-        transition={{ staggerChildren: 0.15 }}
-        className="mt-20 space-y-20 md:space-y-24 lg:space-y-28"
+        transition={{ staggerChildren: 0.1 }}
+        className="space-y-8 md:space-y-12"
       >
         <motion.div variants={sectionVariant}><Home /></motion.div>
-        <motion.div variants={sectionVariant}><Projects /></motion.div>
-        <motion.div variants={sectionVariant}><Certifications /></motion.div>
         <motion.div variants={sectionVariant}><About /></motion.div>
+        <motion.div variants={sectionVariant}><Projects /></motion.div>
         <motion.div variants={sectionVariant}><Experience /></motion.div>
+        <motion.div variants={sectionVariant}><Certifications /></motion.div>
+        <motion.div variants={sectionVariant}><Testimonials /></motion.div>
         <motion.div variants={sectionVariant}><Contact /></motion.div>
       </motion.main>
       <Footer />

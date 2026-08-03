@@ -5,7 +5,7 @@ const ThemeContext = createContext();
 export function ThemeProvider({ children }) {
   const [isDark, setIsDark] = useState(() => {
     const savedTheme = localStorage.getItem("portfolio-theme");
-    return savedTheme ? savedTheme === "dark" : false;
+    return savedTheme ? savedTheme === "dark" : window.matchMedia("(prefers-color-scheme: dark)").matches;
   });
 
   useEffect(() => {

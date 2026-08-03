@@ -1,54 +1,38 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Moon, Sun, Menu, X, Cpu } from "lucide-react";
+import { Moon, Sun, Menu, X, Sparkles } from "lucide-react";
 import { useTheme } from "../context/ThemeContext";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const { isDark, toggleTheme } = useTheme();
 
-  const links = ["Home", "Projects", "Certifications", "About", "Experience", "Contact"];
-  const toggleLabel = isDark ? "Dark mode" : "Light mode";
+  const links = ["About", "Projects", "Experience", "Certifications", "Testimonials", "Contact"];
+  const toggleLabel = `Switch to ${isDark ? "light" : "dark"} mode`;
 
   return (
-    <nav className="fixed top-0 z-50 w-full px-3 py-2.5 md:px-8 md:py-3">
-      <div className="glass mx-auto max-w-6xl rounded-[1.1rem] px-3 py-2 md:rounded-full md:px-5 md:py-2.5">
+    <nav aria-label="Primary navigation" className="site-nav fixed top-0 z-50 w-full px-4 py-4 md:px-8">
+      <div className="nav-inner mx-auto max-w-6xl rounded-2xl px-3 py-2.5 md:rounded-full md:px-5 md:py-3">
         <div className="relative flex items-center justify-between gap-4">
           <a
             href="#home"
             onClick={() => setIsOpen(false)}
-            className="logo-text relative z-10 flex min-w-0 items-center gap-1.5 text-base font-bold text-cyan-300 sm:text-lg md:text-xl"
+            className="logo-text relative z-10 flex min-w-0 items-center gap-2 text-base font-bold text-slate-950 dark:text-white sm:text-lg"
             aria-label="Go to home"
           >
-            <Cpu className="h-4.5 w-4.5 shrink-0" />
-            <span className="truncate">MyPortfolio</span>
+            <span className="brand-mark"><Sparkles className="h-4 w-4" /></span>
+            <span className="truncate">Emmanuel Adejoh</span>
           </a>
 
           <div className="hidden md:absolute md:left-1/2 md:flex md:-translate-x-1/2 md:items-center">
             <button
               onClick={toggleTheme}
-              className="theme-toggle theme-toggle-desktop group relative inline-flex h-10 w-[8.5rem] items-center rounded-full p-1 text-xs font-semibold"
-              aria-label={`Switch to ${isDark ? "light" : "dark"} mode`}
+              className="theme-icon-button"
+              aria-label={toggleLabel}
               aria-pressed={isDark}
               title={toggleLabel}
             >
-              <span className="theme-toggle-thumb" />
-              <span
-                className={`relative z-10 flex w-1/2 items-center justify-center gap-1.5 transition-colors ${
-                  isDark ? "text-slate-400" : "text-slate-950"
-                }`}
-              >
-                <Sun className="h-3 w-3" />
-                Light
-              </span>
-              <span
-                className={`relative z-10 flex w-1/2 items-center justify-center gap-1.5 transition-colors ${
-                  isDark ? "text-cyan-100" : "text-slate-500"
-                }`}
-              >
-                <Moon className="h-3 w-3" />
-                Dark
-              </span>
+              {isDark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
             </button>
           </div>
 
@@ -58,7 +42,7 @@ export default function Navbar() {
                 <li key={item}>
                   <a
                     href={`#${item.toLowerCase()}`}
-                    className="relative text-[0.78rem] font-semibold tracking-wide transition-colors duration-200 hover:text-cyan-300 lg:text-[0.86rem]"
+                    className="nav-link relative text-[0.78rem] font-semibold tracking-wide transition-colors duration-200 lg:text-[0.86rem]"
                   >
                     {item}
                   </a>
@@ -70,28 +54,12 @@ export default function Navbar() {
           <div className="flex items-center gap-2 md:hidden">
             <button
               onClick={toggleTheme}
-              className="theme-toggle theme-toggle-mobile relative inline-flex h-8.5 w-[6.4rem] items-center rounded-full p-1 text-[10px] font-semibold"
-              aria-label={`Switch to ${isDark ? "light" : "dark"} mode`}
+              className="theme-icon-button"
+              aria-label={toggleLabel}
               aria-pressed={isDark}
               title={toggleLabel}
             >
-              <span className="theme-toggle-thumb" />
-              <span
-                className={`relative z-10 flex w-1/2 items-center justify-center gap-1 transition-colors ${
-                  isDark ? "text-slate-400" : "text-slate-950"
-                }`}
-              >
-                <Sun className="h-2.5 w-2.5" />
-                <span>Day</span>
-              </span>
-              <span
-                className={`relative z-10 flex w-1/2 items-center justify-center gap-1 transition-colors ${
-                  isDark ? "text-cyan-100" : "text-slate-500"
-                }`}
-              >
-                <Moon className="h-2.5 w-2.5" />
-                <span>Night</span>
-              </span>
+              {isDark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
             </button>
 
             <button
@@ -114,13 +82,13 @@ export default function Navbar() {
               transition={{ duration: 0.18 }}
               className="md:hidden"
             >
-              <div className="mt-3 rounded-2xl border border-slate-200 bg-white p-2 shadow-lg dark:border-white/10 dark:bg-black">
+              <div className="mobile-menu mt-3 rounded-2xl p-2">
                 <ul className="grid gap-2">
                   {links.map((item) => (
                     <li key={item}>
                       <a
                         href={`#${item.toLowerCase()}`}
-                        className="block rounded-xl px-3.5 py-2.5 text-[15px] font-semibold text-slate-900 transition-colors hover:bg-slate-100 hover:text-cyan-300 dark:text-white dark:hover:bg-white/10"
+                        className="nav-link block rounded-xl px-3.5 py-2.5 text-[15px] font-semibold text-slate-900 transition-colors dark:text-white"
                         onClick={() => setIsOpen(false)}
                       >
                         {item}

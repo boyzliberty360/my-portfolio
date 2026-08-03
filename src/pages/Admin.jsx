@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   Plus, Trash2, Eye, EyeOff, ExternalLink,
   ArrowLeft, Save, Globe, CheckCircle, LogOut, LoaderCircle,
+  MessageSquareQuote, XCircle, Clock, RotateCcw,
 } from "lucide-react";
 import {
   authenticateAdmin,
@@ -10,6 +11,13 @@ import {
   saveAdminProject,
   deleteAdminProject,
 } from "../lib/adminProjects";
+import {
+  deleteAdminTestimonial,
+  getAdminTestimonials,
+  saveAdminTestimonial,
+  updateAdminTestimonial,
+} from "../lib/adminTestimonials";
+import { testimonialSamples } from "../data/testimonialSamples";
 
 const normalizeUrl = (raw) => {
   if (!raw) return null;
@@ -22,6 +30,36 @@ const EMPTY_FORM = {
   name: "",
   description: "",
   link: "",
+  image: "",
+  github: "",
+  technologies: "",
+  featured: false,
+  type: "",
+  problem: "",
+  solution: "",
+  role: "",
+  architecture: "",
+  challenge: "",
+  response: "",
+  quality: "",
+};
+
+// The public card only renders a case study when there is real content for it,
+// so every one of these fields is optional.
+const buildCaseStudy = (form) => {
+  const study = {
+    type: form.type.trim(),
+    problem: form.problem.trim(),
+    solution: form.solution.trim(),
+    role: form.role.trim(),
+    architecture: form.architecture.trim(),
+    challenge: form.challenge.trim(),
+    response: form.response.trim(),
+    quality: form.quality.split("\n").map((line) => line.trim()).filter(Boolean),
+  };
+
+  const hasContent = Object.values(study).some((value) => (Array.isArray(value) ? value.length : value));
+  return hasContent ? study : null;
 };
 
 function PasswordGate({ onAuth }) {
@@ -180,14 +218,72 @@ function ProjectCard({ project, onDelete }) {
   );
 }
 
+const EMPTY_TESTIMONIAL_FORM = {
+  quote: "",
+  name: "",
+  role: "",
+  company: "",
+  avatarUrl: "",
+  sourceUrl: "",
+};
+
+function TestimonialCard({ testimonial, onStatus, onDelete }) {
+  const statusStyles = {
+    pending: "border-amber-400/30 bg-amber-400/10 text-amber-600 dark:text-amber-300",
+    approved: "border-emerald-400/30 bg-emerald-400/10 text-emerald-600 dark:text-emerald-300",
+    rejected: "border-red-400/30 bg-red-400/10 text-red-600 dark:text-red-300",
+  };
+
+  return (
+    <motion.article
+      layout
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="admin-testimonial-card glass rounded-xl border border-white/15 p-5"
+    >
+      <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
+        <div className="flex items-center gap-2">
+          <MessageSquareQuote size={16} className="text-cyan-400" />
+          <span className={`rounded-full border px-2 py-1 text-[10px] font-bold uppercase tracking-wide ${statusStyles[testimonial.status] || statusStyles.pending}`}>
+            {testimonial.status}
+          </span>
+          {testimonial.isSample ? <span className="rounded-full border border-slate-300 px-2 py-1 text-[10px] font-bold uppercase tracking-wide text-slate-500 dark:border-white/15 dark:text-slate-400">Sample</span> : null}
+        </div>
+        <button onClick={() => onDelete(testimonial.id)} className="rounded p-1 text-red-400 transition-colors hover:bg-red-400/10 hover:text-red-300" title="Delete testimonial" aria-label={`Delete testimonial from ${testimonial.name}`}>
+          <Trash2 size={16} />
+        </button>
+      </div>
+
+      <blockquote className="text-sm leading-relaxed text-slate-700 dark:text-slate-200">“{testimonial.quote}”</blockquote>
+      <div className="mt-4 border-t border-slate-200 pt-3 dark:border-white/10">
+        <p className="font-semibold text-slate-900 dark:text-white">{testimonial.name}</p>
+        <p className="text-xs text-slate-500 dark:text-slate-400">{testimonial.role} · {testimonial.company}</p>
+        {testimonial.sourceUrl ? <a href={testimonial.sourceUrl} target="_blank" rel="noopener noreferrer" className="mt-2 inline-flex items-center gap-1 text-xs text-cyan-500 hover:underline"><ExternalLink size={11} /> View source</a> : null}
+      </div>
+
+      <div className="mt-4 flex flex-wrap gap-2">
+        {testimonial.status !== "approved" ? <button onClick={() => onStatus(testimonial.id, "approved")} className="admin-action admin-action-approve"><CheckCircle size={14} /> Approve</button> : null}
+        {testimonial.status !== "rejected" ? <button onClick={() => onStatus(testimonial.id, "rejected")} className="admin-action admin-action-reject"><XCircle size={14} /> Reject</button> : null}
+        {testimonial.status !== "pending" ? <button onClick={() => onStatus(testimonial.id, "pending")} className="admin-action"><RotateCcw size={14} /> Return to pending</button> : null}
+      </div>
+    </motion.article>
+  );
+}
+
 export default function Admin() {
   const initialToken = sessionStorage.getItem("admin-session") || "";
   const [authToken, setAuthToken] = useState(initialToken);
+  const [activeTab, setActiveTab] = useState("projects");
   const [projects, setProjects] = useState([]);
+  const [testimonials, setTestimonials] = useState([]);
   const [loading, setLoading] = useState(Boolean(initialToken));
+  const [testimonialsLoading, setTestimonialsLoading] = useState(Boolean(initialToken));
   const [form, setForm] = useState(EMPTY_FORM);
+  const [testimonialForm, setTestimonialForm] = useState(EMPTY_TESTIMONIAL_FORM);
   const [saved, setSaved] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [testimonialSaving, setTestimonialSaving] = useState(false);
+  const [testimonialSaved, setTestimonialSaved] = useState(false);
   const [actionError, setActionError] = useState("");
 
   const refresh = async () => {
@@ -197,14 +293,30 @@ export default function Admin() {
     setLoading(false);
   };
 
+  const refreshTestimonials = async () => {
+    setTestimonialsLoading(true);
+    const data = await getAdminTestimonials(authToken);
+    setTestimonials(data);
+    setTestimonialsLoading(false);
+  };
+
   useEffect(() => {
     if (!authToken) return undefined;
 
     let cancelled = false;
-    getAdminProjects().then((data) => {
+    Promise.all([getAdminProjects(), getAdminTestimonials(authToken)]).then(([projectData, testimonialData]) => {
       if (!cancelled) {
-        setProjects(data);
+        setProjects(projectData);
+        setTestimonials(testimonialData);
         setLoading(false);
+        setTestimonialsLoading(false);
+      }
+    }).catch((error) => {
+      if (!cancelled) {
+        if (error.status === 401) clearSession();
+        else setActionError(error.message || "Unable to load admin content");
+        setLoading(false);
+        setTestimonialsLoading(false);
       }
     });
 
@@ -239,6 +351,11 @@ export default function Admin() {
       name: form.name.trim(),
       description: form.description.trim(),
       link: normalizeUrl(form.link),
+      image: form.image.trim(),
+      github: normalizeUrl(form.github),
+      technologies: form.technologies.split(",").map((item) => item.trim()).filter(Boolean),
+      featured: form.featured,
+      caseStudy: buildCaseStudy(form),
     };
 
     try {
@@ -251,6 +368,61 @@ export default function Admin() {
       handleRequestError(error);
     } finally {
       setSaving(false);
+    }
+  };
+
+  const handleTestimonialSubmit = async (e) => {
+    e.preventDefault();
+    if (!testimonialForm.quote.trim() || !testimonialForm.name.trim() || !testimonialForm.role.trim() || !testimonialForm.company.trim() || testimonialSaving) return;
+
+    setTestimonialSaving(true);
+    setActionError("");
+    try {
+      await saveAdminTestimonial({ ...testimonialForm, status: "pending", isSample: false }, authToken);
+      await refreshTestimonials();
+      setTestimonialForm(EMPTY_TESTIMONIAL_FORM);
+      setTestimonialSaved(true);
+      setTimeout(() => setTestimonialSaved(false), 2500);
+    } catch (error) {
+      handleRequestError(error);
+    } finally {
+      setTestimonialSaving(false);
+    }
+  };
+
+  const handleTestimonialStatus = async (id, status) => {
+    setActionError("");
+    try {
+      await updateAdminTestimonial(id, { status }, authToken);
+      await refreshTestimonials();
+    } catch (error) {
+      handleRequestError(error);
+    }
+  };
+
+  const handleTestimonialDelete = async (id) => {
+    setActionError("");
+    try {
+      await deleteAdminTestimonial(id, authToken);
+      await refreshTestimonials();
+    } catch (error) {
+      handleRequestError(error);
+    }
+  };
+
+  const loadSampleTestimonials = async () => {
+    if (testimonialSaving || testimonials.some((testimonial) => testimonial.isSample)) return;
+    setTestimonialSaving(true);
+    setActionError("");
+    try {
+      for (const sample of testimonialSamples) {
+        await saveAdminTestimonial(sample, authToken);
+      }
+      await refreshTestimonials();
+    } catch (error) {
+      handleRequestError(error);
+    } finally {
+      setTestimonialSaving(false);
     }
   };
 
@@ -291,10 +463,10 @@ export default function Admin() {
           </a>
           <div>
             <h1 className="ai-heading text-3xl font-bold dark:text-white text-slate-900">
-              Projects Admin
+              Content Admin
             </h1>
             <p className="mt-0.5 text-sm dark:text-slate-400 text-slate-500">
-              Projects added here appear live on the portfolio.
+              Manage portfolio content and review what appears publicly.
             </p>
           </div>
           <button
@@ -306,6 +478,16 @@ export default function Admin() {
           </button>
         </div>
 
+        <div className="admin-tabs mb-8 flex flex-wrap gap-2" role="tablist" aria-label="Content type">
+          <button type="button" role="tab" aria-selected={activeTab === "projects"} onClick={() => setActiveTab("projects")} className={`admin-tab ${activeTab === "projects" ? "admin-tab-active" : ""}`}>
+            <Globe size={15} /> Projects <span>{projects.length}</span>
+          </button>
+          <button type="button" role="tab" aria-selected={activeTab === "testimonials"} onClick={() => setActiveTab("testimonials")} className={`admin-tab ${activeTab === "testimonials" ? "admin-tab-active" : ""}`}>
+            <MessageSquareQuote size={15} /> Testimonials <span>{testimonials.length}</span>
+          </button>
+        </div>
+
+        {activeTab === "projects" ? (
         <div className="grid gap-8 items-start lg:grid-cols-[1fr_1.1fr]">
           <div className="glass dark:bg-black/30 bg-white/60 rounded-2xl border border-white/15 p-6 lg:sticky lg:top-8">
             <h2 className="mb-5 flex items-center gap-2 text-lg font-semibold dark:text-white text-slate-900">
@@ -356,6 +538,99 @@ export default function Admin() {
                   className={inputClass}
                 />
               </div>
+
+              <div>
+                <label className={labelClass}>Preview Image</label>
+                <input
+                  value={form.image}
+                  onChange={(e) => setForm({ ...form, image: e.target.value })}
+                  placeholder="/images/projects/my-project.webp"
+                  className={inputClass}
+                />
+                <p className="mt-1.5 text-[11px] dark:text-slate-500 text-slate-400">
+                  A screenshot in <code>public/images/projects/</code>, or a full https URL. Without one the card shows a plain placeholder.
+                </p>
+              </div>
+
+              <div>
+                <label className={labelClass}>GitHub Repository</label>
+                <input
+                  type="url"
+                  value={form.github}
+                  onChange={(e) => setForm({ ...form, github: e.target.value })}
+                  placeholder="https://github.com/emmyade360/my-project"
+                  className={inputClass}
+                />
+              </div>
+
+              <div>
+                <label className={labelClass}>Tech Stack</label>
+                <input
+                  value={form.technologies}
+                  onChange={(e) => setForm({ ...form, technologies: e.target.value })}
+                  placeholder="Next.js, PostgreSQL, Groq, Redis"
+                  className={inputClass}
+                />
+                <p className="mt-1.5 text-[11px] dark:text-slate-500 text-slate-400">
+                  Comma separated, up to 8. The card shows the first 5.
+                </p>
+              </div>
+
+              <label className="flex cursor-pointer items-center gap-2.5 text-sm dark:text-slate-300 text-slate-600">
+                <input
+                  type="checkbox"
+                  checked={form.featured}
+                  onChange={(e) => setForm({ ...form, featured: e.target.checked })}
+                  className="h-4 w-4 accent-cyan-400"
+                />
+                Feature this project — highlights the card and sorts it first
+              </label>
+
+              <details className="admin-case-study rounded-xl border border-slate-200 dark:border-white/10">
+                <summary className="cursor-pointer px-4 py-3 text-sm font-semibold dark:text-white text-slate-900">
+                  Case study <span className="font-normal dark:text-slate-500 text-slate-400">— optional, all fields</span>
+                </summary>
+                <div className="space-y-4 border-t border-slate-200 px-4 py-4 dark:border-white/10">
+                  <div>
+                    <label className={labelClass}>Project Type</label>
+                    <input
+                      value={form.type}
+                      onChange={(e) => setForm({ ...form, type: e.target.value })}
+                      placeholder="AI product · Fintech platform · Realtime system"
+                      className={inputClass}
+                    />
+                  </div>
+                  {[
+                    { key: "problem", label: "The Problem", placeholder: "What was broken or missing, and for whom?" },
+                    { key: "solution", label: "The Solution", placeholder: "What you built and what it changed." },
+                    { key: "role", label: "My Role", placeholder: "What you personally owned." },
+                    { key: "architecture", label: "Architecture", placeholder: "Stack, data flow, and the decisions behind them." },
+                    { key: "challenge", label: "Hardest Problem", placeholder: "The genuinely difficult part — be specific and technical." },
+                    { key: "response", label: "How I Solved It", placeholder: "The approach, the trade-off, and why." },
+                  ].map((field) => (
+                    <div key={field.key}>
+                      <label className={labelClass}>{field.label}</label>
+                      <textarea
+                        rows={3}
+                        value={form[field.key]}
+                        onChange={(e) => setForm({ ...form, [field.key]: e.target.value })}
+                        placeholder={field.placeholder}
+                        className={`${inputClass} resize-none`}
+                      />
+                    </div>
+                  ))}
+                  <div>
+                    <label className={labelClass}>Engineering Highlights</label>
+                    <textarea
+                      rows={3}
+                      value={form.quality}
+                      onChange={(e) => setForm({ ...form, quality: e.target.value })}
+                      placeholder={"One per line, up to 6\nIdempotency keys prevent double charges\nHMAC signature verification on every webhook"}
+                      className={`${inputClass} resize-none`}
+                    />
+                  </div>
+                </div>
+              </details>
 
               <LivePreview link={form.link} />
 
@@ -408,6 +683,55 @@ export default function Admin() {
             )}
           </div>
         </div>
+        ) : (
+          <div className="grid gap-8 items-start lg:grid-cols-[1fr_1.1fr]">
+            <div className="glass dark:bg-black/30 bg-white/60 rounded-2xl border border-white/15 p-6 lg:sticky lg:top-8">
+              <h2 className="mb-2 flex items-center gap-2 text-lg font-semibold dark:text-white text-slate-900">
+                <MessageSquareQuote size={18} className="text-cyan-400" /> Add Testimonial
+              </h2>
+              <p className="mb-5 text-sm text-slate-500 dark:text-slate-400">New testimonials enter as pending and stay hidden until you approve them.</p>
+
+              <form onSubmit={handleTestimonialSubmit} className="space-y-4">
+                {actionError && <p role="alert" className="rounded-xl border border-red-400/25 bg-red-400/10 px-3 py-2 text-sm text-red-500 dark:text-red-300">{actionError}</p>}
+                <div>
+                  <label className={labelClass}>Testimonial *</label>
+                  <textarea required rows={5} value={testimonialForm.quote} onChange={(e) => setTestimonialForm({ ...testimonialForm, quote: e.target.value })} placeholder="What did they say about working with you?" className={`${inputClass} resize-none`} />
+                </div>
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <div><label className={labelClass}>Person’s name *</label><input required value={testimonialForm.name} onChange={(e) => setTestimonialForm({ ...testimonialForm, name: e.target.value })} placeholder="Ada Example" className={inputClass} /></div>
+                  <div><label className={labelClass}>Role *</label><input required value={testimonialForm.role} onChange={(e) => setTestimonialForm({ ...testimonialForm, role: e.target.value })} placeholder="Product Designer" className={inputClass} /></div>
+                </div>
+                <div><label className={labelClass}>Company / context *</label><input required value={testimonialForm.company} onChange={(e) => setTestimonialForm({ ...testimonialForm, company: e.target.value })} placeholder="Company or collaboration context" className={inputClass} /></div>
+                <div><label className={labelClass}>Avatar URL <span className="normal-case">(optional)</span></label><input type="url" value={testimonialForm.avatarUrl} onChange={(e) => setTestimonialForm({ ...testimonialForm, avatarUrl: e.target.value })} placeholder="https://..." className={inputClass} /></div>
+                <div><label className={labelClass}>Source URL <span className="normal-case">(optional)</span></label><input type="url" value={testimonialForm.sourceUrl} onChange={(e) => setTestimonialForm({ ...testimonialForm, sourceUrl: e.target.value })} placeholder="LinkedIn or verification link" className={inputClass} /></div>
+                <button type="submit" disabled={testimonialSaving} className="lg-btn flex w-full items-center justify-center gap-2 py-3 font-medium text-white">
+                  <span className="relative z-10 flex items-center gap-2">{testimonialSaving ? <><LoaderCircle size={16} className="animate-spin" /> Saving...</> : testimonialSaved ? <><CheckCircle size={16} /> Saved as pending</> : <><Save size={16} /> Add for review</>}</span>
+                </button>
+              </form>
+              <button type="button" onClick={loadSampleTestimonials} disabled={testimonialSaving || testimonials.some((testimonial) => testimonial.isSample)} className="mt-3 inline-flex w-full items-center justify-center gap-2 rounded-full border border-slate-300 px-4 py-2 text-xs font-semibold text-slate-600 transition-colors hover:border-cyan-400 hover:text-cyan-500 disabled:cursor-not-allowed disabled:opacity-50 dark:border-white/15 dark:text-slate-400">
+                <Clock size={14} /> {testimonials.some((testimonial) => testimonial.isSample) ? "Sample drafts loaded" : "Load 3 sample drafts"}
+              </button>
+            </div>
+
+            <div>
+              <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+                <h2 className="text-lg font-semibold dark:text-white text-slate-900">Review Testimonials <span className="text-base font-normal text-cyan-400">({testimonials.length})</span></h2>
+                <p className="text-xs text-slate-500 dark:text-slate-400">Only approved testimonials show on the homepage.</p>
+              </div>
+              {testimonialsLoading ? (
+                <div className="glass rounded-2xl border border-white/15 p-10 text-center text-slate-400">Loading testimonials...</div>
+              ) : testimonials.length === 0 ? (
+                <div className="glass rounded-2xl border border-white/15 p-10 text-center text-slate-400">No testimonials yet. Add one for review.</div>
+              ) : (
+                <AnimatePresence mode="popLayout">
+                  <div className="space-y-4">
+                    {testimonials.map((testimonial) => <TestimonialCard key={testimonial.id} testimonial={testimonial} onStatus={handleTestimonialStatus} onDelete={handleTestimonialDelete} />)}
+                  </div>
+                </AnimatePresence>
+              )}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

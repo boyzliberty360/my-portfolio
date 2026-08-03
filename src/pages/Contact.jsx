@@ -1,123 +1,81 @@
-import React, { useState, useEffect, useCallback } from "react";
-import { motion } from "framer-motion";
-import { Mail, MapPin, User, Send, Github, Clock } from "lucide-react";
+import { useCallback, useEffect, useState } from "react";
+import { motion, useReducedMotion } from "framer-motion";
+import { ArrowUpRight, Clock, FileText, Github, Linkedin, Mail, MapPin, MessageCircle, Send } from "lucide-react";
+import { profile } from "../data/profile";
 
-// Rate limiting configuration (client-side)
-const RATE_LIMIT_WINDOW = 60 * 1000; // 1 minute
+const RATE_LIMIT_WINDOW = 60 * 1000;
 const MAX_REQUESTS_PER_WINDOW = 5;
 
-// Load rate limit data from localStorage
 const loadRateLimitData = () => {
   try {
     const stored = localStorage.getItem("contact-form-rate-limit");
     if (stored) {
       const data = JSON.parse(stored);
-      // Clear expired data
-      if (Date.now() - data.windowStart > RATE_LIMIT_WINDOW) {
-        return { windowStart: Date.now(), requestCount: 0 };
-      }
-      return data;
+      if (Date.now() - data.windowStart <= RATE_LIMIT_WINDOW) return data;
     }
   } catch {
-    // Ignore errors
+    // Local storage is optional; the form still works without it.
   }
   return { windowStart: Date.now(), requestCount: 0 };
 };
 
-// Save rate limit data to localStorage
 const saveRateLimitData = (data) => {
-  try {
-    localStorage.setItem("contact-form-rate-limit", JSON.stringify(data));
-  } catch {
-    // Ignore errors
-  }
+  try { localStorage.setItem("contact-form-rate-limit", JSON.stringify(data)); } catch { /* optional */ }
 };
 
 export default function Contact() {
+  const prefersReducedMotion = useReducedMotion();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState({ type: "", message: "" });
-  const [rateLimitData, setRateLimitData] = useState(loadRateLimitData);
   const [remainingRequests, setRemainingRequests] = useState(MAX_REQUESTS_PER_WINDOW);
   const [cooldownSeconds, setCooldownSeconds] = useState(0);
   const [isRateLimited, setIsRateLimited] = useState(false);
+  const [showFallback, setShowFallback] = useState(false);
 
-  const contactInfo = {
-    name: "Emmanuel Adejoh",
-    email: "adejorion@gmail.com",
-    location: "Nigeria",
-    github: "https://github.com/emmyade360",
-  };
-
-  // Update remaining requests and cooldown timer
   const updateRateLimitState = useCallback(() => {
     const data = loadRateLimitData();
-    const now = Date.now();
-    
-    // Check if window has expired
-    if (now - data.windowStart > RATE_LIMIT_WINDOW) {
-      // Reset for new window
-      const newData = { windowStart: now, requestCount: 0 };
-      saveRateLimitData(newData);
+    const elapsed = Date.now() - data.windowStart;
+    if (elapsed > RATE_LIMIT_WINDOW) {
+      const reset = { windowStart: Date.now(), requestCount: 0 };
+      saveRateLimitData(reset);
       setRemainingRequests(MAX_REQUESTS_PER_WINDOW);
       setCooldownSeconds(0);
       setIsRateLimited(false);
-    } else {
-      // Calculate remaining requests
-      const remaining = Math.max(0, MAX_REQUESTS_PER_WINDOW - data.requestCount);
-      setRemainingRequests(remaining);
-      
-      // Calculate cooldown
-      const elapsed = now - data.windowStart;
-      const remainingTime = Math.max(0, Math.ceil((RATE_LIMIT_WINDOW - elapsed) / 1000));
-      setCooldownSeconds(remainingTime);
-      
-      // Check if rate limited
-      setIsRateLimited(data.requestCount >= MAX_REQUESTS_PER_WINDOW);
+      return;
     }
+    setRemainingRequests(Math.max(0, MAX_REQUESTS_PER_WINDOW - data.requestCount));
+    setCooldownSeconds(Math.max(0, Math.ceil((RATE_LIMIT_WINDOW - elapsed) / 1000)));
+    setIsRateLimited(data.requestCount >= MAX_REQUESTS_PER_WINDOW);
   }, []);
- 
-  // Update rate limit state every second when in cooldown
+
   useEffect(() => {
     updateRateLimitState();
-    
-    if (cooldownSeconds > 0 || isRateLimited) {
-      const interval = setInterval(updateRateLimitState, 1000);
-      return () => clearInterval(interval);
-    }
-  }, [cooldownSeconds, isRateLimited, updateRateLimitState]);
+    const interval = setInterval(updateRateLimitState, 1000);
+    return () => clearInterval(interval);
+  }, [updateRateLimitState]);
 
-  // Check server rate limit and submit form
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    
-    // Client-side rate limit check
+  const handleSubmit = async (event) => {
+    event.preventDefault();
     const data = loadRateLimitData();
-    const now = Date.now();
-    
-    // Reset window if expired
-    let currentData = data;
-    if (now - data.windowStart > RATE_LIMIT_WINDOW) {
-      currentData = { windowStart: now, requestCount: 0 };
-    }
-    
-    // Check if client-side limit exceeded
-    if (currentData.requestCount >= MAX_REQUESTS_PER_WINDOW) {
-      const retryAfter = Math.ceil((RATE_LIMIT_WINDOW - (now - currentData.windowStart)) / 1000);
-      setSubmitStatus({
-        type: "error",
-        message: `Too many requests. Please wait ${retryAfter} seconds before sending another message.`,
-      });
+    if (data.requestCount >= MAX_REQUESTS_PER_WINDOW) {
+      setSubmitStatus({ type: "error", message: `Please wait ${cooldownSeconds || 60} seconds before sending another message.` });
       return;
     }
 
-    setSubmitStatus({ type: "", message: "" });
-
-    const form = e.currentTarget;
+    const form = event.currentTarget;
     const formData = new FormData(form);
-    
-    // Add Web3Forms access key
-    formData.append("access_key", import.meta.env.VITE_WEB3FORMS_KEY);
-    formData.append("subject", formData.get("subject") || "New Contact Form Submission");
+    const accessKey = import.meta.env.VITE_WEB3FORMS_KEY;
+    setSubmitStatus({ type: "", message: "" });
+    setShowFallback(false);
+
+    if (!accessKey) {
+      setSubmitStatus({ type: "error", message: "The contact form is not configured yet." });
+      setShowFallback(true);
+      return;
+    }
+
+    formData.append("access_key", accessKey);
+    formData.append("subject", formData.get("subject") || "New portfolio contact");
     formData.append("from_name", formData.get("name"));
     formData.append("email_from", formData.get("email"));
     formData.append("to_name", "Emmanuel");
@@ -125,252 +83,77 @@ export default function Contact() {
 
     try {
       setIsSubmitting(true);
-
-      const response = await fetch("https://api.web3forms.com/submit", {
-        method: "POST",
-        body: formData,
-      });
-
+      const response = await fetch("https://api.web3forms.com/submit", { method: "POST", body: formData });
       const result = await response.json();
-
-      // Handle server-side rate limiting (429 response)
-      if (response.status === 429 || result.code === "RATE_LIMIT_EXCEEDED") {
-        // Update local rate limit data to reflect server rejection
-        const newData = { windowStart: now, requestCount: MAX_REQUESTS_PER_WINDOW };
-        saveRateLimitData(newData);
-        setRateLimitData(newData);
-        updateRateLimitState();
-        
-        setSubmitStatus({
-          type: "error",
-          message: "Too many requests from your IP. Please wait a moment before trying again.",
-        });
-        return;
-      }
-
-      if (result.success) {
-        // Increment client-side request count
-        const updatedData = {
-          windowStart: currentData.windowStart,
-          requestCount: currentData.requestCount + 1,
-        };
-        saveRateLimitData(updatedData);
-        setRateLimitData(updatedData);
-        updateRateLimitState();
-        
-        setSubmitStatus({
-          type: "success",
-          message: "Message sent successfully! I'll get back to you soon.",
-        });
-        form.reset();
-      } else {
-        throw new Error(result.message || "Failed to send message");
-      }
-    } catch (error) {
-      setSubmitStatus({
-        type: "error",
-        message: "Could not send message right now. Please try again.",
-      });
+      if (!response.ok || !result.success) throw new Error(result.message || "Unable to send message");
+      const updated = { windowStart: data.windowStart, requestCount: data.requestCount + 1 };
+      saveRateLimitData(updated);
+      updateRateLimitState();
+      setSubmitStatus({ type: "success", message: "Message sent successfully. I will get back to you soon." });
+      form.reset();
+    } catch {
+      setSubmitStatus({ type: "error", message: "The form service is unavailable right now." });
+      setShowFallback(true);
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  // Determine button state
   const isDisabled = isSubmitting || isRateLimited || remainingRequests === 0;
-  const buttonText = isSubmitting 
-    ? "Sending..." 
-    : isRateLimited 
-      ? `Wait ${cooldownSeconds}s` 
-      : "Send Message";
+  const mailto = `mailto:${profile.email}?subject=${encodeURIComponent("Role opportunity")}`;
+  const whatsapp = `https://wa.me/${profile.whatsapp}?text=${encodeURIComponent(
+    `Hi Emmanuel, I found your portfolio and I'd like to talk about an AI engineering role.`,
+  )}`;
 
   return (
-    <section id="contact" className="px-6 md:px-16 py-20">
-      <div className="max-w-6xl mx-auto">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-12"
+    <section id="contact" className="content-section section-shell scroll-mt-24">
+      <div className="contact-header">
+        <div><p className="eyebrow">Get in touch</p><h2 className="section-title">{profile.availability}.</h2></div>
+        <p className="section-description">Hiring, or just want to ask something? Tell me what you are building and what you need help with. You do not need to know the technical details — I reply to every message.</p>
+      </div>
+
+      <div className="contact-layout">
+        <motion.form
+          initial={prefersReducedMotion ? false : { opacity: 0, y: 14 }}
+          whileInView={prefersReducedMotion ? undefined : { opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.15 }}
+          transition={{ duration: 0.5 }}
+          onSubmit={handleSubmit}
+          className="contact-form surface"
         >
-          <h2 className="ai-heading text-4xl md:text-5xl font-bold dark:text-white text-slate-900 mb-4">
-            Contact
-          </h2>
-          <p className="text-lg md:text-2xl dark:text-gray-300 text-slate-600 max-w-2xl mx-auto">
-            Have a project in mind? Let's discuss how we can work together to bring your ideas to life.
-          </p>
-        </motion.div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
-          <motion.form
-            initial={{ opacity: 0, x: -20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6 }}
-            onSubmit={handleSubmit}
-            className="glass dark:bg-black/30 bg-white/10 p-6 md:p-8 rounded-2xl space-y-5"
-          >
-            <h3 className="text-3xl font-bold dark:text-white text-slate-900">Send me a message</h3>
-
-            <div className="grid md:grid-cols-2 gap-4">
-              <div>
-                <label htmlFor="name" className="block mb-2 dark:text-gray-200 text-slate-700">
-                  Name
-                </label>
-                <input
-                  id="name"
-                  name="name"
-                  type="text"
-                  autoComplete="name"
-                  required
-                  disabled={isDisabled}
-                  className="lg-input w-full p-3 rounded-lg dark:text-white text-slate-900 disabled:opacity-50"
-                />
-              </div>
-              <div>
-                <label htmlFor="email" className="block mb-2 dark:text-gray-200 text-slate-700">
-                  Email
-                </label>
-                <input
-                  id="email"
-                  name="email"
-                  type="email"
-                  autoComplete="email"
-                  required
-                  disabled={isDisabled}
-                  className="lg-input w-full p-3 rounded-lg dark:text-white text-slate-900 disabled:opacity-50"
-                />
-              </div>
-            </div>
-
-            <div>
-              <label htmlFor="subject" className="block mb-2 dark:text-gray-200 text-slate-700">
-                Subject
-              </label>
-              <input
-                id="subject"
-                name="subject"
-                type="text"
-                autoComplete="off"
-                disabled={isDisabled}
-                className="lg-input w-full p-3 rounded-lg dark:text-white text-slate-900 disabled:opacity-50"
-              />
-            </div>
-
-            <div>
-              <label htmlFor="message" className="block mb-2 dark:text-gray-200 text-slate-700">
-                Message
-              </label>
-              <textarea
-                id="message"
-                name="message"
-                rows={6}
-                required
-                disabled={isDisabled}
-                className="lg-input w-full p-3 rounded-lg dark:text-white text-slate-900 disabled:opacity-50"
-              />
-            </div>
-
-            {isRateLimited && (
-              <div className="flex items-center gap-2 text-sm text-orange-500 dark:text-orange-400">
-                <Clock size={16} />
-                <span>Cooldown: {cooldownSeconds}s</span>
-              </div>
-            )}
-
-            <button
-              type="submit"
-              disabled={isDisabled}
-              className="lg-btn w-full flex items-center justify-center gap-2 py-3 text-white font-semibold"
-            >
-              <span className="relative z-10 flex items-center gap-2">
-                <Send size={16} />
-                {buttonText}
-              </span>
-            </button>
-
-            {submitStatus.message && (
-              <p
-                className={`text-sm ${
-                  submitStatus.type === "success"
-                    ? "text-emerald-500 dark:text-emerald-300"
-                    : "text-red-500 dark:text-red-300"
-                }`}
-              >
-                {submitStatus.message}
-              </p>
-            )}
-          </motion.form>
-
-          <div className="space-y-6">
-            <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6 }}
-              className="glass dark:bg-black/30 bg-white/10 p-6 md:p-8 rounded-2xl space-y-6"
-            >
-              <div className="flex items-start gap-4">
-                <div className="rounded-xl bg-blue-600 p-3 text-white dark:bg-cyan-500 dark:text-black">
-                  <User size={20} />
-                </div>
-                <div>
-                  <p className="font-semibold dark:text-white text-slate-900">Name</p>
-                  <p className="dark:text-gray-300 text-slate-600">{contactInfo.name}</p>
-                </div>
-              </div>
-
-              <div className="flex items-start gap-4">
-                <div className="rounded-xl bg-blue-600 p-3 text-white dark:bg-cyan-500 dark:text-black">
-                  <Mail size={20} />
-                </div>
-                <div>
-                  <p className="font-semibold dark:text-white text-slate-900">Email</p>
-                  <p className="dark:text-gray-300 text-slate-600">{contactInfo.email}</p>
-                </div>
-              </div>
-
-              <div className="flex items-start gap-4">
-                <div className="rounded-xl bg-blue-600 p-3 text-white dark:bg-cyan-500 dark:text-black">
-                  <Github size={20} />
-                </div>
-                <div>
-                  <p className="font-semibold dark:text-white text-slate-900">GitHub</p>
-                  <a 
-                    href={contactInfo.github} 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="dark:text-gray-300 text-slate-600 hover:text-cyan-400 transition-colors"
-                  >
-                    emmyade360
-                  </a>
-                </div>
-              </div>
-
-              <div className="flex items-start gap-4">
-                <div className="rounded-xl bg-blue-600 p-3 text-white dark:bg-cyan-500 dark:text-black">
-                  <MapPin size={20} />
-                </div>
-                <div>
-                  <p className="font-semibold dark:text-white text-slate-900">Location</p>
-                  <p className="dark:text-gray-300 text-slate-600">{contactInfo.location}</p>
-                </div>
-              </div>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.1 }}
-              className="rounded-2xl bg-black p-6 text-white dark:bg-white dark:text-black md:p-8"
-            >
-              <h4 className="text-2xl font-bold mb-3">Let's work together!</h4>
-              <p className="mb-5 leading-relaxed text-white/85 dark:text-black/75">
-                I'm always interested in new opportunities and exciting projects. Whether you have a
-                question or just want to say hi, I'll try my best to get back to you!
-              </p>
-              <p className="font-semibold text-white/80 dark:text-black/70">Response time: Usually within 12 hours</p>
-            </motion.div>
+          <div className="form-heading"><span className="form-step">01</span><div><h3>Send a message</h3><p>A job opening, a problem you are stuck on, or just a question — all welcome.</p></div></div>
+          <div className="form-grid">
+            <label><span>Name</span><input name="name" type="text" autoComplete="name" required disabled={isDisabled} /></label>
+            <label><span>Email</span><input name="email" type="email" autoComplete="email" required disabled={isDisabled} /></label>
           </div>
-        </div>
+          <label><span>Subject <small>Optional</small></span><input name="subject" type="text" autoComplete="off" disabled={isDisabled} /></label>
+          <label><span>Message</span><textarea name="message" rows="6" required disabled={isDisabled} /></label>
+          {isRateLimited ? <p className="form-note form-note-warning"><Clock className="h-4 w-4" /> Cooldown: {cooldownSeconds}s</p> : null}
+          <button className="button button-primary button-submit" type="submit" disabled={isDisabled}><Send className="h-4 w-4" />{isSubmitting ? "Sending…" : isRateLimited ? `Wait ${cooldownSeconds}s` : "Send message"}</button>
+          {submitStatus.message ? <p className={`form-status ${submitStatus.type}`} aria-live="polite">{submitStatus.message}</p> : null}
+          {showFallback ? <a className="text-link" href={mailto}>Open your email app instead <ArrowUpRight className="h-4 w-4" /></a> : null}
+        </motion.form>
+
+        <motion.aside
+          initial={prefersReducedMotion ? false : { opacity: 0, y: 14 }}
+          whileInView={prefersReducedMotion ? undefined : { opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.15 }}
+          transition={{ duration: 0.5, delay: 0.08 }}
+          className="contact-aside"
+        >
+          <div className="contact-card surface"><span className="form-step">02</span><h3>Prefer a direct line?</h3><p>WhatsApp is the fastest way to reach me. My resume is a click away, and the code behind everything here is public on GitHub.</p>
+            <div className="direct-links">
+              <a href={whatsapp} target="_blank" rel="noopener noreferrer"><MessageCircle className="h-4 w-4" /><span><small>WhatsApp</small>{profile.phone}</span><ArrowUpRight className="h-4 w-4" /></a>
+              <a href={mailto}><Mail className="h-4 w-4" /><span><small>Email</small>{profile.email}</span><ArrowUpRight className="h-4 w-4" /></a>
+              <a href={profile.github} target="_blank" rel="noopener noreferrer"><Github className="h-4 w-4" /><span><small>GitHub</small>@{profile.githubHandle}</span><ArrowUpRight className="h-4 w-4" /></a>
+              {profile.linkedin ? (
+                <a href={profile.linkedin} target="_blank" rel="noopener noreferrer"><Linkedin className="h-4 w-4" /><span><small>LinkedIn</small>{profile.linkedinHandle || "Profile"}</span><ArrowUpRight className="h-4 w-4" /></a>
+              ) : null}
+              <a href="/Resume.pdf" download="Emmanuel-Adejoh-CV.pdf"><FileText className="h-4 w-4" /><span><small>Resume</small>PDF download</span><ArrowUpRight className="h-4 w-4" /></a>
+            </div>
+          </div>
+          <div className="contact-location"><MapPin className="h-4 w-4" /><span>{profile.timezoneNote}</span></div>
+        </motion.aside>
       </div>
     </section>
   );

@@ -1,65 +1,41 @@
-import React from "react";
-import { motion } from "framer-motion";
-import { Briefcase, Calendar } from "lucide-react";
+import { motion, useReducedMotion } from "framer-motion";
+import { ArrowUpRight, Briefcase, Calendar } from "lucide-react";
 import { experiences } from "../data/profile";
 
 export default function Experience() {
+  const prefersReducedMotion = useReducedMotion();
+
   return (
-    <section id="experience" className="px-6 md:px-16 py-20">
-      <div className="max-w-4xl mx-auto">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-12"
-        >
-          <h2 className="text-4xl md:text-5xl font-bold dark:text-white text-slate-900 mb-4">
-            Experience
-          </h2>
-          <p className="text-lg md:text-xl dark:text-gray-300 text-slate-600 max-w-2xl mx-auto">
-            My professional journey in tech
-          </p>
-        </motion.div>
+    <section id="experience" className="content-section section-shell scroll-mt-24">
+      <div className="section-intro section-intro-row">
+        <div><p className="eyebrow">Experience</p><h2 className="section-title">Where I have worked.</h2></div>
+        <p className="section-description">Building and releasing software for real users, deepening the behind-the-scenes side, and teaching other developers along the way.</p>
+      </div>
 
-        <div className="space-y-6">
-          {experiences.map((exp, index) => (
-            <div key={index} className="relative">
-              <motion.div
-                initial={{ opacity: 0, x: -20 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                transition={{ delay: index * 0.1, duration: 0.5 }}
-                className="glass dark:bg-black/30 bg-white/10 p-6 md:p-8 rounded-2xl hover:scale-[1.02] transition-transform duration-300"
-              >
-                <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
-                  <div className="flex-1">
-                    <div className="flex items-center gap-3 mb-2">
-                      <div className="rounded-lg bg-blue-600 p-2 text-white dark:bg-cyan-500 dark:text-black">
-                        <Briefcase size={20} />
-                      </div>
-                      <h3 className="text-xl font-bold dark:text-white text-slate-900">
-                        {exp.role}
-                      </h3>
-                    </div>
-                    <p className="text-cyan-400 font-semibold text-lg mb-2">{exp.company}</p>
-                    <p className="dark:text-gray-300 text-slate-600 leading-relaxed">
-                      {exp.description}
-                    </p>
-                  </div>
-                  <div className="flex items-center gap-2 text-sm dark:text-gray-400 text-slate-500">
-                    <Calendar size={16} />
-                    <span>{exp.period}</span>
-                  </div>
-                </div>
-              </motion.div>
-
-              {index < experiences.length - 1 ? (
-                <div className="flex justify-center py-3" aria-hidden="true">
-                  <div className="h-12 w-1 rounded-full bg-blue-600 dark:bg-cyan-300" />
-                </div>
-              ) : null}
+      <div className="experience-list">
+        {experiences.map((experience, index) => (
+          <motion.article
+            key={`${experience.company}-${experience.role}`}
+            initial={prefersReducedMotion ? false : { opacity: 0, x: -14 }}
+            whileInView={prefersReducedMotion ? undefined : { opacity: 1, x: 0 }}
+            viewport={{ once: true, amount: 0.15 }}
+            transition={{ duration: 0.5, delay: index * 0.08 }}
+            className="experience-item"
+          >
+            <div className="experience-marker" aria-hidden="true"><Briefcase className="h-4 w-4" /></div>
+            <div className="experience-content surface">
+              <div className="experience-topline">
+                <div><p className="experience-company">{experience.company}{experience.current ? <span className="current-badge">Current</span> : null}</p><h3>{experience.role}</h3></div>
+                <span className="experience-period"><Calendar className="h-3.5 w-3.5" /> {experience.period}</span>
+              </div>
+              <p className="experience-description">{experience.description}</p>
+              <div className="tag-list">
+                {(experience.technologies || []).map((technology) => <span key={technology}>{technology}</span>)}
+              </div>
+              <a className="text-link experience-link" href="#contact">Ask me about this role <ArrowUpRight className="h-4 w-4" /></a>
             </div>
-          ))}
-        </div>
+          </motion.article>
+        ))}
       </div>
     </section>
   );

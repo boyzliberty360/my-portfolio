@@ -1,75 +1,66 @@
 import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import Card from "../components/Card";
 import { getAdminProjects } from "../lib/adminProjects";
 
 export default function Projects() {
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
+  const prefersReducedMotion = useReducedMotion();
 
   useEffect(() => {
     let active = true;
-
     const loadProjects = () => {
       getAdminProjects().then((data) => {
         if (active) {
-          setProjects(data);
+          // Featured work leads; the rest keep the order they were published in.
+          setProjects([...data].sort((a, b) => Number(Boolean(b.featured)) - Number(Boolean(a.featured))));
           setLoading(false);
         }
       });
     };
-
     loadProjects();
-    const sync = () => loadProjects();
-    window.addEventListener("admin-projects-updated", sync);
+    window.addEventListener("admin-projects-updated", loadProjects);
     return () => {
       active = false;
-      window.removeEventListener("admin-projects-updated", sync);
+      window.removeEventListener("admin-projects-updated", loadProjects);
     };
   }, []);
 
-  if (loading) {
-    return (
-      <section id="projects" className="space-y-10 px-6 md:px-16 py-20">
-        <motion.h2
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="ai-heading text-4xl font-bold text-center text-cyan-300"
-        >
-          Projects
-        </motion.h2>
-        <p className="text-center dark:text-slate-500 text-slate-400 text-sm">
-          Loading projects...
-        </p>
-      </section>
-    );
-  }
-
   return (
-    <section id="projects" className="space-y-10 px-6 md:px-16 py-20">
-      <motion.h2
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
-        className="ai-heading text-4xl font-bold text-center text-cyan-300"
-      >
-        Projects
-      </motion.h2>
-      {projects.length === 0 ? (
-        <p className="text-center dark:text-slate-500 text-slate-400 text-sm">
-          No projects yet.
-        </p>
+    <section id="projects" className="content-section section-shell scroll-mt-24">
+      <div className="section-intro section-intro-row">
+        <div><p className="eyebrow">My work</p><h2 className="section-title">Real products, live right now.</h2></div>
+        <p className="section-description">Not mock-ups or practice exercises — every one of these is online and you can click through and use it yourself. Open a case study to see what problem it solves and how I built it.</p>
+      </div>
+
+      {loading ? (
+        <div className="project-grid" aria-busy="true" aria-label="Loading projects">
+          {[1, 2].map((item) => <div className="project-skeleton surface" key={item}><span /><span /><span /></div>)}
+        </div>
+      ) : projects.length === 0 ? (
+        <div className="empty-state surface"><p>Projects are being updated. Please check back soon.</p></div>
       ) : (
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {projects.map((repo) => (
-            <Card
-              key={repo.id}
-              title={repo.name || repo.displayName}
-              description={repo.description}
-              link={repo.link || repo.liveUrl || repo.html_url}
-              image={repo.image}
-            />
+        <div className="project-grid">
+          {projects.map((project, index) => (
+            <motion.div
+              key={project.id}
+              initial={prefersReducedMotion ? false : { opacity: 0, y: 16 }}
+              whileInView={prefersReducedMotion ? undefined : { opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.12 }}
+              transition={{ duration: 0.5, delay: index * 0.08 }}
+            >
+              <Card
+                title={project.name || project.displayName}
+                description={project.description}
+                link={project.link || project.liveUrl || project.html_url}
+                image={project.image}
+                technologies={project.technologies || project.stack || []}
+                github={project.github || project.githubUrl}
+                caseStudy={project.caseStudy}
+                flagship={Boolean(project.featured)}
+              />
+            </motion.div>
           ))}
         </div>
       )}
