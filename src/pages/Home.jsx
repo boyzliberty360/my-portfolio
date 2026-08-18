@@ -1,42 +1,18 @@
-import { useEffect, useState } from "react";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import { ArrowDownRight, ArrowRight, Download, Github, Linkedin, Mail, MapPin } from "lucide-react";
 import { profile, proofPoints } from "../data/profile";
 
 const PROFILE_IMAGE = "/images/adejoh-emmanuel-professional.webp";
-const ROLE_OPTIONS = ["Frontend engineering", "Backend engineering", "AI engineering"];
-
 export default function Home() {
   const prefersReducedMotion = useReducedMotion();
-  const [roleIndex, setRoleIndex] = useState(0);
-
-  useEffect(() => {
-    if (prefersReducedMotion) return undefined;
-    const interval = setInterval(() => setRoleIndex((current) => (current + 1) % ROLE_OPTIONS.length), 2600);
-    return () => clearInterval(interval);
-  }, [prefersReducedMotion]);
 
   return (
     <section id="home" className="hero-section section-shell scroll-mt-24">
       <div className="hero-grid">
         <div className="hero-copy">
-          <div className="role-switcher" aria-live="polite" aria-label="Roles Emmanuel is open to">
-            <span>Open to</span>
-            {prefersReducedMotion ? (
-              <strong>frontend, backend &amp; AI engineering roles</strong>
-            ) : (
-              <AnimatePresence mode="wait" initial={false}>
-                <motion.strong
-                  key={ROLE_OPTIONS[roleIndex]}
-                  initial={{ opacity: 0, y: 8, filter: "blur(4px)" }}
-                  animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-                  exit={{ opacity: 0, y: -8, filter: "blur(4px)" }}
-                  transition={{ duration: 0.25 }}
-                >
-                  {ROLE_OPTIONS[roleIndex]}
-                </motion.strong>
-              </AnimatePresence>
-            )}
+          <div className="role-switcher" aria-label="Primary role">
+            <span>Primary role</span>
+            <strong>{profile.title}</strong>
           </div>
 
           <motion.h1
@@ -45,7 +21,7 @@ export default function Home() {
             transition={{ delay: 0.08, duration: 0.65 }}
             className="hero-title"
           >
-            The AI demo is easy. <em>I build the rest.</em>
+            I build the full stack. <em>From interface to API.</em>
           </motion.h1>
 
           <motion.p
@@ -98,7 +74,7 @@ export default function Home() {
           <div className="profile-frame">
             <div className="profile-frame-top">
               <span>EM 01</span>
-              <span>Frontend, backend, AI</span>
+              <span>Full-stack web + AI workflows</span>
             </div>
             <img
               src={PROFILE_IMAGE}
@@ -111,7 +87,7 @@ export default function Home() {
             <div className="profile-caption">
               <div>
                 <p className="profile-name">Emmanuel Adejoh</p>
-                <p className="profile-role">Interfaces, systems, and AI workflows</p>
+                <p className="profile-role">Interfaces, services, and data systems</p>
               </div>
               <a className="icon-button" href={profile.github} target="_blank" rel="noopener noreferrer" aria-label="Open Emmanuel's GitHub profile">
                 <Github className="h-4 w-4" />

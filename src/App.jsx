@@ -30,9 +30,9 @@ function Portfolio() {
         className="space-y-8 md:space-y-12"
       >
         <motion.div variants={sectionVariant}><Home /></motion.div>
-        <motion.div variants={sectionVariant}><About /></motion.div>
         <motion.div variants={sectionVariant}><Projects /></motion.div>
         <motion.div variants={sectionVariant}><Experience /></motion.div>
+        <motion.div variants={sectionVariant}><About /></motion.div>
         <motion.div variants={sectionVariant}><Certifications /></motion.div>
         <motion.div variants={sectionVariant}><Testimonials /></motion.div>
         <motion.div variants={sectionVariant}><Contact /></motion.div>

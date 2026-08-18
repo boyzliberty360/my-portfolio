@@ -10,8 +10,8 @@ export default function Certifications() {
   return (
     <section id="certifications" className="content-section section-shell scroll-mt-24">
       <div className="section-intro section-intro-row">
-        <div><p className="eyebrow">Credentials</p><h2 className="section-title">Checked by someone other than me.</h2></div>
-        <p className="section-description">Anyone can call themselves a developer. This one was awarded after an assessed programme and competition run by Nomba and DevCareer.</p>
+        <div><p className="eyebrow">Certification</p><h2 className="section-title">A credential for the work behind the code.</h2></div>
+        <p className="section-description">Certified through the Nomba Developer Certification and Hackathon programme run with DevCareer.</p>
       </div>
 
       <motion.article

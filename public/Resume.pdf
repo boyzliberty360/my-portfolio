@@ -3,7 +3,7 @@
 << /Type /Catalog /Pages 2 0 R >>
 endobj
 2 0 obj
-<< /Type /Pages /Kids [5 0 R 7 0 R] /Count 2 >>
+<< /Type /Pages /Kids [5 0 R] /Count 1 >>
 endobj
 3 0 obj
 << /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
@@ -15,135 +15,81 @@ endobj
 << /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents 6 0 R >>
 endobj
 6 0 obj
-<< /Length 4782 >>
+<< /Length 6492 >>
 stream
 0.02 0.36 0.32 rg 0 832 595 10 re f
 BT 0.08 0.12 0.12 rg /F2 22 Tf 1 0 0 1 48 788 Tm (Emmanuel Adejoh) Tj ET
-BT 0.02 0.36 0.32 rg /F1 13 Tf 1 0 0 1 48 758 Tm (AI Engineer | Frontend Engineer | Backend Engineer) Tj ET
-BT 0.3 0.37 0.35 rg /F1 10 Tf 1 0 0 1 48 736 Tm (adejorion@gmail.com | +2349020151614 | Nigeria) Tj ET
-BT 0.3 0.37 0.35 rg /F1 10 Tf 1 0 0 1 48 721 Tm (github.com/emmyade360 | https://emmyade.vercel.app/) Tj ET
+BT 0.02 0.36 0.32 rg /F1 11.5 Tf 1 0 0 1 48 758 Tm (Full-Stack Software Engineer | React, Next.js, Node.js, Go) Tj ET
+BT 0.3 0.37 0.35 rg /F1 9 Tf 1 0 0 1 48 736 Tm (adejorion@gmail.com | +2349020151614 | Nigeria) Tj ET
+BT 0.3 0.37 0.35 rg /F1 9 Tf 1 0 0 1 48 721 Tm (github.com/emmyade360 | https://emmyade.vercel.app/) Tj ET
 1.1 w 0.02 0.36 0.32 RG 48 708 m 547 708 l S
 0.88 0.94 0.92 rg 48 682 499 22 re f
 0.02 0.36 0.32 rg 48 684 4 17 re f
-BT 0.02 0.36 0.32 rg /F2 12 Tf 1 0 0 1 60 688 Tm (PROFESSIONAL SUMMARY) Tj ET
+BT 0.02 0.36 0.32 rg /F2 12 Tf 1 0 0 1 60 688 Tm (PROFILE) Tj ET
 0.65 w 0.78 0.83 0.81 RG 48 680 m 547 680 l S
-BT 0.08 0.12 0.12 rg /F1 11 Tf 1 0 0 1 48 663 Tm (AI Engineer and full-stack developer who builds complete AI-powered applications: the) Tj ET
-BT 0.08 0.12 0.12 rg /F1 11 Tf 1 0 0 1 48 647 Tm (interfaces people use and the backend systems that make them reliable. Experienced with) Tj ET
-BT 0.08 0.12 0.12 rg /F1 11 Tf 1 0 0 1 48 631 Tm (React, Next.js, TypeScript, Node.js, Go, PostgreSQL, Redis, REST APIs, and AI services) Tj ET
-BT 0.08 0.12 0.12 rg /F1 11 Tf 1 0 0 1 48 615 Tm (including Groq, OpenAI, Anthropic Claude, and Cerebras. Focused on resilient AI) Tj ET
-BT 0.08 0.12 0.12 rg /F1 11 Tf 1 0 0 1 48 599 Tm (workflows, answer validation, prompt-injection defence, data privacy, rate limiting,) Tj ET
-BT 0.08 0.12 0.12 rg /F1 11 Tf 1 0 0 1 48 583 Tm (cost-aware model selection, accessible interfaces, and production-ready delivery.) Tj ET
-BT 0.08 0.12 0.12 rg /F1 11 Tf 1 0 0 1 48 567 Tm (Brings transferable cloud and deployment foundations for AWS-oriented frontend,) Tj ET
-BT 0.08 0.12 0.12 rg /F1 11 Tf 1 0 0 1 48 551 Tm (backend, and AI engineering teams.) Tj ET
-0.88 0.94 0.92 rg 48 519 499 22 re f
-0.02 0.36 0.32 rg 48 521 4 17 re f
-BT 0.02 0.36 0.32 rg /F2 12 Tf 1 0 0 1 60 525 Tm (TECHNICAL SKILLS) Tj ET
-0.65 w 0.78 0.83 0.81 RG 48 517 m 547 517 l S
-BT 0.08 0.12 0.12 rg /F1 10 Tf 1 0 0 1 48 500 Tm (AI Engineering: AI application development, prompt engineering, Vercel AI SDK, OpenAI,) Tj ET
-BT 0.08 0.12 0.12 rg /F1 10 Tf 1 0 0 1 48 486 Tm (Anthropic Claude, Groq, Cerebras, Llama, answer validation, prompt-injection defence, AI) Tj ET
-BT 0.08 0.12 0.12 rg /F1 10 Tf 1 0 0 1 48 472 Tm (failover, cost-aware model routing, data redaction) Tj ET
-BT 0.08 0.12 0.12 rg /F1 10 Tf 1 0 0 1 48 452 Tm (Frontend Engineering: React, Next.js, TypeScript, JavaScript, Tailwind CSS, React Query,) Tj ET
-BT 0.08 0.12 0.12 rg /F1 10 Tf 1 0 0 1 48 438 Tm (Zustand, responsive design, accessibility, performance optimization, Framer Motion) Tj ET
-BT 0.08 0.12 0.12 rg /F1 10 Tf 1 0 0 1 48 418 Tm (Backend Engineering: Node.js, Go, REST APIs, Express.js, PostgreSQL, MongoDB, Redis, Supabase,) Tj ET
-BT 0.08 0.12 0.12 rg /F1 10 Tf 1 0 0 1 48 404 Tm (authentication, rate limiting, validation with Zod) Tj ET
-BT 0.08 0.12 0.12 rg /F1 10 Tf 1 0 0 1 48 384 Tm (Cloud, DevOps, and Quality: Docker, Vercel, Git, GitHub, Vitest, Jest, ESLint, logging, health) Tj ET
-BT 0.08 0.12 0.12 rg /F1 10 Tf 1 0 0 1 48 370 Tm (checks, deployment workflows, API integration, environment-based configuration, AWS-ready) Tj ET
-BT 0.08 0.12 0.12 rg /F1 10 Tf 1 0 0 1 48 356 Tm (foundations) Tj ET
-0.88 0.94 0.92 rg 48 330 499 22 re f
-0.02 0.36 0.32 rg 48 332 4 17 re f
-BT 0.02 0.36 0.32 rg /F2 12 Tf 1 0 0 1 60 336 Tm (CERTIFICATIONS) Tj ET
-0.65 w 0.78 0.83 0.81 RG 48 328 m 547 328 l S
-BT 0.08 0.12 0.12 rg /F1 10 Tf 1 0 0 1 48 311 Tm (Certified Nomba Developer: Nomba x DevCareer; Nomba Developer Certification and Hackathon 2026;) Tj ET
-BT 0.08 0.12 0.12 rg /F1 10 Tf 1 0 0 1 48 297 Tm (Issued July 1, 2026; Credential ID NMB-2026-XX6Z9S) Tj ET
-0.88 0.94 0.92 rg 48 269 499 22 re f
-0.02 0.36 0.32 rg 48 271 4 17 re f
-BT 0.02 0.36 0.32 rg /F2 12 Tf 1 0 0 1 60 275 Tm (AI ENGINEERING) Tj ET
-0.65 w 0.78 0.83 0.81 RG 48 267 m 547 267 l S
-BT 0.08 0.12 0.12 rg /F1 10 Tf 1 0 0 1 48 250 Tm (- Implemented AI application workflows with Groq, OpenAI, Anthropic Claude, Cerebras, and the) Tj ET
-BT 0.08 0.12 0.12 rg /F1 10 Tf 1 0 0 1 48 236 Tm (Vercel AI SDK) Tj ET
-BT 0.08 0.12 0.12 rg /F1 10 Tf 1 0 0 1 48 218 Tm (- Designed provider failover and deterministic fallback paths for degraded or unavailable AI) Tj ET
-BT 0.08 0.12 0.12 rg /F1 10 Tf 1 0 0 1 48 204 Tm (services) Tj ET
-BT 0.08 0.12 0.12 rg /F1 10 Tf 1 0 0 1 48 186 Tm (- Added output validation, prompt-injection controls, personal-data redaction, and request rate) Tj ET
-BT 0.08 0.12 0.12 rg /F1 10 Tf 1 0 0 1 48 172 Tm (limiting) Tj ET
-BT 0.08 0.12 0.12 rg /F1 10 Tf 1 0 0 1 48 154 Tm (- Applied cost-aware model routing so simple tasks use efficient models and complex tasks) Tj ET
-BT 0.08 0.12 0.12 rg /F1 10 Tf 1 0 0 1 48 140 Tm (receive more capable models) Tj ET
-endstream
-endobj
-7 0 obj
-<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents 8 0 R >>
-endobj
-8 0 obj
-<< /Length 5208 >>
-stream
-0.88 0.94 0.92 rg 48 782 499 22 re f
-0.02 0.36 0.32 rg 48 784 4 17 re f
-BT 0.02 0.36 0.32 rg /F2 12 Tf 1 0 0 1 60 788 Tm (AWS-READY CLOUD FOUNDATIONS) Tj ET
-0.65 w 0.78 0.83 0.81 RG 48 780 m 547 780 l S
-BT 0.08 0.12 0.12 rg /F1 10 Tf 1 0 0 1 48 763 Tm (- Cloud-ready application foundations: Dockerized Node.js and Go services, stateless REST APIs,) Tj ET
-BT 0.08 0.12 0.12 rg /F1 10 Tf 1 0 0 1 48 749 Tm (environment-based configuration, and health checks) Tj ET
-BT 0.08 0.12 0.12 rg /F1 10 Tf 1 0 0 1 48 731 Tm (- Transferable AWS service patterns across compute, RDS/PostgreSQL, ElastiCache/Redis, S3-style) Tj ET
-BT 0.08 0.12 0.12 rg /F1 10 Tf 1 0 0 1 48 717 Tm (object storage, and CloudWatch-oriented logging) Tj ET
-BT 0.08 0.12 0.12 rg /F1 10 Tf 1 0 0 1 48 699 Tm (- Security-minded delivery with validation, least-privilege thinking, rate limiting, secrets) Tj ET
-BT 0.08 0.12 0.12 rg /F1 10 Tf 1 0 0 1 48 685 Tm (separation, and observable failure paths) Tj ET
-0.88 0.94 0.92 rg 48 661 499 22 re f
-0.02 0.36 0.32 rg 48 663 4 17 re f
-BT 0.02 0.36 0.32 rg /F2 12 Tf 1 0 0 1 60 667 Tm (PRODUCT ENGINEERING) Tj ET
-0.65 w 0.78 0.83 0.81 RG 48 659 m 547 659 l S
-BT 0.08 0.12 0.12 rg /F1 10 Tf 1 0 0 1 48 642 Tm (- Built responsive React and Next.js interfaces that work clearly across phones, tablets, and) Tj ET
-BT 0.08 0.12 0.12 rg /F1 10 Tf 1 0 0 1 48 628 Tm (desktop screens) Tj ET
-BT 0.08 0.12 0.12 rg /F1 10 Tf 1 0 0 1 48 610 Tm (- Implemented Node.js and Go services with PostgreSQL, MongoDB, Redis, Supabase, and REST API) Tj ET
-BT 0.08 0.12 0.12 rg /F1 10 Tf 1 0 0 1 48 596 Tm (integrations) Tj ET
-BT 0.08 0.12 0.12 rg /F1 10 Tf 1 0 0 1 48 578 Tm (- Added automated checks, structured logging, validation, and deployment workflows to improve) Tj ET
-BT 0.08 0.12 0.12 rg /F1 10 Tf 1 0 0 1 48 564 Tm (release confidence) Tj ET
-BT 0.08 0.12 0.12 rg /F1 10 Tf 1 0 0 1 48 546 Tm (- Communicated technical decisions clearly across remote collaboration and supported junior) Tj ET
-BT 0.08 0.12 0.12 rg /F1 10 Tf 1 0 0 1 48 532 Tm (developer growth) Tj ET
-0.88 0.94 0.92 rg 48 508 499 22 re f
-0.02 0.36 0.32 rg 48 510 4 17 re f
-BT 0.02 0.36 0.32 rg /F2 12 Tf 1 0 0 1 60 514 Tm (EXPERIENCE) Tj ET
-0.65 w 0.78 0.83 0.81 RG 48 506 m 547 506 l S
-0.88 0.94 0.92 rg 48 483 499 22 re f
-BT 0.08 0.12 0.12 rg /F2 11 Tf 1 0 0 1 48 489 Tm (Software Engineer & Technical Mentor | Mercuryx) Tj ET
-BT 0.02 0.36 0.32 rg /F1 10 Tf 1 0 0 1 48 473 Tm (Oct 2025 to Present) Tj ET
-BT 0.08 0.12 0.12 rg /F1 10 Tf 1 0 0 1 48 457 Tm (I take features from specification through implementation, review, and release to production) Tj ET
-BT 0.08 0.12 0.12 rg /F1 10 Tf 1 0 0 1 48 443 Tm (users. I also mentor the junior engineers on the team, which means defending design decisions) Tj ET
-BT 0.08 0.12 0.12 rg /F1 10 Tf 1 0 0 1 48 429 Tm (out loud and turning implicit conventions into written ones.) Tj ET
-BT 0.08 0.12 0.12 rg /F1 10 Tf 1 0 0 1 48 409 Tm (- Own features from specification through implementation, review, and production release.) Tj ET
-BT 0.08 0.12 0.12 rg /F1 10 Tf 1 0 0 1 48 391 Tm (- Mentor junior engineers, review their work, and write down conventions the team had only kept) Tj ET
-BT 0.08 0.12 0.12 rg /F1 10 Tf 1 0 0 1 48 377 Tm (in its head.) Tj ET
-0.6 w 0.9 0.93 0.92 RG 48 355 m 547 355 l S
-0.88 0.94 0.92 rg 48 337 499 22 re f
-BT 0.08 0.12 0.12 rg /F2 11 Tf 1 0 0 1 48 343 Tm (Backend Engineering Programme in Go | Learn2Earn) Tj ET
-BT 0.02 0.36 0.32 rg /F1 10 Tf 1 0 0 1 48 327 Tm (Nov 2025 to Dec 2025) Tj ET
-BT 0.08 0.12 0.12 rg /F1 10 Tf 1 0 0 1 48 311 Tm (An intensive Go programme covering concurrency, HTTP service design, and the structure of a) Tj ET
-BT 0.08 0.12 0.12 rg /F1 10 Tf 1 0 0 1 48 297 Tm (backend that stays predictable as load rises rather than degrading unpredictably.) Tj ET
-BT 0.08 0.12 0.12 rg /F1 10 Tf 1 0 0 1 48 277 Tm (- Concurrency patterns, HTTP service design, and structuring a backend that degrades) Tj ET
-BT 0.08 0.12 0.12 rg /F1 10 Tf 1 0 0 1 48 263 Tm (predictably under load.) Tj ET
-BT 0.08 0.12 0.12 rg /F1 10 Tf 1 0 0 1 48 245 Tm (- Built and tested services against the patterns Go is designed around rather than porting) Tj ET
-BT 0.08 0.12 0.12 rg /F1 10 Tf 1 0 0 1 48 231 Tm (JavaScript habits across.) Tj ET
-0.6 w 0.9 0.93 0.92 RG 48 209 m 547 209 l S
-0.88 0.94 0.92 rg 48 191 499 22 re f
-BT 0.08 0.12 0.12 rg /F2 11 Tf 1 0 0 1 48 197 Tm (Full Stack Developer | Vivaking Technologies) Tj ET
-BT 0.02 0.36 0.32 rg /F1 10 Tf 1 0 0 1 48 181 Tm (Mar 2025 to Nov 2025) Tj ET
-BT 0.08 0.12 0.12 rg /F1 10 Tf 1 0 0 1 48 165 Tm (I shipped client features end to end: React interfaces, Node and MongoDB services, and the API) Tj ET
-BT 0.08 0.12 0.12 rg /F1 10 Tf 1 0 0 1 48 151 Tm (contracts joining them. A recurring part of the work was profiling the paths users hit most) Tj ET
-BT 0.08 0.12 0.12 rg /F1 10 Tf 1 0 0 1 48 137 Tm (often and cutting the work done on them.) Tj ET
-BT 0.08 0.12 0.12 rg /F1 10 Tf 1 0 0 1 48 117 Tm (- Delivered React interfaces, Node and MongoDB services, and the API contracts joining them.) Tj ET
-BT 0.08 0.12 0.12 rg /F1 10 Tf 1 0 0 1 48 99 Tm (- Profiled the paths users hit most often and cut the work done on each request.) Tj ET
+BT 0.08 0.12 0.12 rg /F1 9.2 Tf 1 0 0 1 48 663 Tm (Full-stack software engineer building React/Next.js products, Node.js/Go services, database-backed APIs,) Tj ET
+BT 0.08 0.12 0.12 rg /F1 9.2 Tf 1 0 0 1 48 650.5 Tm (and production safeguards. Ships end-to-end features and payment workflows; also builds AI workflows) Tj ET
+BT 0.08 0.12 0.12 rg /F1 9.2 Tf 1 0 0 1 48 638 Tm (with validation, provider failover, prompt-injection controls, and cost-aware routing.) Tj ET
+0.88 0.94 0.92 rg 48 612.5 499 22 re f
+0.02 0.36 0.32 rg 48 614.5 4 17 re f
+BT 0.02 0.36 0.32 rg /F2 12 Tf 1 0 0 1 60 618.5 Tm (SELECTED PROJECTS) Tj ET
+0.65 w 0.78 0.83 0.81 RG 48 610.5 m 547 610.5 l S
+BT 0.08 0.12 0.12 rg /F2 9.7 Tf 1 0 0 1 48 593.5 Tm (Trusta | Escrow payments | Sole engineer) Tj ET
+BT 0.02 0.36 0.32 rg /F1 8.2 Tf 1 0 0 1 48 580.5 Tm (Next.js, Prisma, PostgreSQL, Redis, Zod) Tj ET
+BT 0.08 0.12 0.12 rg /F1 8.6 Tf 1 0 0 1 48 568.5 Tm (- Designed the deal state machine, payment integration, authorization rules, and append-only event log for a) Tj ET
+BT 0.08 0.12 0.12 rg /F1 8.6 Tf 1 0 0 1 48 555.9 Tm (safe-payment platform.) Tj ET
+BT 0.08 0.12 0.12 rg /F1 8.6 Tf 1 0 0 1 48 541.3 Tm (- Made money-moving actions resilient to duplicate requests and unreliable callbacks with idempotency, signed) Tj ET
+BT 0.08 0.12 0.12 rg /F1 8.6 Tf 1 0 0 1 48 528.6999999999999 Tm (webhooks, provider rechecks, and scheduled reconciliation.) Tj ET
+BT 0.08 0.12 0.12 rg /F2 9.7 Tf 1 0 0 1 48 511.0999999999999 Tm (DoctorCare | Healthcare platform | Interface and data model) Tj ET
+BT 0.02 0.36 0.32 rg /F1 8.2 Tf 1 0 0 1 48 498.0999999999999 Tm (API integration, route-scoped data, validation) Tj ET
+BT 0.08 0.12 0.12 rg /F1 8.6 Tf 1 0 0 1 48 486.0999999999999 Tm (- Built patient-facing search, booking, consultation, and medical-record flows across doctors, patients,) Tj ET
+BT 0.08 0.12 0.12 rg /F1 8.6 Tf 1 0 0 1 48 473.4999999999999 Tm (appointments, and records.) Tj ET
+BT 0.08 0.12 0.12 rg /F1 8.6 Tf 1 0 0 1 48 458.89999999999986 Tm (- Scoped records to the routes that need them and made scheduling and destructive actions explicit through) Tj ET
+BT 0.08 0.12 0.12 rg /F1 8.6 Tf 1 0 0 1 48 446.29999999999984 Tm (validation and confirmation.) Tj ET
+0.88 0.94 0.92 rg 48 422.6999999999998 499 22 re f
+0.02 0.36 0.32 rg 48 424.6999999999998 4 17 re f
+BT 0.02 0.36 0.32 rg /F2 12 Tf 1 0 0 1 60 428.6999999999998 Tm (PROFESSIONAL EXPERIENCE) Tj ET
+0.65 w 0.78 0.83 0.81 RG 48 420.6999999999998 m 547 420.6999999999998 l S
+BT 0.08 0.12 0.12 rg /F2 9.7 Tf 1 0 0 1 48 403.6999999999998 Tm (Software Engineer & Technical Mentor | Mercuryx) Tj ET
+BT 0.02 0.36 0.32 rg /F1 8.2 Tf 1 0 0 1 48 390.6999999999998 Tm (Oct 2025 to Present) Tj ET
+BT 0.08 0.12 0.12 rg /F1 8.6 Tf 1 0 0 1 48 378.6999999999998 Tm (- Own features from specification through implementation, review, and production release.) Tj ET
+BT 0.08 0.12 0.12 rg /F1 8.6 Tf 1 0 0 1 48 364.0999999999998 Tm (- Review junior engineers' work and document conventions used across the team.) Tj ET
+BT 0.08 0.12 0.12 rg /F2 9.7 Tf 1 0 0 1 48 346.4999999999998 Tm (Full Stack Developer | Vivaking Technologies) Tj ET
+BT 0.02 0.36 0.32 rg /F1 8.2 Tf 1 0 0 1 48 333.4999999999998 Tm (Mar 2025 to Nov 2025) Tj ET
+BT 0.08 0.12 0.12 rg /F1 8.6 Tf 1 0 0 1 48 321.4999999999998 Tm (- Built React interfaces and Node.js/MongoDB services, owning the API contracts between them.) Tj ET
+BT 0.08 0.12 0.12 rg /F1 8.6 Tf 1 0 0 1 48 306.89999999999975 Tm (- Profiled frequently used request paths and reduced the work performed on each request.) Tj ET
+0.88 0.94 0.92 rg 48 283.2999999999997 499 22 re f
+0.02 0.36 0.32 rg 48 285.2999999999997 4 17 re f
+BT 0.02 0.36 0.32 rg /F2 12 Tf 1 0 0 1 60 289.2999999999997 Tm (TECHNICAL SKILLS) Tj ET
+0.65 w 0.78 0.83 0.81 RG 48 281.2999999999997 m 547 281.2999999999997 l S
+BT 0.08 0.12 0.12 rg /F1 8.2 Tf 1 0 0 1 48 264.2999999999997 Tm (Full-Stack Web: React, Next.js, TypeScript, JavaScript, Node.js, Go, REST APIs, Tailwind CSS, responsive design,) Tj ET
+BT 0.08 0.12 0.12 rg /F1 8.2 Tf 1 0 0 1 48 252.09999999999974 Tm (accessibility) Tj ET
+BT 0.08 0.12 0.12 rg /F1 8.2 Tf 1 0 0 1 48 237.89999999999975 Tm (Backend and Data: PostgreSQL, MongoDB, Prisma, Redis, Supabase, Express.js, authentication, rate limiting, validation) Tj ET
+BT 0.08 0.12 0.12 rg /F1 8.2 Tf 1 0 0 1 48 225.69999999999976 Tm (with Zod, API integration) Tj ET
+BT 0.08 0.12 0.12 rg /F1 8.2 Tf 1 0 0 1 48 211.49999999999977 Tm (AI Engineering: Vercel AI SDK, OpenAI, Anthropic Claude, Groq, Cerebras, Llama, prompt engineering, output) Tj ET
+BT 0.08 0.12 0.12 rg /F1 8.2 Tf 1 0 0 1 48 199.29999999999978 Tm (validation, provider failover, prompt-injection defence, data redaction) Tj ET
+BT 0.08 0.12 0.12 rg /F1 8.2 Tf 1 0 0 1 48 185.0999999999998 Tm (Quality and Delivery: Docker, Vercel, Git, GitHub, Vitest, Jest, ESLint, logging, health checks, deployment) Tj ET
+BT 0.08 0.12 0.12 rg /F1 8.2 Tf 1 0 0 1 48 172.8999999999998 Tm (workflows, environment-based configuration) Tj ET
+0.88 0.94 0.92 rg 48 152.69999999999982 499 22 re f
+0.02 0.36 0.32 rg 48 154.69999999999982 4 17 re f
+BT 0.02 0.36 0.32 rg /F2 12 Tf 1 0 0 1 60 158.69999999999982 Tm (TRAINING AND CERTIFICATION) Tj ET
+0.65 w 0.78 0.83 0.81 RG 48 150.69999999999982 m 547 150.69999999999982 l S
+BT 0.08 0.12 0.12 rg /F1 8.2 Tf 1 0 0 1 48 133.69999999999982 Tm (Backend Engineering Programme in Go | Learn2Earn: Nov 2025 to Dec 2025; Practised Go concurrency patterns, HTTP) Tj ET
+BT 0.08 0.12 0.12 rg /F1 8.2 Tf 1 0 0 1 48 121.49999999999982 Tm (service design, and predictable degradation under load.; Built and tested services using idiomatic Go patterns.) Tj ET
+BT 0.08 0.12 0.12 rg /F1 8.2 Tf 1 0 0 1 48 105.29999999999981 Tm (Certified Nomba Developer: Nomba x DevCareer; Issued July 1, 2026; Credential ID NMB-2026-XX6Z9S) Tj ET
 endstream
 endobj
 xref
-0 9
-0000000000 65535 f 
-0000000009 00000 n 
-0000000058 00000 n 
-0000000121 00000 n 
-0000000191 00000 n 
-0000000266 00000 n 
-0000000402 00000 n 
-0000005235 00000 n 
-0000005371 00000 n 
+0 7
+0000000000 65535 f
+0000000009 00000 n
+0000000058 00000 n
+0000000115 00000 n
+0000000185 00000 n
+0000000260 00000 n
+0000000396 00000 n
 trailer
-<< /Size 9 /Root 1 0 R >>
+<< /Size 7 /Root 1 0 R >>
 startxref
-10630
+6939
 %%EOF

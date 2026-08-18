@@ -21,7 +21,7 @@ export default function About() {
 
   return (
     <section id="about" className="content-section section-shell scroll-mt-24">
-      <SectionIntro eyebrow="What I do" title="Getting a model to answer is easy. Keeping it correct under load is the job." />
+      <SectionIntro eyebrow="How I work" title="Full-stack products, from interface to data layer." />
 
       <div className="about-layout">
         <motion.div
@@ -67,7 +67,7 @@ export default function About() {
 
       <div className="subsection-heading skills-heading">
         <div><p className="eyebrow">Toolkit</p><h3>What I use, and what I use it for</h3></div>
-        <p>Each name carries what it actually does in the systems I have shipped.</p>
+        <p>Each name carries the part of the product or delivery path I use it for.</p>
       </div>
       <div className="skills-grid">
         {skillCategories.map((category) => (

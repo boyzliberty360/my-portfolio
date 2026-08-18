@@ -10,7 +10,7 @@ export default function Footer() {
         <div className="section-shell footer-content">
           <div className="footer-cta">
             <p className="footer-kicker">{profile.availability}</p>
-            <h2>Let's build something<br /><em>that lasts.</em></h2>
+            <h2>Need a full-stack engineer?<br /><em>Let's talk about the product.</em></h2>
           </div>
 
           <div className="footer-links-area">

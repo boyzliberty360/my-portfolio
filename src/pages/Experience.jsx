@@ -8,8 +8,8 @@ export default function Experience() {
   return (
     <section id="experience" className="content-section section-shell scroll-mt-24">
       <div className="section-intro section-intro-row">
-        <div><p className="eyebrow">Experience</p><h2 className="section-title">Where I have worked.</h2></div>
-        <p className="section-description">Shipping to production users, moving deliberately deeper into backend and systems work, and mentoring alongside it, which is the fastest way I know to find out whether a decision was actually sound.</p>
+        <div><p className="eyebrow">Experience</p><h2 className="section-title">Where I have shipped and learned.</h2></div>
+        <p className="section-description">Professional roles show feature ownership and team delivery. The Go programme is listed separately as focused backend training.</p>
       </div>
 
       <div className="experience-list">
@@ -25,10 +25,15 @@ export default function Experience() {
             <div className="experience-marker" aria-hidden="true"><Briefcase className="h-4 w-4" /></div>
             <div className="experience-content surface">
               <div className="experience-topline">
-                <div><p className="experience-company">{experience.company}{experience.current ? <span className="current-badge">Current</span> : null}</p><h3>{experience.role}</h3></div>
+                <div><p className="experience-company">{experience.company}{experience.current ? <span className="current-badge">Current</span> : null}{experience.kind === "training" ? <span className="training-badge">Training</span> : null}</p><h3>{experience.role}</h3></div>
                 <span className="experience-period"><Calendar className="h-3.5 w-3.5" /> {experience.period}</span>
               </div>
               <p className="experience-description">{experience.description}</p>
+              {experience.highlights?.length ? (
+                <ul className="experience-highlights">
+                  {experience.highlights.map((highlight) => <li key={highlight}>{highlight}</li>)}
+                </ul>
+              ) : null}
               <div className="tag-list">
                 {(experience.technologies || []).map((technology) => <span key={technology}>{technology}</span>)}
               </div>

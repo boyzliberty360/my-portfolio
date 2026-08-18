@@ -32,7 +32,7 @@ const CASE_STUDY_FIELDS = [
 // evaluating the work than an absent section does.
 const asList = (value) => (Array.isArray(value) && value.length ? value : []);
 
-export default function Card({ title, description, link, image, technologies = [], flagship = false, github, caseStudy }) {
+export default function Card({ title, description, link, image, technologies = [], flagship = false, github, caseStudy, recruiterProof }) {
   // Content entered in the admin wins; the checked-in map is the fallback for
   // projects written before the admin carried case-study fields. Neither one
   // present means no case study renders at all. Generic filler reads worse
@@ -44,6 +44,7 @@ export default function Card({ title, description, link, image, technologies = [
   const lessons = asList(study?.lessons);
   const next = asList(study?.next);
   const snippet = study?.snippet?.code ? study.snippet : null;
+  const proof = study?.recruiterProof || recruiterProof || projectCaseStudies[title]?.recruiterProof || null;
   const hasCaseStudy =
     entries.length > 0 || quality.length > 0 || tradeoffs.length > 0 ||
     lessons.length > 0 || next.length > 0 || Boolean(snippet);
@@ -93,6 +94,12 @@ export default function Card({ title, description, link, image, technologies = [
           {flagship ? <span className="flagship-badge">Flagship</span> : null}
         </div>
         {description ? <p className="project-summary">{description}</p> : null}
+        {proof ? (
+          <div className="project-proof">
+            <span className="detail-label">Recruiter proof</span>
+            <p>{proof}</p>
+          </div>
+        ) : null}
         {technologies.length ? (
           <div className="tag-list" aria-label={`${title} technologies`}>
             {technologies.slice(0, 5).map((tech) => <span key={tech}>{tech}</span>)}

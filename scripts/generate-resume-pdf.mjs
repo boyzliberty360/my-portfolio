@@ -1,6 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
-import { certifications, experiences, profile, resumeSkillGroups, resumeSummary } from "../src/data/profile.js";
+import { certifications, experiences, profile, resumeProjects, resumeSkillGroups, resumeSummary } from "../src/data/profile.js";
 
 const PAGE_WIDTH = 595;
 const PAGE_HEIGHT = 842;
@@ -157,79 +157,59 @@ function buildResumePages() {
 
   drawText(profile.name, MARGIN_X, y, "F2", 22, COLORS.ink);
   y -= 30;
-  drawText("AI Engineer | Frontend Engineer | Backend Engineer", MARGIN_X, y, "F1", 13, COLORS.accent);
+  drawText(profile.titleLong, MARGIN_X, y, "F1", 11.5, COLORS.accent);
   y -= 22;
-  drawText(`${profile.email} | ${profile.phone} | ${profile.location}`, MARGIN_X, y, "F1", 10, COLORS.muted);
+  drawText(`${profile.email} | ${profile.phone} | ${profile.location}`, MARGIN_X, y, "F1", 9, COLORS.muted);
   y -= 15;
-  drawText(`github.com/${profile.githubHandle} | ${profile.siteUrl}`, MARGIN_X, y, "F1", 10, COLORS.muted);
+  drawText(`github.com/${profile.githubHandle} | ${profile.siteUrl}`, MARGIN_X, y, "F1", 9, COLORS.muted);
   y -= 13;
   drawLine(MARGIN_X, y, MARGIN_X + CONTENT_WIDTH, y, 1.1, COLORS.accent);
   y -= 20;
 
-  addSectionHeading("Professional Summary");
-  addWrappedBlock(resumeSummary, { size: 11, lineHeight: 16, gapAfter: 10 });
+  addSectionHeading("Profile");
+  addWrappedBlock(resumeSummary, { size: 9.2, lineHeight: 12.5, gapAfter: 7 });
+
+  addSectionHeading("Selected Projects");
+  for (const project of resumeProjects) {
+    requireSpace(78);
+    drawText(`${project.name} | ${project.type} | ${project.role}`, MARGIN_X, y, "F2", 9.7, COLORS.ink);
+    y -= 13;
+    drawText(project.stack, MARGIN_X, y, "F1", 8.2, COLORS.accent);
+    y -= 12;
+    addBulletList(project.bullets, { size: 8.6, gapAfter: 2 });
+    y -= 3;
+  }
+
+  addSectionHeading("Professional Experience");
+  for (const item of experiences.filter((experience) => experience.kind !== "training")) {
+    requireSpace(58);
+    drawText(`${item.role} | ${item.company}`, MARGIN_X, y, "F2", 9.7, COLORS.ink);
+    y -= 13;
+    drawText(item.period, MARGIN_X, y, "F1", 8.2, COLORS.accent);
+    y -= 12;
+    if (item.highlights?.length) {
+      addBulletList(item.highlights, { size: 8.6, gapAfter: 2 });
+    }
+    y -= 3;
+  }
 
   addSectionHeading("Technical Skills");
   for (const category of resumeSkillGroups) {
-    addLabelledParagraph(category.title, category.skills);
+    addLabelledParagraph(category.title, category.skills, 8.2, 2);
   }
 
-  addSectionHeading("Certifications");
+  addSectionHeading("Training and Certification");
+  const training = experiences.find((experience) => experience.kind === "training");
+  if (training) {
+    addLabelledParagraph(`${training.role} | ${training.company}`, `${training.period}; ${training.highlights.join("; ")}`, 8.2, 4);
+  }
   for (const certification of certifications) {
     addLabelledParagraph(
       certification.name,
-      `${certification.issuer}; ${certification.programme}; Issued ${certification.issued}; Credential ID ${certification.credentialId}`,
-      10,
-      8,
+      `${certification.issuer}; Issued ${certification.issued}; Credential ID ${certification.credentialId}`,
+      8.2,
+      2,
     );
-  }
-
-  addSectionHeading("AI Engineering");
-  addBulletList([
-    "Implemented AI application workflows with Groq, OpenAI, Anthropic Claude, Cerebras, and the Vercel AI SDK",
-    "Designed provider failover and deterministic fallback paths for degraded or unavailable AI services",
-    "Added output validation, prompt-injection controls, personal-data redaction, and request rate limiting",
-    "Applied cost-aware model routing so simple tasks use efficient models and complex tasks receive more capable models",
-  ]);
-
-  requireSpace(130);
-  addSectionHeading("AWS-Ready Cloud Foundations");
-  addBulletList([
-    "Cloud-ready application foundations: Dockerized Node.js and Go services, stateless REST APIs, environment-based configuration, and health checks",
-    "Transferable AWS service patterns across compute, RDS/PostgreSQL, ElastiCache/Redis, S3-style object storage, and CloudWatch-oriented logging",
-    "Security-minded delivery with validation, least-privilege thinking, rate limiting, secrets separation, and observable failure paths",
-  ]);
-
-  addSectionHeading("Product Engineering");
-  addBulletList([
-    "Built responsive React and Next.js interfaces that work clearly across phones, tablets, and desktop screens",
-    "Implemented Node.js and Go services with PostgreSQL, MongoDB, Redis, Supabase, and REST API integrations",
-    "Added automated checks, structured logging, validation, and deployment workflows to improve release confidence",
-    "Communicated technical decisions clearly across remote collaboration and supported junior developer growth",
-  ]);
-
-  addSectionHeading("Experience");
-  for (const item of experiences) {
-    requireSpace(96);
-    drawFilledRect(MARGIN_X, y - 6, CONTENT_WIDTH, 22, COLORS.accentLight);
-    drawText(`${item.role} | ${item.company}`, MARGIN_X, y, "F2", 11, COLORS.ink);
-    y -= 16;
-    drawText(item.period, MARGIN_X, y, "F1", 10, COLORS.accent);
-    y -= 16;
-    addWrappedBlock(item.description, { size: 10, lineHeight: 14, gapAfter: 6 });
-    // Bullets live on the record in profile.js, not here. Keying them off the
-    // company name meant the resume kept its own copy of the story and drifted
-    // out of voice with the site the moment either one was edited.
-    if (item.highlights?.length) {
-      addBulletList(item.highlights, { size: 10, gapAfter: 4 });
-    }
-    y -= 4;
-    if (item !== experiences[experiences.length - 1]) {
-      drawLine(MARGIN_X, y, MARGIN_X + CONTENT_WIDTH, y, 0.6, COLORS.softLine);
-      y -= 12;
-    } else {
-      y -= 6;
-    }
   }
 
   if (currentPage.length > 0) {
@@ -249,9 +229,9 @@ function buildPdf(objects) {
 
   const xrefStart = header.length + body.length;
   let xref = `xref\n0 ${objects.length + 1}\n`;
-  xref += "0000000000 65535 f \n";
+  xref += "0000000000 65535 f\n";
   for (let i = 1; i < offsets.length; i += 1) {
-    xref += `${String(offsets[i]).padStart(10, "0")} 00000 n \n`;
+    xref += `${String(offsets[i]).padStart(10, "0")} 00000 n\n`;
   }
 
   const trailer = `trailer\n<< /Size ${objects.length + 1} /Root 1 0 R >>\nstartxref\n${xrefStart}\n%%EOF`;

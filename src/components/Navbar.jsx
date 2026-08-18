@@ -2,8 +2,9 @@ import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Moon, Sun, Menu, X } from "lucide-react";
 import { useTheme } from "../context/ThemeContext";
+import { getPublishedTestimonials } from "../lib/adminTestimonials";
 
-const LINKS = ["About", "Projects", "Experience", "Certifications", "Testimonials", "Contact"];
+const LINKS = ["Projects", "Experience", "About", "Certifications", "Contact"];
 
 // The same dashed-gear mark as the favicon in public/engineer.svg, redrawn on
 // currentColor so it picks up the accent chip in both themes. The favicon's
@@ -26,14 +27,35 @@ function BrandMark() {
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [activeSection, setActiveSection] = useState("");
+  const [hasTestimonials, setHasTestimonials] = useState(false);
   const { isDark, toggleTheme } = useTheme();
+
+  useEffect(() => {
+    let active = true;
+    const loadTestimonials = () => getPublishedTestimonials().then((data) => {
+      if (active) setHasTestimonials(data.length > 0);
+    });
+    loadTestimonials();
+    window.addEventListener("testimonials-updated", loadTestimonials);
+    return () => {
+      active = false;
+      window.removeEventListener("testimonials-updated", loadTestimonials);
+    };
+  }, []);
+
+  const links = hasTestimonials
+    ? ["Projects", "Experience", "About", "Certifications", "Testimonials", "Contact"]
+    : LINKS;
 
   // Highlights whichever section currently owns the viewport. The top margin
   // clears the fixed nav so a section is only "active" once it is actually
   // readable, and the bottom margin keeps the last section from winning early
   // while the one above it still fills the screen.
   useEffect(() => {
-    const sections = LINKS
+    const sectionNames = hasTestimonials
+      ? ["Projects", "Experience", "About", "Certifications", "Testimonials", "Contact"]
+      : LINKS;
+    const sections = sectionNames
       .map((link) => document.getElementById(link.toLowerCase()))
       .filter(Boolean);
     if (!sections.length) return undefined;
@@ -50,9 +72,8 @@ export default function Navbar() {
 
     sections.forEach((section) => observer.observe(section));
     return () => observer.disconnect();
-  }, []);
+  }, [hasTestimonials]);
 
-  const links = LINKS;
   const toggleLabel = `Switch to ${isDark ? "light" : "dark"} mode`;
 
   return (

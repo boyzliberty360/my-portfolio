@@ -1,8 +1,8 @@
 # Portfolio: Emmanuel Adejoh
 
-Personal portfolio for a full-stack AI engineer. React + Vite front end, Tailwind for styling,
-and Vercel Functions backing a small content admin so projects and testimonials can be edited
-without a redeploy.
+Personal portfolio for a full-stack software engineer with an AI engineering specialization.
+React + Vite front end, Tailwind for styling, and Vercel Functions backing a small content admin
+so projects and testimonials can be edited without a redeploy.
 
 ## Architecture
 

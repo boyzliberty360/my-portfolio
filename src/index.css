@@ -204,9 +204,11 @@ h1, h2, h3, h4, .logo-text { font-family: "Space Grotesk", ui-sans-serif, system
 .project-heading-row { display: flex; align-items: start; justify-content: space-between; gap: 1rem; }
 .project-type { color: var(--accent); font: 0.68rem "DM Mono", monospace; letter-spacing: 0.04em; text-transform: uppercase; }
 .project-heading-row h3 { margin-top: 0.35rem; font-size: 1.65rem; letter-spacing: -0.04em; }
-.flagship-badge, .current-badge { display: inline-flex; align-items: center; border-radius: 999px; background: var(--accent-soft); color: var(--accent); font: 0.62rem "DM Mono", monospace; letter-spacing: 0.05em; text-transform: uppercase; }
+.flagship-badge, .current-badge, .training-badge { display: inline-flex; align-items: center; border-radius: 999px; background: var(--accent-soft); color: var(--accent); font: 0.62rem "DM Mono", monospace; letter-spacing: 0.05em; text-transform: uppercase; }
 .flagship-badge { padding: 0.35rem 0.55rem; }
 .project-summary { margin-top: 0.75rem; color: var(--ink-soft); font-size: 0.88rem; line-height: 1.6; }
+.project-proof { margin-top: 1rem; padding-top: 0.9rem; border-top: 1px solid var(--line); }
+.project-proof p { margin-top: 0.35rem; color: var(--ink); font-size: 0.82rem; line-height: 1.6; }
 .tag-list { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 1rem; }
 .tag-list span { padding: 0.3rem 0.5rem; border: 1px solid var(--line); border-radius: 999px; color: var(--ink-soft); font: 0.63rem "DM Mono", monospace; }
 .case-study-details { margin-top: 1.25rem; border-top: 1px solid var(--line); }
@@ -252,10 +254,11 @@ h1, h2, h3, h4, .logo-text { font-family: "Space Grotesk", ui-sans-serif, system
 .experience-content { padding: 1.35rem; }
 .experience-topline { display: flex; align-items: start; justify-content: space-between; gap: 1rem; }
 .experience-company { display: flex; align-items: center; gap: 0.55rem; color: var(--accent); font-size: 0.8rem; font-weight: 700; }
-.current-badge { padding: 0.22rem 0.45rem; }
+.current-badge, .training-badge { padding: 0.22rem 0.45rem; }
 .experience-topline h3 { margin-top: 0.3rem; font-size: 1.4rem; letter-spacing: -0.035em; }
 .experience-period { display: inline-flex; align-items: center; gap: 0.35rem; color: var(--ink-faint); font: 0.67rem "DM Mono", monospace; white-space: nowrap; }
 .experience-description { max-width: 780px; margin-top: 1rem; color: var(--ink-soft); font-size: 0.9rem; line-height: 1.7; }
+.experience-highlights { display: grid; gap: 0.45rem; max-width: 780px; margin: 0.9rem 0 0; padding-left: 1.1rem; color: var(--ink); font-size: 0.82rem; line-height: 1.55; }
 .experience-link { margin-top: 1.2rem; }
 
 .certification-card { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(300px, 0.8fr); gap: 2rem; padding: 0.8rem; }

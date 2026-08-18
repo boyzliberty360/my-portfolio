@@ -2,7 +2,8 @@
   {
     "id": "7f6a4a8a-6350-42d2-96f5-35e40dada993",
     "name": "Trusta",
-    "description": "A safe-payment platform for online deals: funds are held against an explicit deal state machine and released only once delivery conditions are met, with every transition audited.",
+    "description": "A safe-payment platform for online deals, with funds held against an explicit deal state machine and released only after delivery conditions are met.",
+    "recruiterProof": "Sole engineer who designed the deal state machine and payment safeguards around idempotency, signed webhooks, provider rechecks, and scheduled reconciliation.",
     "link": "https://trusta-pro.vercel.app/",
     "github": "https://github.com/emmyade360/Trusta",
     "image": "/images/projects/trusta-preview.webp",
@@ -21,7 +22,8 @@
   {
     "id": "82f51b0b-7f68-439f-ac0f-d0637ae3a318",
     "name": "DoctorCare",
-    "description": "A digital healthcare platform connecting patients with verified doctors for consultations, appointment booking, and medical record management.",
+    "description": "A healthcare platform connecting patients with verified doctors for consultation, appointment booking, and medical-record management.",
+    "recruiterProof": "Built the patient-facing flow and data model, then scoped medical records to the routes that need them and made booking validation explicit.",
     "link": "https://doctorcare-phi.vercel.app/",
     "featured": false,
     "createdAt": "2026-08-01T10:24:16.604Z",

@@ -8,6 +8,8 @@
 export const projectCaseStudies = {
   Trusta: {
     type: "Escrow payments",
+    recruiterProof:
+      "Sole engineer who designed the deal state machine and the payment safeguards around idempotency, signed webhooks, provider rechecks, and scheduled reconciliation.",
     problem:
       "Peer-to-peer trade stalls on who moves first. The buyer will not pay before delivery, the seller will not ship before payment, and neither side has a record either of them would accept afterwards.",
     solution:
@@ -94,6 +96,8 @@ export function assertDealTransition(from: DealStatus, to: DealStatus) {
   },
   DoctorCare: {
     type: "Healthcare",
+    recruiterProof:
+      "Built the patient-facing flow and data model, then scoped medical records to the routes that need them and made booking validation explicit.",
     problem:
       "Finding a verified doctor, booking a slot that actually exists, and keeping the resulting records somewhere retrievable normally means three disconnected systems and a phone call to reconcile them.",
     solution:

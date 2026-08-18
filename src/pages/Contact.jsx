@@ -102,7 +102,7 @@ export default function Contact() {
   const isDisabled = isSubmitting || isRateLimited || remainingRequests === 0;
   const mailto = `mailto:${profile.email}?subject=${encodeURIComponent("Role opportunity")}`;
   const whatsapp = `https://wa.me/${profile.whatsapp}?text=${encodeURIComponent(
-    `Hi Emmanuel, I found your portfolio and I'd like to talk about an AI engineering role.`,
+    `Hi Emmanuel, I found your portfolio and I'd like to talk about a full-stack engineering role.`,
   )}`;
 
   return (
@@ -110,7 +110,7 @@ export default function Contact() {
       <div className="contact-header">
         <div><p className="eyebrow">Get in touch</p><h2 className="section-title">{profile.availability}.</h2></div>
         <p className="section-description">
-          Hiring, or want to dig into something on this page? Tell me what you are building and where it is hard. {profile.responseTime}
+          Hiring for a full-stack role, or want to discuss a project? Tell me what you are building and where it is hard. {profile.responseTime}
         </p>
       </div>
 

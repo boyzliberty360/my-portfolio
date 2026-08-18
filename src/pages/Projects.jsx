@@ -30,8 +30,8 @@ export default function Projects() {
   return (
     <section id="projects" className="content-section section-shell scroll-mt-24">
       <div className="section-intro section-intro-row">
-        <div><p className="eyebrow">Selected work</p><h2 className="section-title">Shipped, and open to inspection.</h2></div>
-        <p className="section-description">Every one of these is deployed and usable right now. The case studies go past the feature list into the architecture, the failure modes, and the decisions I would have to defend in review, including the ones I got wrong first.</p>
+        <div><p className="eyebrow">Selected work</p><h2 className="section-title">Full-stack products with the decisions left visible.</h2></div>
+        <p className="section-description">These projects show the work behind the interface: state changes, data boundaries, payment safety, validation, and the trade-offs that make a product easier to trust.</p>
       </div>
 
       {loading ? (
@@ -58,6 +58,7 @@ export default function Projects() {
                 technologies={project.technologies || project.stack || []}
                 github={project.github || project.githubUrl}
                 caseStudy={project.caseStudy}
+                recruiterProof={project.recruiterProof}
                 flagship={Boolean(project.featured)}
               />
             </motion.div>

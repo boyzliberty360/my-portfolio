@@ -34,17 +34,28 @@ function TestimonialCard({ testimonial, index }) {
 export default function Testimonials() {
   const prefersReducedMotion = useReducedMotion();
   const [testimonials, setTestimonials] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [form, setForm] = useState(EMPTY_REVIEW);
   const [submitting, setSubmitting] = useState(false);
   const [submitState, setSubmitState] = useState({ type: "", message: "" });
 
   useEffect(() => {
     let active = true;
-    const load = () => getPublishedTestimonials().then((data) => { if (active) setTestimonials(data); });
+    const load = () => getPublishedTestimonials().then((data) => {
+      if (active) {
+        setTestimonials(data);
+        setLoading(false);
+      }
+    });
     load();
     window.addEventListener("testimonials-updated", load);
     return () => { active = false; window.removeEventListener("testimonials-updated", load); };
   }, []);
+
+  // An empty references section asks a recruiter to supply the proof that the
+  // portfolio does not yet have. Keep it out of the public scan until there
+  // is a verified testimonial to show.
+  if (loading || !testimonials.length) return null;
 
   return (
     <section id="testimonials" className="content-section section-shell scroll-mt-24">
@@ -52,9 +63,9 @@ export default function Testimonials() {
         <div><p className="eyebrow">References</p><h2 className="section-title">What it is like to work with me.</h2></div>
         <p className="section-description">From people who have actually worked with me. Every quote is from a real colleague, and nothing appears here without being checked first.</p>
       </div>
-      {testimonials.length ? <div className="testimonial-grid">
+      <div className="testimonial-grid">
         {testimonials.map((testimonial, index) => <TestimonialCard key={testimonial.id} testimonial={testimonial} index={index} />)}
-      </div> : <p className="testimonial-empty">No public testimonials yet. Be the first to leave a review.</p>}
+      </div>
 
       <motion.form
         initial={prefersReducedMotion ? false : { opacity: 0, y: 14 }}
