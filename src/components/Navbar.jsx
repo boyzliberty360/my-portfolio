@@ -1,10 +1,18 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Moon, Sun, Menu, X } from "lucide-react";
+import { Download, Menu, Moon, Sun, X } from "lucide-react";
 import { useTheme } from "../context/ThemeContext";
 import { getPublishedTestimonials } from "../lib/adminTestimonials";
 
-const LINKS = ["Projects", "Experience", "About", "Certifications", "Contact"];
+const LINKS = [
+  { id: "projects", label: "Projects" },
+  { id: "experience", label: "Experience" },
+  { id: "about", label: "About" },
+  { id: "certifications", label: "Credentials" },
+  { id: "contact", label: "Contact" },
+];
+
+const TESTIMONIALS_LINK = { id: "testimonials", label: "Testimonials" };
 
 // The same dashed-gear mark as the favicon in public/engineer.svg, redrawn on
 // currentColor so it picks up the accent chip in both themes. The favicon's
@@ -43,20 +51,20 @@ export default function Navbar() {
     };
   }, []);
 
-  const links = hasTestimonials
-    ? ["Projects", "Experience", "About", "Certifications", "Testimonials", "Contact"]
-    : LINKS;
+  const links = useMemo(
+    () => (hasTestimonials
+      ? [...LINKS.slice(0, 4), TESTIMONIALS_LINK, LINKS[4]]
+      : LINKS),
+    [hasTestimonials],
+  );
 
   // Highlights whichever section currently owns the viewport. The top margin
   // clears the fixed nav so a section is only "active" once it is actually
   // readable, and the bottom margin keeps the last section from winning early
   // while the one above it still fills the screen.
   useEffect(() => {
-    const sectionNames = hasTestimonials
-      ? ["Projects", "Experience", "About", "Certifications", "Testimonials", "Contact"]
-      : LINKS;
-    const sections = sectionNames
-      .map((link) => document.getElementById(link.toLowerCase()))
+    const sections = links
+      .map(({ id }) => document.getElementById(id))
       .filter(Boolean);
     if (!sections.length) return undefined;
 
@@ -72,53 +80,65 @@ export default function Navbar() {
 
     sections.forEach((section) => observer.observe(section));
     return () => observer.disconnect();
-  }, [hasTestimonials]);
+  }, [links]);
+
+  useEffect(() => {
+    const closeOnEscape = (event) => {
+      if (event.key === "Escape") setIsOpen(false);
+    };
+
+    window.addEventListener("keydown", closeOnEscape);
+    return () => window.removeEventListener("keydown", closeOnEscape);
+  }, []);
 
   const toggleLabel = `Switch to ${isDark ? "light" : "dark"} mode`;
 
   return (
-    <nav aria-label="Primary navigation" className="site-nav fixed top-0 z-50 w-full px-4 py-4 md:px-8">
-      <div className="nav-inner mx-auto max-w-6xl rounded-2xl px-3 py-2.5 md:rounded-full md:px-5 md:py-3">
-        <div className="relative flex items-center justify-between gap-4">
+    <nav aria-label="Primary navigation" className="site-nav fixed top-0 z-50 w-full px-3 py-3 sm:px-5 sm:py-4">
+      <div className="nav-inner mx-auto max-w-6xl rounded-2xl px-3 py-2.5 sm:px-4 lg:rounded-full lg:px-5">
+        <div className="nav-layout">
           <a
             href="#home"
             onClick={() => setIsOpen(false)}
-            className="logo-text relative z-10 flex min-w-0 items-center gap-2 text-base font-bold text-slate-950 dark:text-white sm:text-lg"
+            className="logo-text flex min-w-0 items-center gap-2 text-base font-bold sm:text-lg"
             aria-label="Go to home"
           >
             <span className="brand-mark"><BrandMark /></span>
             <span className="truncate">Emmanuel Adejoh</span>
           </a>
 
-          <div className="hidden md:absolute md:left-1/2 md:flex md:-translate-x-1/2 md:items-center">
-            <button
-              onClick={toggleTheme}
-              className="theme-icon-button"
-              aria-label={toggleLabel}
-              aria-pressed={isDark}
-              title={toggleLabel}
-            >
-              {isDark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
-            </button>
-          </div>
-
-          <div className="hidden items-center md:flex">
-            <ul className="nav-links flex items-center gap-3 text-slate-900 dark:text-white lg:gap-5">
+          <div className="nav-desktop">
+            <ul className="nav-links" aria-label="Portfolio sections">
               {links.map((item) => (
-                <li key={item}>
+                <li key={item.id}>
                   <a
-                    href={`#${item.toLowerCase()}`}
-                    aria-current={activeSection === item.toLowerCase() ? "page" : undefined}
-                    className="nav-link relative text-[0.78rem] font-semibold tracking-wide transition-colors duration-200 lg:text-[0.86rem]"
+                    href={`#${item.id}`}
+                    aria-current={activeSection === item.id ? "location" : undefined}
+                    className="nav-link"
                   >
-                    {item}
+                    {item.label}
                   </a>
                 </li>
               ))}
             </ul>
+            <div className="nav-actions">
+              <a className="nav-resume" href="/Resume.pdf" download="Emmanuel-Adejoh-CV.pdf">
+                <Download aria-hidden="true" />
+                <span>Resume</span>
+              </a>
+              <button
+                onClick={toggleTheme}
+                className="theme-icon-button"
+                aria-label={toggleLabel}
+                aria-pressed={isDark}
+                title={toggleLabel}
+              >
+                {isDark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+              </button>
+            </div>
           </div>
 
-          <div className="flex items-center gap-2 md:hidden">
+          <div className="nav-mobile-actions">
             <button
               onClick={toggleTheme}
               className="theme-icon-button"
@@ -130,12 +150,14 @@ export default function Navbar() {
             </button>
 
             <button
-              className="mobile-icon-btn dark:text-white text-slate-900"
+              className="mobile-menu-button"
               onClick={() => setIsOpen((prev) => !prev)}
-              aria-label="Toggle mobile menu"
+              aria-label={isOpen ? "Close navigation menu" : "Open navigation menu"}
               aria-expanded={isOpen}
+              aria-controls="mobile-navigation"
             >
-              {isOpen ? <X className="h-4.5 w-4.5" /> : <Menu className="h-4.5 w-4.5" />}
+              <span>{isOpen ? "Close" : "Menu"}</span>
+              {isOpen ? <X aria-hidden="true" /> : <Menu aria-hidden="true" />}
             </button>
           </div>
         </div>
@@ -147,23 +169,36 @@ export default function Navbar() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
               transition={{ duration: 0.18 }}
-              className="md:hidden"
+              className="lg:hidden"
             >
-              <div className="mobile-menu mt-3 rounded-2xl p-2">
-                <ul className="grid gap-2">
+              <div id="mobile-navigation" className="mobile-menu mt-3 rounded-2xl p-2.5">
+                <div className="mobile-menu-heading">
+                  <span>Navigate</span>
+                  <span>{String(links.length).padStart(2, "0")} sections</span>
+                </div>
+                <ul className="mobile-nav-links">
                   {links.map((item) => (
-                    <li key={item}>
+                    <li key={item.id}>
                       <a
-                        href={`#${item.toLowerCase()}`}
-                        aria-current={activeSection === item.toLowerCase() ? "page" : undefined}
-                        className="nav-link block rounded-xl px-3.5 py-2.5 text-[15px] font-semibold text-slate-900 transition-colors dark:text-white"
+                        href={`#${item.id}`}
+                        aria-current={activeSection === item.id ? "location" : undefined}
+                        className="nav-link mobile-nav-link"
                         onClick={() => setIsOpen(false)}
                       >
-                        {item}
+                        <span>{item.label}</span>
+                        <span aria-hidden="true">{String(links.indexOf(item) + 1).padStart(2, "0")}</span>
                       </a>
                     </li>
                   ))}
                 </ul>
+                <a
+                  className="mobile-resume-link"
+                  href="/Resume.pdf"
+                  download="Emmanuel-Adejoh-CV.pdf"
+                  onClick={() => setIsOpen(false)}
+                >
+                  <Download aria-hidden="true" /> Download resume
+                </a>
               </div>
             </motion.div>
           )}

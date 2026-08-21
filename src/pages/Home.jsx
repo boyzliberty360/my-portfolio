@@ -1,5 +1,5 @@
 import { motion, useReducedMotion } from "framer-motion";
-import { ArrowDownRight, ArrowRight, Download, Github, Linkedin, Mail, MapPin } from "lucide-react";
+import { ArrowDownRight, ArrowRight, Github, Linkedin, Mail, MapPin } from "lucide-react";
 import { profile, proofPoints } from "../data/profile";
 
 const PROFILE_IMAGE = "/images/adejoh-emmanuel-professional.webp";
@@ -41,9 +41,6 @@ export default function Home() {
           >
             <a className="button button-primary" href="#projects">
               View case studies <ArrowRight className="h-4 w-4" />
-            </a>
-            <a className="button button-secondary" href="/Resume.pdf" download="Emmanuel-Adejoh-CV.pdf">
-              <Download className="h-4 w-4" /> Download resume
             </a>
             <a className="button button-ghost" href="#contact">
               Get in touch
